@@ -409,6 +409,16 @@ data class FeatureItem(val title: String, val subtitle: String, val icon: androi
 @Composable
 fun HomeScreen(userState: UserState, elapsedMillis: Long, onNavigate: (String) -> Unit) {
     val answeredCount = QuestionnaireEngine.answeredOptions(userState.answers).size
+    val emblemMotion = rememberInfiniteTransition(label = "home-emblem-motion")
+    val emblemPulse by emblemMotion.animateFloat(
+        initialValue = 0.96f,
+        targetValue = 1.04f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "home-emblem-pulse"
+    )
     val features = listOf(
         FeatureItem("جلسة الأسئلة", "كل اختيار يغيّر مسار المواجهة", Icons.Default.QuestionAnswer, "questions"),
         FeatureItem("شجرة الوجوه", "احتمالات تدعمها الأدلة وتراجعها", Icons.Default.AccountTree, "faces"),
@@ -438,11 +448,57 @@ fun HomeScreen(userState: UserState, elapsedMillis: Long, onNavigate: (String) -
                     .border(1.dp, Color(0x667B61A7), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.Fingerprint, contentDescription = "رمز المحاكمة", tint = Violet, modifier = Modifier.size(29.dp))
+                Icon(
+                    Icons.Default.Fingerprint,
+                    contentDescription = "رمز المحاكمة",
+                    tint = Violet,
+                    modifier = Modifier.size(29.dp).graphicsLayer {
+                        scaleX = emblemPulse
+                        scaleY = emblemPulse
+                    }
+                )
             }
         }
 
         Spacer(Modifier.height(18.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(Color(0xFF1A1424))
+                    .border(1.dp, Color(0x667B61A7), RoundedCornerShape(50))
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    Modifier.size(7.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFB9A1FF))
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    "الجلسة مفتوحة",
+                    color = Color(0xFFE3D8FF),
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+            Spacer(Modifier.width(10.dp))
+            Text(
+                "مسارك يتشكّل مع كل إجابة",
+                modifier = Modifier.weight(1f),
+                color = MutedText,
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.End,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        Spacer(Modifier.height(12.dp))
 
         Box(
             Modifier.fillMaxWidth()
