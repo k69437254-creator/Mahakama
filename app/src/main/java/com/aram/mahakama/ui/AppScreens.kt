@@ -21,6 +21,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -76,6 +77,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -1418,7 +1420,13 @@ fun ProfileScreen(userState: UserState) {
 }
 
 @Composable
-fun SettingsScreen(userState: UserState, onSaveName: (String) -> Unit, onToggleMuted: (Boolean) -> Unit) {
+fun SettingsScreen(
+    userState: UserState,
+    onSaveName: (String) -> Unit,
+    onToggleMuted: (Boolean) -> Unit,
+    onSelectMusicTrack: (String) -> Unit,
+    onVolumeChange: (Float) -> Unit
+) {
     var name by rememberSaveable(userState.userName) { mutableStateOf(userState.userName) }
     val uriHandler = LocalUriHandler.current
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 18.dp, vertical = 12.dp)) {
@@ -1439,15 +1447,51 @@ fun SettingsScreen(userState: UserState, onSaveName: (String) -> Unit, onToggleM
         }
         Spacer(Modifier.height(12.dp))
         Card(colors = CardDefaults.cardColors(containerColor = Panel), shape = RoundedCornerShape(20.dp)) {
-            Row(Modifier.fillMaxWidth().padding(17.dp), verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.size(42.dp).clip(RoundedCornerShape(13.dp)).background(PanelRaised), contentAlignment = Alignment.Center) { Icon(Icons.Default.MusicNote, contentDescription = null, tint = Violet) }
-                Spacer(Modifier.width(12.dp))
-                Column(Modifier.weight(1f)) {
-                    Text("الموسيقى الخلفية", style = MaterialTheme.typography.titleSmall)
-                    Spacer(Modifier.height(3.dp))
-                    Text(if (userState.ambientMuted) "الصمت حاضر حتى تختار عودة الموسيقى." else "لحن المحاكمة يرافقك من خلف الكلمات.", color = MutedText, style = MaterialTheme.typography.bodySmall)
+            Column(Modifier.fillMaxWidth().padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.size(42.dp).clip(RoundedCornerShape(13.dp)).background(PanelRaised), contentAlignment = Alignment.Center) {
+                        Icon(Icons.Default.MusicNote, contentDescription = null, tint = Violet)
+                    }
+                    Spacer(Modifier.width(11.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text("موسيقى المحاكمة", style = MaterialTheme.typography.titleSmall)
+                        Spacer(Modifier.height(3.dp))
+                        Text(if (userState.ambientMuted) "الموسيقى صامتة، لكن اختيارك محفوظ." else "يعزف اللحن المختار عبر الشاشات، بتكرارٍ متصل.", color = MutedText, style = MaterialTheme.typography.bodySmall)
+                    }
+                    Switch(checked = !userState.ambientMuted, onCheckedChange = { enabled -> onToggleMuted(!enabled) })
                 }
-                Switch(checked = !userState.ambientMuted, onCheckedChange = { enabled -> onToggleMuted(!enabled) })
+                Spacer(Modifier.height(14.dp))
+                Text("اختر اللحن", color = Color(0xFFD9CCF0), style = MaterialTheme.typography.labelLarge)
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
+                    listOf("death" to "الموت", "sin" to "الخطيئة", "fate" to "القدر").forEach { (id, title) ->
+                        val selected = userState.selectedMusicTrack == id
+                        Button(
+                            onClick = { onSelectMusicTrack(id) },
+                            modifier = Modifier.weight(1f).height(43.dp),
+                            contentPadding = PaddingValues(horizontal = 3.dp, vertical = 5.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (selected) Color(0xFFD1C0F5) else PanelRaised,
+                                contentColor = if (selected) Color(0xFF20162C) else Color(0xFFD9CBEA)
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) { Text(title, fontSize = 11.sp, maxLines = 1) }
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+                Text("اللحن الحالي: " + when (userState.selectedMusicTrack) {
+                    "sin" -> "لحن الخطيئة"
+                    "fate" -> "لحن القدر"
+                    else -> "لحن الموت"
+                }, color = MutedText, style = MaterialTheme.typography.bodySmall)
+                Spacer(Modifier.height(13.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("مستوى الصوت", color = Color(0xFFD9CCF0), style = MaterialTheme.typography.labelLarge)
+                    Spacer(Modifier.weight(1f))
+                    Text("${(userState.musicVolume * 100).toInt()}٪", color = Violet, style = MaterialTheme.typography.labelLarge)
+                }
+                Slider(value = userState.musicVolume, onValueChange = onVolumeChange, valueRange = 0f..1f)
+                Text("يُخفَّض اللحن تلقائيًا أثناء كلام الأوركسترا وطيف الروح، ثم يعود إلى مستواه المختار.", color = MutedText, style = MaterialTheme.typography.bodySmall)
             }
         }
         Spacer(Modifier.height(12.dp))

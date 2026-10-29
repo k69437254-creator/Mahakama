@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -26,6 +27,10 @@ private val Context.mahakamaDataStore by preferencesDataStore(name = "mahakama_p
 data class UserState(
     val userName: String = "",
     val ambientMuted: Boolean = false,
+    val selectedMusicTrack: String = "death",
+    val hasChosenMusicTrack: Boolean = false,
+    val musicVolume: Float = 0.82f,
+    val orchestraIntroCompleted: Boolean = false,
     val trialStarted: Boolean = false,
     val totalActiveMillis: Long = 0L,
     val answers: Map<String, String> = emptyMap(),
@@ -62,6 +67,25 @@ class PreferencesRepository private constructor(private val store: DataStore<Pre
 
     suspend fun setAmbientMuted(muted: Boolean) {
         store.edit { it[Keys.AMBIENT_MUTED] = muted }
+    }
+
+    suspend fun setSelectedMusicTrack(trackId: String) {
+        val safeTrack = when (trackId) {
+            "death", "sin", "fate" -> trackId
+            else -> "death"
+        }
+        store.edit {
+            it[Keys.SELECTED_MUSIC_TRACK] = safeTrack
+            it[Keys.HAS_CHOSEN_MUSIC_TRACK] = true
+        }
+    }
+
+    suspend fun setMusicVolume(volume: Float) {
+        store.edit { it[Keys.MUSIC_VOLUME] = volume.coerceIn(0f, 1f) }
+    }
+
+    suspend fun setOrchestraIntroCompleted(completed: Boolean) {
+        store.edit { it[Keys.ORCHESTRA_INTRO_COMPLETED] = completed }
     }
 
     suspend fun markTrialStarted() {
@@ -112,6 +136,10 @@ class PreferencesRepository private constructor(private val store: DataStore<Pre
     private fun toUserState(prefs: Preferences): UserState = UserState(
         userName = prefs[Keys.USER_NAME].orEmpty(),
         ambientMuted = prefs[Keys.AMBIENT_MUTED] ?: false,
+        selectedMusicTrack = prefs[Keys.SELECTED_MUSIC_TRACK] ?: "death",
+        hasChosenMusicTrack = prefs[Keys.HAS_CHOSEN_MUSIC_TRACK] ?: false,
+        musicVolume = (prefs[Keys.MUSIC_VOLUME] ?: 0.82f).coerceIn(0f, 1f),
+        orchestraIntroCompleted = prefs[Keys.ORCHESTRA_INTRO_COMPLETED] ?: false,
         trialStarted = prefs[Keys.TRIAL_STARTED] ?: false,
         totalActiveMillis = prefs[Keys.TOTAL_ACTIVE_MILLIS] ?: 0L,
         answers = parseAnswers(prefs[Keys.ANSWERS_JSON].orEmpty()),
@@ -154,6 +182,10 @@ class PreferencesRepository private constructor(private val store: DataStore<Pre
     private object Keys {
         val USER_NAME = stringPreferencesKey("user_name")
         val AMBIENT_MUTED = booleanPreferencesKey("ambient_muted")
+        val SELECTED_MUSIC_TRACK = stringPreferencesKey("selected_music_track")
+        val HAS_CHOSEN_MUSIC_TRACK = booleanPreferencesKey("has_chosen_music_track")
+        val MUSIC_VOLUME = floatPreferencesKey("music_volume")
+        val ORCHESTRA_INTRO_COMPLETED = booleanPreferencesKey("orchestra_intro_completed")
         val TRIAL_STARTED = booleanPreferencesKey("trial_started")
         val TOTAL_ACTIVE_MILLIS = longPreferencesKey("total_active_millis")
         val ANSWERS_JSON = stringPreferencesKey("answers_json")

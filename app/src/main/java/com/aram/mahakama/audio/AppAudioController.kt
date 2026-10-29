@@ -24,26 +24,45 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
     private val appContext = context.applicationContext
     private val mainHandler = Handler(Looper.getMainLooper())
     private var player: MediaPlayer? = null
+    private var playerTrackId: String? = null
+    private var selectedTrackId: String = "death"
+    private var trackSwitchPending = false
+    private var trackSwitchRunnable: Runnable? = null
+    private var masterVolume = 0.82f
     private var tts: TextToSpeech? = TextToSpeech(appContext, this)
     private var ttsReady = false
     private var appIsForeground = false
     private var muted = false
     private var speaking = false
     private var queuedText: String? = null
+    private var queuedLowVoice = false
     private var finishedCallback: (() -> Unit)? = null
     private var activeUtteranceId: String? = null
     private var volumeAnimator: ValueAnimator? = null
     private var currentMusicVolume = 0f
 
     @Synchronized
-    fun updateAmbientState(isForeground: Boolean, isMuted: Boolean) {
+    fun updateAmbientState(
+        isForeground: Boolean,
+        isMuted: Boolean,
+        trackId: String = selectedTrackId,
+        volume: Float = masterVolume
+    ) {
         appIsForeground = isForeground
         muted = isMuted
+        masterVolume = volume.coerceIn(0f, 1f)
+        val requestedTrack = normalizeTrackId(trackId)
+        if (requestedTrack != selectedTrackId) selectedTrackId = requestedTrack
+        if (trackSwitchPending) return
+        if (player != null && playerTrackId != selectedTrackId) {
+            selectTrack(selectedTrackId)
+            return
+        }
         ensurePlayer()
         val audio = player ?: return
         if (!AmbientAudioPolicy.shouldPlay(appIsForeground, muted)) {
             // Let the fade finish before pausing; pausing immediately would make the fade inaudible.
-            fadeMusicTo(AmbientAudioPolicy.targetVolume(appIsForeground, muted, speaking), 220L)
+            fadeMusicTo(ambientTargetVolume(speaking), 220L)
             if (currentMusicVolume <= 0.001f && audio.isPlaying) audio.pause()
         } else {
             try {
@@ -51,38 +70,95 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
             } catch (e: IllegalStateException) {
                 Log.w(TAG, "Ambient audio could not start", e)
             }
-            fadeMusicTo(AmbientAudioPolicy.targetVolume(appIsForeground, muted, speaking), if (speaking) 520L else 950L)
+            fadeMusicTo(ambientTargetVolume(speaking), if (speaking) 520L else 950L)
         }
     }
 
     @Synchronized
     fun speakSpirit(text: String, onFinished: () -> Unit = {}) {
+        speakWithProfile(text, lowVoice = false, onFinished = onFinished)
+    }
+
+    /** Lower and slower orchestra speech; timbre depends on the device TTS engine. */
+    @Synchronized
+    fun speakOrchestra(text: String, onFinished: () -> Unit = {}) {
+        speakWithProfile(text, lowVoice = true, onFinished = onFinished)
+    }
+
+    @Synchronized
+    private fun speakWithProfile(text: String, lowVoice: Boolean, onFinished: () -> Unit) {
         if (text.isBlank()) return
         speaking = true
         finishedCallback = onFinished
+        queuedLowVoice = lowVoice
         if (appIsForeground && !muted) {
             ensurePlayer()
             player?.let { audio ->
                 try { if (!audio.isPlaying) audio.start() } catch (_: IllegalStateException) { }
             }
             // Keep the same soft atmospheric track audible under the voice, at a ducked level.
-            fadeMusicTo(AmbientAudioPolicy.targetVolume(appIsForeground, muted, true), 650L)
+            fadeMusicTo(ambientTargetVolume(true), 650L)
         }
         if (!ttsReady) {
             queuedText = text
             return
         }
-        speakNow(prepareArabicSpeech(text))
+        speakNow(prepareArabicSpeech(text), lowVoice)
+    }
+
+    /** Switches the looping soundtrack with a fade and never overlaps two players. */
+    @Synchronized
+    fun selectTrack(trackId: String) {
+        val requested = normalizeTrackId(trackId)
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            mainHandler.post { selectTrack(requested) }
+            return
+        }
+        selectedTrackId = requested
+        if (trackSwitchPending) return
+        if (player != null && playerTrackId == requested) return
+        if (player == null) {
+            ensurePlayer()
+            val next = player ?: return
+            if (AmbientAudioPolicy.shouldPlay(appIsForeground, muted)) {
+                try { if (!next.isPlaying) next.start() } catch (_: IllegalStateException) { }
+            }
+            fadeMusicTo(ambientTargetVolume(speaking), 850L)
+            return
+        }
+        trackSwitchPending = true
+        fadeMusicTo(0f, 430L)
+        val switchTask = Runnable {
+            synchronized(this) {
+                trackSwitchRunnable = null
+                trackSwitchPending = false
+                try { player?.release() } catch (_: Exception) { }
+                player = null
+                playerTrackId = null
+                currentMusicVolume = 0f
+                ensurePlayer()
+                val next = player ?: return@synchronized
+                if (AmbientAudioPolicy.shouldPlay(appIsForeground, muted)) {
+                    try { if (!next.isPlaying) next.start() } catch (_: IllegalStateException) { }
+                    fadeMusicTo(ambientTargetVolume(speaking), if (speaking) 520L else 900L)
+                } else {
+                    setMusicVolume(0f)
+                }
+            }
+        }
+        trackSwitchRunnable = switchTask
+        mainHandler.postDelayed(switchTask, 450L)
     }
 
     @Synchronized
     fun stopSpirit() {
         queuedText = null
+        queuedLowVoice = false
         finishedCallback = null
         activeUtteranceId = null
         try { tts?.stop() } catch (_: Exception) { }
         speaking = false
-        fadeMusicTo(AmbientAudioPolicy.targetVolume(appIsForeground, muted, false), 800L)
+        fadeMusicTo(ambientTargetVolume(false), 800L)
     }
 
     @Synchronized
@@ -93,10 +169,14 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
         finishedCallback = null
         activeUtteranceId = null
         speaking = false
+        trackSwitchRunnable?.let { mainHandler.removeCallbacks(it) }
+        trackSwitchRunnable = null
+        trackSwitchPending = false
         try { tts?.stop(); tts?.shutdown() } catch (_: Exception) { }
         tts = null
         try { player?.release() } catch (_: Exception) { }
         player = null
+        playerTrackId = null
     }
 
     override fun onInit(status: Int) {
@@ -167,8 +247,14 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
                 override fun onError(utteranceId: String?) = finishSpeakingIfCurrent(utteranceId)
                 override fun onError(utteranceId: String?, errorCode: Int) = finishSpeakingIfCurrent(utteranceId)
             })
-            val queued = synchronized(this) { queuedText.also { queuedText = null } }
-            if (queued != null && ttsReady) speakNow(prepareArabicSpeech(queued))
+            val queued = synchronized(this) {
+                val text = queuedText
+                val lowVoice = queuedLowVoice
+                queuedText = null
+                queuedLowVoice = false
+                if (text == null) null else text to lowVoice
+            }
+            if (queued != null && ttsReady) speakNow(prepareArabicSpeech(queued.first), queued.second)
         } catch (e: Exception) {
             Log.w(TAG, "Arabic TTS setup failed; the spirit message remains visible", e)
             ttsReady = false
@@ -177,9 +263,15 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
     }
 
     @Synchronized
-    private fun speakNow(text: String) {
+    private fun speakNow(text: String, lowVoice: Boolean = false) {
         val engine = tts ?: return
         if (!ttsReady) return
+        try {
+            engine.setSpeechRate(if (lowVoice) ORCHESTRA_SPEECH_RATE else SPEECH_RATE)
+            engine.setPitch(if (lowVoice) ORCHESTRA_SPEECH_PITCH else SPEECH_PITCH)
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not apply the selected voice profile", e)
+        }
         val id = "spirit-${UUID.randomUUID()}"
         activeUtteranceId = id
         val result = engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, id)
@@ -195,7 +287,7 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
         queuedText = null
         activeUtteranceId = null
         speaking = false
-        fadeMusicTo(AmbientAudioPolicy.targetVolume(appIsForeground, muted, false), 700L)
+        fadeMusicTo(ambientTargetVolume(false), 700L)
         val callback = finishedCallback
         finishedCallback = null
         callback?.invoke()
@@ -210,7 +302,7 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
         if (utteranceId == null || utteranceId != activeUtteranceId) return
         activeUtteranceId = null
         speaking = false
-        fadeMusicTo(AmbientAudioPolicy.targetVolume(appIsForeground, muted, false), 850L)
+        fadeMusicTo(ambientTargetVolume(false), 850L)
         val callback = finishedCallback
         finishedCallback = null
         callback?.invoke()
@@ -219,15 +311,29 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
     @Synchronized
     private fun ensurePlayer() {
         if (player != null) return
+        val resourceId = when (selectedTrackId) {
+            "sin" -> R.raw.track_sin
+            "fate" -> R.raw.track_fate
+            else -> R.raw.track_death
+        }
         try {
-            player = MediaPlayer.create(appContext, R.raw.mahakama_ambient)?.apply {
+            player = MediaPlayer.create(appContext, resourceId)?.apply {
                 isLooping = true
                 setVolume(0f, 0f)
             }
+            if (player != null) playerTrackId = selectedTrackId
         } catch (e: Exception) {
             Log.e(TAG, "Ambient track could not be loaded", e)
         }
     }
+
+    private fun normalizeTrackId(trackId: String): String = when (trackId) {
+        "death", "sin", "fate" -> trackId
+        else -> "death"
+    }
+
+    private fun ambientTargetVolume(isSpeaking: Boolean): Float =
+        (AmbientAudioPolicy.targetVolume(appIsForeground, muted, isSpeaking) * masterVolume).coerceIn(0f, 1f)
 
     @Synchronized
     private fun fadeMusicTo(target: Float, durationMs: Long) {
@@ -289,6 +395,8 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
         private const val TAG = "MahakamaAudio"
         private const val SPEECH_RATE = 0.91f
         private const val SPEECH_PITCH = 1.02f
+        private const val ORCHESTRA_SPEECH_RATE = 0.76f
+        private const val ORCHESTRA_SPEECH_PITCH = 0.76f
 
         /** Reviewed tashkeel for recurring lines; new lines still depend on device TTS. */
         private val VOCALIZED_LINES = mapOf(

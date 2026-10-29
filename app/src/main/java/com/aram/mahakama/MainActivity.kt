@@ -61,6 +61,7 @@ import com.aram.mahakama.ui.SectionHeader
 import com.aram.mahakama.ui.SettingsScreen
 import com.aram.mahakama.ui.SilentRoomScreen
 import com.aram.mahakama.ui.SpiritOverlay
+import com.aram.mahakama.ui.SpiritOrchestraScreen
 import com.aram.mahakama.ui.TimerCard
 import com.aram.mahakama.ui.UnmaskingScreen
 import com.aram.mahakama.ui.WelcomeScreen
@@ -161,8 +162,9 @@ private fun MahakamaApp(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-    LaunchedEffect(isForeground, userState.ambientMuted) {
-        audio.updateAmbientState(isForeground, userState.ambientMuted)
+    LaunchedEffect(isForeground, userState.ambientMuted, userState.selectedMusicTrack, userState.hasChosenMusicTrack, userState.trialStarted, userState.musicVolume) {
+        val silenceBeforeTrackChoice = !userState.hasChosenMusicTrack
+        audio.updateAmbientState(isForeground, userState.ambientMuted || silenceBeforeTrackChoice, userState.selectedMusicTrack, userState.musicVolume)
     }
     LaunchedEffect(spiritLine) {
         val line = spiritLine
@@ -235,6 +237,26 @@ private fun MahakamaApp(
                     userState.userName.isBlank() -> {
                         NameEntryScreen { name -> scope.launch { repository.saveUserName(name) } }
                     }
+                    !userState.orchestraIntroCompleted -> {
+                        SpiritOrchestraScreen(
+                            userName = userState.userName,
+                            selectedTrack = userState.selectedMusicTrack,
+                            hasChosenTrack = userState.hasChosenMusicTrack,
+                            onPreviewTrack = { trackId ->
+                                audio.selectTrack(trackId)
+                                scope.launch { repository.setSelectedMusicTrack(trackId) }
+                            },
+                            onSpeakName = { line, onFinished -> audio.speakOrchestra(line, onFinished) },
+                            onSpeakQuestion = { line -> audio.speakOrchestra(line) },
+                            onContinue = { trackId ->
+                                audio.stopSpirit()
+                                scope.launch {
+                                    repository.setSelectedMusicTrack(trackId)
+                                    repository.setOrchestraIntroCompleted(true)
+                                }
+                            }
+                        )
+                    }
                     !userState.trialStarted -> {
                         WelcomeScreen(userState.userName) {
                             route = "home"
@@ -298,7 +320,12 @@ private fun MahakamaApp(
                             "settings" -> SettingsScreen(
                                 userState = userState,
                                 onSaveName = { name -> scope.launch { repository.saveUserName(name) } },
-                                onToggleMuted = { muted -> scope.launch { repository.setAmbientMuted(muted) } }
+                                onToggleMuted = { muted -> scope.launch { repository.setAmbientMuted(muted) } },
+                                onSelectMusicTrack = { trackId ->
+                                    audio.selectTrack(trackId)
+                                    scope.launch { repository.setSelectedMusicTrack(trackId) }
+                                },
+                                onVolumeChange = { volume -> scope.launch { repository.setMusicVolume(volume) } }
                             )
                             "profile" -> ProfileScreen(userState)
                             else -> HomeScreen(userState, elapsedMillis, onNavigate = { route = it })
