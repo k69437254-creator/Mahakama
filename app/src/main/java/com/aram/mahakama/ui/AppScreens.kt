@@ -1695,7 +1695,6 @@ fun SpiritOverlay(
                             center = Offset(w * 0.5f, h * 0.34f)
                         )
                     }
-                    }
                     Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color(0xFFB9A1FF).copy(alpha = 0.8f), modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp).size(21.dp))
                 }
 
@@ -1733,7 +1732,7 @@ fun SpiritOverlay(
                     val count = 25
                     val barWidth = size.width / (count * 2f)
                     for (i in 0 until count) {
-                        val wave = abs(sin(voiceMotion * 2f * PI.toFloat() + i * 0.54f))
+                        val wave = abs(sin(i * 0.54f + System.nanoTime() / 1_000_000_000f))
                         val speakingScale = if (speechFinished) 0.22f else 0.35f + wave * 0.65f
                         val barHeight = (3f + 18f * wave * speakingScale).dp.toPx()
                         val x = i * (barWidth * 2f) + barWidth / 2f
