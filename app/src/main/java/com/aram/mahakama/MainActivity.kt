@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.material3.Surface
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -82,7 +83,13 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MahakamaTheme {
-                MahakamaApp(repository, clock, audioController)
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = Color(0xFF0C0A12),
+                    contentColor = Color(0xFFF0EAF8)
+                ) {
+                    MahakamaApp(repository, clock, audioController)
+                }
             }
         }
     }

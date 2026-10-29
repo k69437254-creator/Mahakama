@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
 
 private val VioletScheme = darkColorScheme(
@@ -28,15 +29,15 @@ private val VioletScheme = darkColorScheme(
 )
 
 private val MahakamaTypography = Typography(
-    bodyLarge = TextStyle(fontSize = 16.sp, lineHeight = 27.sp, fontWeight = FontWeight.Normal),
-    bodyMedium = TextStyle(fontSize = 15.sp, lineHeight = 24.sp, fontWeight = FontWeight.Normal),
-    bodySmall = TextStyle(fontSize = 13.sp, lineHeight = 20.sp),
-    titleLarge = TextStyle(fontSize = 24.sp, lineHeight = 33.sp, fontWeight = FontWeight.SemiBold),
-    titleMedium = TextStyle(fontSize = 19.sp, lineHeight = 28.sp, fontWeight = FontWeight.SemiBold),
-    titleSmall = TextStyle(fontSize = 16.sp, lineHeight = 24.sp, fontWeight = FontWeight.SemiBold),
-    headlineMedium = TextStyle(fontSize = 28.sp, lineHeight = 37.sp, fontWeight = FontWeight.Bold),
-    headlineSmall = TextStyle(fontSize = 23.sp, lineHeight = 32.sp, fontWeight = FontWeight.SemiBold),
-    labelLarge = TextStyle(fontSize = 15.sp, lineHeight = 22.sp, fontWeight = FontWeight.SemiBold)
+    bodyLarge = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 16.sp, lineHeight = 28.sp, fontWeight = FontWeight.Normal),
+    bodyMedium = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 15.sp, lineHeight = 25.sp, fontWeight = FontWeight.Normal),
+    bodySmall = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 14.sp, lineHeight = 22.sp, fontWeight = FontWeight.Normal),
+    titleLarge = TextStyle(fontFamily = FontFamily.Serif, fontSize = 27.sp, lineHeight = 36.sp, fontWeight = FontWeight.Bold),
+    titleMedium = TextStyle(fontFamily = FontFamily.Serif, fontSize = 21.sp, lineHeight = 29.sp, fontWeight = FontWeight.SemiBold),
+    titleSmall = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 17.sp, lineHeight = 25.sp, fontWeight = FontWeight.SemiBold),
+    headlineMedium = TextStyle(fontFamily = FontFamily.Serif, fontSize = 30.sp, lineHeight = 39.sp, fontWeight = FontWeight.Bold),
+    headlineSmall = TextStyle(fontFamily = FontFamily.Serif, fontSize = 25.sp, lineHeight = 34.sp, fontWeight = FontWeight.SemiBold),
+    labelLarge = TextStyle(fontFamily = FontFamily.SansSerif, fontSize = 15.sp, lineHeight = 23.sp, fontWeight = FontWeight.SemiBold)
 )
 
 @Composable

@@ -151,7 +151,7 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
                 }
             }
 
-            // Slower, slightly lower delivery. Voice quality still depends on the device's installed Arabic engine.
+            // Balanced pace and pitch. The final voice timbre still depends on the Arabic engine installed on the device.
             engine.setSpeechRate(SPEECH_RATE)
             engine.setPitch(SPEECH_PITCH)
             engine.setAudioAttributes(
@@ -287,8 +287,8 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
 
     companion object {
         private const val TAG = "MahakamaAudio"
-        private const val SPEECH_RATE = 0.73f
-        private const val SPEECH_PITCH = 0.84f
+        private const val SPEECH_RATE = 0.91f
+        private const val SPEECH_PITCH = 1.02f
 
         /** Reviewed tashkeel for recurring lines; new lines still depend on device TTS. */
         private val VOCALIZED_LINES = mapOf(

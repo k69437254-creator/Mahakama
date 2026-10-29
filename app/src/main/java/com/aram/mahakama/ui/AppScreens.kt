@@ -106,7 +106,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -406,91 +408,262 @@ data class FeatureItem(val title: String, val subtitle: String, val icon: androi
 
 @Composable
 fun HomeScreen(userState: UserState, elapsedMillis: Long, onNavigate: (String) -> Unit) {
+    val answeredCount = QuestionnaireEngine.answeredOptions(userState.answers).size
     val features = listOf(
-        FeatureItem("جلسة الأسئلة", "كل إجابة تفتح طريقًا", Icons.Default.QuestionAnswer, "questions"),
-        FeatureItem("شجرة الوجوه", "وجوه محتملة لا أحكام ثابتة", Icons.Default.AccountTree, "faces"),
-        FeatureItem("كشف القناع", "خيط بين ما تقول وما تختار", Icons.Default.Visibility, "unmasking"),
-        FeatureItem("ذاتك الأخرى", "اختبر احتمالات لم تعشها", Icons.Default.AutoAwesome, "other_you"),
-        FeatureItem("المحكمة الداخلية", "اسمع الحجج قبل الحكم", Icons.Default.Gavel, "inner_court"),
-        FeatureItem("صدى الماضي", "قارن بين نسختين من إجاباتك", Icons.Default.History, "echo"),
-        FeatureItem("الغرفة الصامتة", "اكتب ما لا يسألك عنه أحد", Icons.Default.EditNote, "silent_room"),
-        FeatureItem("إعدادات المحاكمة", "الاسم والصوت والتفاصيل", Icons.Default.Settings, "settings")
+        FeatureItem("جلسة الأسئلة", "كل اختيار يغيّر مسار المواجهة", Icons.Default.QuestionAnswer, "questions"),
+        FeatureItem("شجرة الوجوه", "احتمالات تدعمها الأدلة وتراجعها", Icons.Default.AccountTree, "faces"),
+        FeatureItem("كشف القناع", "ما تقوله وما تكشفه اختياراتك", Icons.Default.Visibility, "unmasking"),
+        FeatureItem("ذاتك الأخرى", "طرق لم تعشها بعد", Icons.Default.AutoAwesome, "other_you"),
+        FeatureItem("المحكمة الداخلية", "استمع إلى الحجج قبل الحكم", Icons.Default.Gavel, "inner_court"),
+        FeatureItem("صدى الماضي", "قارن بين إجاباتك عبر الزمن", Icons.Default.History, "echo"),
+        FeatureItem("الغرفة الصامتة", "مساحة تكتب فيها بلا مقاطعة", Icons.Default.EditNote, "silent_room"),
+        FeatureItem("إعدادات المحاكمة", "الاسم والصوت والتفضيلات", Icons.Default.Settings, "settings")
     )
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 18.dp, vertical = 10.dp)) {
+
+    Column(
+        Modifier.fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 18.dp, vertical = 12.dp)
+    ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text("المحاكمة", style = MaterialTheme.typography.titleLarge)
+                Text("المحاكمة", color = Color(0xFFF4EEFF), style = MaterialTheme.typography.titleLarge)
                 Spacer(Modifier.height(3.dp))
-                Text("أهلًا بعودتك، ${userState.userName}.", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                Text("أهلًا بعودتك، ${userState.userName}.", color = Color(0xFFCFC3E0), style = MaterialTheme.typography.bodyMedium)
             }
-            Box(Modifier.size(48.dp).clip(CircleShape).background(PanelRaised), contentAlignment = Alignment.Center) {
-                Icon(Icons.Default.Fingerprint, contentDescription = null, tint = Violet, modifier = Modifier.size(26.dp))
+            Box(
+                Modifier.size(52.dp)
+                    .clip(CircleShape)
+                    .background(PanelRaised)
+                    .border(1.dp, Color(0x667B61A7), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(Icons.Default.Fingerprint, contentDescription = "رمز المحاكمة", tint = Violet, modifier = Modifier.size(29.dp))
             }
         }
+
         Spacer(Modifier.height(18.dp))
-        TimerCard(elapsedMillis = elapsedMillis, compact = true, onClick = { onNavigate("clock") })
-        Spacer(Modifier.height(22.dp))
-        Text("مسارات المحاكمة", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(4.dp))
-        Text("اختر الباب الذي تحتاج إلى فتحه الآن.", color = MutedText, style = MaterialTheme.typography.bodySmall)
-        Spacer(Modifier.height(14.dp))
-        features.chunked(2).forEach { row ->
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                row.forEach { feature ->
-                    FeatureCard(feature, Modifier.weight(1f)) { onNavigate(feature.route) }
+
+        Box(
+            Modifier.fillMaxWidth()
+                .clip(RoundedCornerShape(28.dp))
+                .background(Brush.linearGradient(listOf(Color(0xFF30213F), Color(0xFF1A1425), Color(0xFF24172F))))
+                .border(1.dp, Color(0x557D63AD), RoundedCornerShape(28.dp))
+        ) {
+            Canvas(Modifier.matchParentSize()) {
+                val extent = size.maxDimension
+                val center = Offset(size.width * 0.12f, size.height * 0.42f)
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        listOf(Color(0x55B9A1FF), Color(0x183D2A59), Color.Transparent),
+                        center = center,
+                        radius = extent * 0.62f
+                    ),
+                    radius = extent * 0.62f,
+                    center = center
+                )
+                for (i in 0 until 4) {
+                    drawCircle(
+                        color = Color(0x25D5C5FF),
+                        radius = extent * (0.12f + i * 0.07f),
+                        center = center,
+                        style = Stroke(width = (0.7f + i * 0.25f).dp.toPx())
+                    )
                 }
-                if (row.size == 1) Spacer(Modifier.weight(1f))
+                drawArc(
+                    brush = Brush.sweepGradient(listOf(Color.Transparent, Color(0x88B9A1FF), Color.Transparent)),
+                    startAngle = -65f,
+                    sweepAngle = 145f,
+                    useCenter = false,
+                    topLeft = Offset(center.x - extent * 0.36f, center.y - extent * 0.36f),
+                    size = Size(extent * 0.72f, extent * 0.72f),
+                    style = Stroke(width = 1.2.dp.toPx(), cap = StrokeCap.Round)
+                )
             }
-            Spacer(Modifier.height(12.dp))
+            Column(Modifier.fillMaxWidth().padding(20.dp)) {
+                Row(verticalAlignment = Alignment.Top) {
+                    Column(Modifier.weight(1f)) {
+                        Text("ملف القضية  •  ٠٠١", color = Color(0xFFD4C4FF), style = MaterialTheme.typography.labelLarge)
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            "لم يصدر الحكم بعد.",
+                            color = Color(0xFFF8F3FF),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            "هذه ليست قائمة أسئلة؛ إنها رحلة تتغيّر ملامحها مع كل اختيار.",
+                            color = Color(0xFFD0C4DF),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Box(
+                        Modifier.size(62.dp)
+                            .clip(CircleShape)
+                            .background(Color(0x33291E39))
+                            .border(1.dp, Color(0x667D63AD), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(Icons.Default.Psychology, contentDescription = null, tint = Color(0xFFD1BFFF), modifier = Modifier.size(34.dp))
+                    }
+                }
+                Spacer(Modifier.height(18.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.width(4.dp).height(32.dp).clip(CircleShape).background(Violet))
+                    Spacer(Modifier.width(10.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            if (answeredCount == 0) "كل شيء يبدأ بملاحظة صادقة" else "لقد تركت أثرًا في هذا الملف",
+                            color = Color(0xFFF1EAFE),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        Text(
+                            "$answeredCount إجابة محفوظة من مسارك الحالي",
+                            color = Color(0xFFC2B5D5),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+                Spacer(Modifier.height(18.dp))
+                Button(
+                    onClick = { onNavigate("questions") },
+                    modifier = Modifier.fillMaxWidth().height(54.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFD4C4FF),
+                        contentColor = Color(0xFF21172D)
+                    )
+                ) {
+                    Text(
+                        if (answeredCount == 0) "ابدأ المواجهة" else "تابع من حيث توقفت",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Icon(Icons.Default.ChevronLeft, contentDescription = null)
+                }
+            }
         }
-        Card(colors = CardDefaults.cardColors(containerColor = Panel), shape = RoundedCornerShape(20.dp), modifier = Modifier.fillMaxWidth()) {
-            Row(Modifier.fillMaxWidth().clickable { onNavigate("profile") }.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Psychology, contentDescription = null, tint = Violet, modifier = Modifier.size(28.dp))
+
+        Spacer(Modifier.height(14.dp))
+        TimerCard(elapsedMillis = elapsedMillis, compact = true, onClick = { onNavigate("clock") })
+
+        Spacer(Modifier.height(26.dp))
+        Text("خريطة المحاكمة", color = Color(0xFFF1EAFE), style = MaterialTheme.typography.titleLarge)
+        Spacer(Modifier.height(4.dp))
+        Text(
+            "مسارات مترابطة داخل قضية واحدة؛ افتح الباب الذي تحتاجه الآن.",
+            color = MutedText,
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(Modifier.height(14.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth().border(1.dp, Line, RoundedCornerShape(24.dp)),
+            colors = CardDefaults.cardColors(containerColor = Panel),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
+            Column {
+                features.forEachIndexed { index, feature ->
+                    Row(
+                        Modifier.fillMaxWidth()
+                            .clickable { onNavigate(feature.route) }
+                            .padding(horizontal = 14.dp, vertical = 13.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            Modifier.size(42.dp)
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(PanelRaised)
+                                .border(1.dp, Color(0x443F3450), RoundedCornerShape(14.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(feature.icon, contentDescription = null, tint = Violet, modifier = Modifier.size(22.dp))
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(feature.title, color = Color(0xFFF0E9FA), style = MaterialTheme.typography.titleSmall)
+                            Spacer(Modifier.height(2.dp))
+                            Text(feature.subtitle, color = MutedText, style = MaterialTheme.typography.bodySmall)
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                String.format(java.util.Locale.ROOT, "%02d", index + 1),
+                                color = Color(0xFF9F8BBE),
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                            Icon(Icons.Default.ChevronLeft, contentDescription = "فتح ${feature.title}", tint = Color(0xFFB9A1FF), modifier = Modifier.size(18.dp))
+                        }
+                    }
+                    if (index < features.lastIndex) {
+                        Divider(color = Color(0xFF34283F), modifier = Modifier.padding(start = 14.dp, end = 14.dp))
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(14.dp))
+        Card(
+            modifier = Modifier.fillMaxWidth()
+                .clickable { onNavigate("profile") }
+                .border(1.dp, Color(0x557B61A7), RoundedCornerShape(20.dp)),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF20182B)),
+            shape = RoundedCornerShape(20.dp)
+        ) {
+            Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Psychology, contentDescription = null, tint = Violet, modifier = Modifier.size(30.dp))
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
-                    Text("ملف الانعكاس", style = MaterialTheme.typography.titleSmall)
-                    Text("${QuestionnaireEngine.answeredOptions(userState.answers).size} إجابة في المسار الحالي؛ صورة تتغير كلما ظهرت أدلة جديدة.", color = MutedText, style = MaterialTheme.typography.bodySmall)
+                    Text("ملف الانعكاس", color = Color(0xFFF1EAFE), style = MaterialTheme.typography.titleSmall)
+                    Text("صورة متحركة قابلة للمراجعة، لا تعريف نهائي بك.", color = MutedText, style = MaterialTheme.typography.bodySmall)
                 }
                 Icon(Icons.Default.ChevronLeft, contentDescription = null, tint = Violet)
             }
         }
-        Spacer(Modifier.height(28.dp))
-    }
-}
-
-@Composable
-private fun FeatureCard(feature: FeatureItem, modifier: Modifier = Modifier, onClick: () -> Unit) {
-    Card(
-        modifier = modifier.heightIn(min = 136.dp).clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = Panel),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-    ) {
-        Column(Modifier.fillMaxWidth().padding(14.dp)) {
-            Box(Modifier.size(42.dp).clip(RoundedCornerShape(14.dp)).background(PanelRaised), contentAlignment = Alignment.Center) {
-                Icon(feature.icon, contentDescription = null, tint = Violet, modifier = Modifier.size(22.dp))
-            }
-            Spacer(Modifier.height(12.dp))
-            Text(feature.title, style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Spacer(Modifier.height(3.dp))
-            Text(feature.subtitle, color = MutedText, style = MaterialTheme.typography.bodySmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
-        }
+        Spacer(Modifier.height(24.dp))
     }
 }
 
 @Composable
 fun TimerCard(elapsedMillis: Long, compact: Boolean, onClick: (() -> Unit)? = null) {
-    val modifier = if (onClick != null) Modifier.fillMaxWidth().clickable(onClick = onClick) else Modifier.fillMaxWidth()
-    Card(modifier = modifier, colors = CardDefaults.cardColors(containerColor = PanelRaised), shape = RoundedCornerShape(24.dp)) {
-        Row(Modifier.fillMaxWidth().padding(if (compact) 16.dp else 24.dp), verticalAlignment = Alignment.CenterVertically) {
-            TimerDial(elapsedMillis, modifier = Modifier.size(if (compact) 78.dp else 160.dp))
+    val shape = RoundedCornerShape(if (compact) 22.dp else 28.dp)
+    val modifier = Modifier.fillMaxWidth()
+        .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+        .border(1.dp, Color(0xFF3A2E49), shape)
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = if (compact) Color(0xFF191421) else Color(0xFF1D1728)),
+        shape = shape,
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Row(
+            Modifier.fillMaxWidth().padding(if (compact) 15.dp else 24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TimerDial(elapsedMillis, modifier = Modifier.size(if (compact) 82.dp else 148.dp))
             Spacer(Modifier.width(16.dp))
             Column(Modifier.weight(1f)) {
-                Text(if (compact) "زمن المواجهة" else "الزمن الذي شهد مواجهتك", color = Violet, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    if (compact) "الوقت المتراكم" else "الزمن الذي شهد مواجهتك",
+                    color = Color(0xFFD0BCFF),
+                    style = MaterialTheme.typography.titleSmall
+                )
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    formatElapsedTime(elapsedMillis),
+                    color = Color(0xFFF6F0FF),
+                    style = (if (compact) MaterialTheme.typography.titleLarge else MaterialTheme.typography.headlineMedium)
+                        .copy(fontFamily = FontFamily.Monospace, textDirection = TextDirection.Ltr, letterSpacing = 1.2.sp),
+                    maxLines = 1
+                )
                 Spacer(Modifier.height(5.dp))
-                Text(formatElapsedTime(elapsedMillis), style = if (compact) MaterialTheme.typography.titleLarge else MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Medium)
-                Spacer(Modifier.height(5.dp))
-                Text("كل دقيقةٍ هنا جزء من رحلتك، لا نقطة بداية جديدة.", color = MutedText, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    "وقت حقيقي محفوظ، لا يبدأ من الصفر عند عودتك.",
+                    color = Color(0xFFBEB2CF),
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
         }
     }
@@ -498,19 +671,73 @@ fun TimerCard(elapsedMillis: Long, compact: Boolean, onClick: (() -> Unit)? = nu
 
 @Composable
 private fun TimerDial(elapsedMillis: Long, modifier: Modifier = Modifier) {
-    val progress = ((elapsedMillis / 1_000L) % 3_600L).toFloat() / 3_600f
+    val elapsedSeconds = (elapsedMillis.coerceAtLeast(0L) / 1_000L) % 60L
+    val progress = elapsedSeconds.toFloat() / 60f
     Canvas(modifier) {
-        val stroke = size.minDimension * 0.065f
-        val inset = stroke / 2f + 2.dp.toPx()
-        val arcSize = Size(size.width - inset * 2, size.height - inset * 2)
-        drawCircle(color = Color(0xFF33273F), radius = size.minDimension / 2f - stroke / 2f)
-        drawArc(color = Color(0xFF48365F), startAngle = -90f, sweepAngle = 360f, useCenter = false, topLeft = Offset(inset, inset), size = arcSize, style = Stroke(stroke))
-        drawArc(
-            brush = Brush.sweepGradient(listOf(Color(0xFF6E4CA6), Violet, Color(0xFFD9CCFF))),
-            startAngle = -90f, sweepAngle = 360f * progress, useCenter = false,
-            topLeft = Offset(inset, inset), size = arcSize, style = Stroke(stroke, cap = StrokeCap.Round)
+        val minSize = size.minDimension
+        val center = Offset(size.width / 2f, size.height / 2f)
+        val ringRadius = minSize * 0.365f
+        val ringSize = Size(ringRadius * 2f, ringRadius * 2f)
+        val ringTopLeft = Offset(center.x - ringRadius, center.y - ringRadius)
+        drawCircle(
+            brush = Brush.radialGradient(
+                listOf(Color(0x553D2D56), Color(0x22271D38), Color.Transparent),
+                center = center,
+                radius = minSize * 0.49f
+            ),
+            radius = minSize * 0.49f,
+            center = center
         )
-        drawCircle(color = Violet.copy(alpha = 0.07f), radius = size.minDimension * 0.31f)
+        drawArc(
+            color = Color(0xFF3A2E49),
+            startAngle = -90f,
+            sweepAngle = 360f,
+            useCenter = false,
+            topLeft = ringTopLeft,
+            size = ringSize,
+            style = Stroke(width = minSize * 0.095f, cap = StrokeCap.Round)
+        )
+        drawArc(
+            brush = Brush.sweepGradient(listOf(Color(0xFF7252AC), Color(0xFFB9A1FF), Color(0xFFE0D5FF))),
+            startAngle = -90f,
+            sweepAngle = 360f * progress,
+            useCenter = false,
+            topLeft = ringTopLeft,
+            size = ringSize,
+            style = Stroke(width = minSize * 0.095f, cap = StrokeCap.Round)
+        )
+        for (tick in 0 until 60) {
+            val angle = (-90.0 + tick * 6.0) * PI / 180.0
+            val outerRadius = minSize * 0.475f
+            val innerRadius = outerRadius - if (tick % 5 == 0) minSize * 0.065f else minSize * 0.028f
+            val start = Offset(
+                center.x + cos(angle).toFloat() * innerRadius,
+                center.y + sin(angle).toFloat() * innerRadius
+            )
+            val end = Offset(
+                center.x + cos(angle).toFloat() * outerRadius,
+                center.y + sin(angle).toFloat() * outerRadius
+            )
+            drawLine(
+                color = if (tick.toLong() <= elapsedSeconds) Color(0xFFD0BCFF).copy(alpha = 0.78f) else Color(0xFF776987).copy(alpha = if (tick % 5 == 0) 0.9f else 0.45f),
+                start = start,
+                end = end,
+                strokeWidth = if (tick % 5 == 0) 1.35.dp.toPx() else 0.7.dp.toPx(),
+                cap = StrokeCap.Round
+            )
+        }
+        drawCircle(color = Color(0xFFE3D7FF), radius = minSize * 0.035f, center = center)
+        val handAngle = (-90.0 + elapsedSeconds * 6.0) * PI / 180.0
+        drawLine(
+            color = Color(0xFFD2C2FF),
+            start = center,
+            end = Offset(
+                center.x + cos(handAngle).toFloat() * minSize * 0.22f,
+                center.y + sin(handAngle).toFloat() * minSize * 0.22f
+            ),
+            strokeWidth = 1.6.dp.toPx(),
+            cap = StrokeCap.Round
+        )
     }
 }
 
@@ -568,35 +795,113 @@ fun QuestionnaireScreen(
                 }
             }
         } else {
-            Text(question.heading, color = Violet, style = MaterialTheme.typography.bodySmall)
-            Spacer(Modifier.height(9.dp))
-            Text(question.prompt, style = MaterialTheme.typography.headlineSmall, color = Color(0xFFF0E8FF))
-            Spacer(Modifier.height(10.dp))
-            Text("لا تبحث عن الإجابة التي تبدو أفضل؛ لاحظ الإجابة الأقرب إلى ما يحدث فيك فعلًا.", color = MutedText, style = MaterialTheme.typography.bodyMedium)
-            Spacer(Modifier.height(24.dp))
-            question.options.forEachIndexed { index, option ->
-                Card(
-                    modifier = Modifier.fillMaxWidth().clickable { onAnswer(question, option.id) },
-                    colors = CardDefaults.cardColors(containerColor = Panel),
-                    shape = RoundedCornerShape(20.dp)
-                ) {
-                    Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.Top) {
-                        Box(Modifier.size(34.dp).clip(CircleShape).background(PanelRaised), contentAlignment = Alignment.Center) {
-                            Text("${index + 1}", color = Violet, style = MaterialTheme.typography.labelLarge)
+            Box(
+                Modifier.fillMaxWidth()
+                    .clip(RoundedCornerShape(26.dp))
+                    .background(Brush.linearGradient(listOf(Color(0xFF2B2039), Color(0xFF18131F), Color(0xFF21172B))))
+                    .border(1.dp, Color(0x557B61A7), RoundedCornerShape(26.dp))
+            ) {
+                Canvas(Modifier.matchParentSize()) {
+                    val center = Offset(size.width * 0.92f, size.height * 0.12f)
+                    drawCircle(
+                        brush = Brush.radialGradient(listOf(Color(0x339C7BDF), Color.Transparent), center, size.maxDimension * 0.56f),
+                        radius = size.maxDimension * 0.56f,
+                        center = center
+                    )
+                }
+                Column(Modifier.fillMaxWidth().padding(20.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            Modifier.clip(RoundedCornerShape(10.dp))
+                                .background(Color(0x332D2340))
+                                .border(1.dp, Color(0x557B61A7), RoundedCornerShape(10.dp))
+                                .padding(horizontal = 11.dp, vertical = 7.dp)
+                        ) {
+                            Text(
+                                "المشهد ${String.format(java.util.Locale.ROOT, "%03d", answeredCount + 1)}",
+                                color = Color(0xFFD3C3FF),
+                                style = MaterialTheme.typography.labelLarge
+                            )
                         }
-                        Spacer(Modifier.width(12.dp))
-                        Column(Modifier.weight(1f)) {
-                            Text(option.title, style = MaterialTheme.typography.titleSmall)
-                            Spacer(Modifier.height(5.dp))
-                            Text(option.detail, color = MutedText, style = MaterialTheme.typography.bodySmall)
+                        Spacer(Modifier.width(10.dp))
+                        Text(question.heading, color = Color(0xFFD3C3FF), style = MaterialTheme.typography.bodySmall)
+                    }
+                    Spacer(Modifier.height(14.dp))
+                    Text(
+                        question.prompt,
+                        color = Color(0xFFF7F2FF),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        "لا تبحث عن الإجابة التي تبدو أجمل؛ لاحظ ما يحدث فيك عندما يصبح الاختيار حقيقيًا.",
+                        color = Color(0xFFC9BDD8),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(22.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.width(4.dp).height(24.dp).clip(CircleShape).background(Violet))
+                Spacer(Modifier.width(9.dp))
+                Column {
+                    Text("ما الاستجابة الأقرب إليك؟", color = Color(0xFFF0E9FA), style = MaterialTheme.typography.titleMedium)
+                    Text("اختر أثرًا، وسيتغيّر الطريق بعده.", color = MutedText, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth().border(1.dp, Line, RoundedCornerShape(22.dp)),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF17121E)),
+                shape = RoundedCornerShape(22.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            ) {
+                Column {
+                    question.options.forEachIndexed { index, option ->
+                        Row(
+                            Modifier.fillMaxWidth()
+                                .clickable { onAnswer(question, option.id) }
+                                .padding(horizontal = 15.dp, vertical = 15.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                Modifier.size(38.dp)
+                                    .clip(RoundedCornerShape(13.dp))
+                                    .background(Color(0xFF2A2038))
+                                    .border(1.dp, Color(0x665C477D), RoundedCornerShape(13.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    String.format(java.util.Locale.ROOT, "%02d", index + 1),
+                                    color = Color(0xFFD2C1FF),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+                            Spacer(Modifier.width(12.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(option.title, color = Color(0xFFF3ECFB), style = MaterialTheme.typography.titleSmall)
+                                Spacer(Modifier.height(4.dp))
+                                Text(option.detail, color = Color(0xFFBEB2CF), style = MaterialTheme.typography.bodySmall)
+                            }
+                            Spacer(Modifier.width(8.dp))
+                            Icon(Icons.Default.ChevronLeft, contentDescription = null, tint = Violet)
                         }
-                        Icon(Icons.Default.ChevronLeft, contentDescription = null, tint = Violet)
+                        if (index < question.options.lastIndex) {
+                            Divider(color = Color(0xFF33283E), modifier = Modifier.padding(horizontal = 14.dp))
+                        }
                     }
                 }
-                Spacer(Modifier.height(10.dp))
             }
-            Spacer(Modifier.height(8.dp))
-            Text("لا توجد إجابة مثالية. توجد إجابة تساعدك على رؤية نفسك من زاوية أخرى.", color = Color(0xFF82768F), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+            Spacer(Modifier.height(12.dp))
+            Text(
+                "لا توجد إجابة مثالية. توجد زاوية أخرى تستحق أن تُرى.",
+                color = Color(0xFFB7A9C9),
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
         Spacer(Modifier.height(24.dp))
     }
@@ -1225,18 +1530,6 @@ fun SpiritOverlay(
         animationSpec = infiniteRepeatable(tween(18000, easing = LinearEasing), RepeatMode.Restart),
         label = "spirit-mist"
     )
-    val eyeGlow by motion.animateFloat(
-        initialValue = 0.32f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(1650, easing = FastOutSlowInEasing), RepeatMode.Reverse),
-        label = "spirit-eyes"
-    )
-    val voiceMotion by motion.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(880, easing = LinearEasing), RepeatMode.Restart),
-        label = "spirit-voice-wave"
-    )
     val haloPulse by motion.animateFloat(
         initialValue = 0.68f,
         targetValue = 1f,
@@ -1323,86 +1616,91 @@ fun SpiritOverlay(
                     contentAlignment = Alignment.Center
                 ) {
                     Canvas(Modifier.fillMaxSize()) {
-                        val center = Offset(size.width * 0.5f, size.height * 0.48f)
-                        val ringRadius = size.minDimension * 0.42f
-                        val phase = mistPhase * 2f * PI.toFloat()
-                        drawCircle(Color(0x50543B77), radius = ringRadius, style = Stroke(width = 1.dp.toPx()), center = center)
-                        drawCircle(Color(0x328C70C0), radius = ringRadius * 0.82f, style = Stroke(width = 1.dp.toPx()), center = center)
+                        val w = size.width
+                        val h = size.height
+                        val center = Offset(w * 0.5f, h * 0.47f)
+                        val extent = size.minDimension
+
+                        // An abstract, veiled presence: light and silhouette rather than cartoon eyes or a moving mouth.
+                        drawCircle(
+                            brush = Brush.radialGradient(
+                                listOf(Color(0x559C7BDF), Color(0x273F2D5E), Color.Transparent),
+                                center = Offset(w * 0.5f, h * 0.43f),
+                                radius = extent * 0.54f
+                            ),
+                            radius = extent * 0.54f,
+                            center = Offset(w * 0.5f, h * 0.43f)
+                        )
+                        drawCircle(
+                            color = Color(0x405A437D),
+                            radius = extent * 0.405f,
+                            center = center,
+                            style = Stroke(width = 1.dp.toPx())
+                        )
+                        drawCircle(
+                            color = Color(0x2DAD92EF),
+                            radius = extent * 0.345f,
+                            center = center,
+                            style = Stroke(width = 1.dp.toPx())
+                        )
                         rotate(degrees = mistPhase * 360f, pivot = center) {
                             drawArc(
-                                color = Color(0x777F62B5),
-                                startAngle = 202f,
-                                sweepAngle = 82f,
+                                brush = Brush.sweepGradient(listOf(Color.Transparent, Color(0xC2C2ADFF), Color.Transparent)),
+                                startAngle = 198f,
+                                sweepAngle = 112f,
                                 useCenter = false,
-                                topLeft = Offset(center.x - ringRadius * 0.92f, center.y - ringRadius * 0.92f),
-                                size = Size(ringRadius * 1.84f, ringRadius * 1.84f),
-                                style = Stroke(width = 1.4.dp.toPx(), cap = StrokeCap.Round)
+                                topLeft = Offset(center.x - extent * 0.42f, center.y - extent * 0.42f),
+                                size = Size(extent * 0.84f, extent * 0.84f),
+                                style = Stroke(width = 1.5.dp.toPx(), cap = StrokeCap.Round)
                             )
                         }
-                        // Several slow cloud layers give the figure a translucent, breathing outline.
-                        for (i in 0 until 7) {
-                            val cloudAngle = phase * (if (i % 2 == 0) 0.7f else -0.54f) + i * 0.92f
-                            val cloudCenter = Offset(
-                                center.x + cos(cloudAngle) * size.minDimension * (0.16f + (i % 3) * 0.025f),
-                                center.y + sin(cloudAngle) * size.minDimension * (0.14f + (i % 4) * 0.018f)
+                        // A soft cloak-like silhouette dissolves into the mist at the shoulders.
+                        val silhouette = PathBuilder(w, h).make()
+                        drawPath(
+                            silhouette,
+                            brush = Brush.verticalGradient(
+                                listOf(Color(0xCA45335E), Color(0xA21B1427), Color(0x0009070D)),
+                                startY = h * 0.18f,
+                                endY = h * 0.9f
                             )
-                            drawOval(
-                                brush = Brush.radialGradient(listOf(Color(0x293D285E), Color(0x123C2C55), Color.Transparent), center = cloudCenter, radius = size.minDimension * 0.25f),
-                                topLeft = Offset(cloudCenter.x - size.minDimension * 0.22f, cloudCenter.y - size.minDimension * 0.13f),
-                                size = Size(size.minDimension * 0.44f, size.minDimension * 0.26f)
-                            )
-                        }
-                        val silhouette = PathBuilder(size.width, size.height).make()
-                        drawPath(silhouette, brush = Brush.verticalGradient(listOf(Color(0xFF3C2C53), Color(0xFF17101F), Color(0xFF09070D))))
-                        // Hood edges catch the violet light as the entity slowly turns.
+                        )
                         drawArc(
-                            color = Color(0x778C6AC2),
+                            color = Color(0x889F82D5),
                             startAngle = 194f,
                             sweepAngle = 152f,
                             useCenter = false,
-                            topLeft = Offset(size.width * 0.28f, size.height * 0.07f),
-                            size = Size(size.width * 0.44f, size.height * 0.43f),
-                            style = Stroke(width = 1.1.dp.toPx())
+                            topLeft = Offset(w * 0.28f, h * 0.07f),
+                            size = Size(w * 0.44f, h * 0.43f),
+                            style = Stroke(width = 1.25.dp.toPx())
                         )
-                        val eyeY = size.height * 0.326f
-                        val leftEye = Offset(size.width * 0.425f, eyeY)
-                        val rightEye = Offset(size.width * 0.575f, eyeY)
-                        val eyeRadius = size.minDimension * (0.027f + 0.012f * eyeGlow)
-                        listOf(leftEye, rightEye).forEach { eye ->
-                            drawCircle(
-                                brush = Brush.radialGradient(listOf(Color(0xFFDCD0FF).copy(alpha = 0.4f + eyeGlow * 0.45f), Color(0xAA9B72FF).copy(alpha = eyeGlow), Color.Transparent), center = eye, radius = eyeRadius * 3.4f),
-                                radius = eyeRadius * 3.4f,
-                                center = eye
-                            )
-                            drawLine(
-                                color = Color(0xFFE6DBFF).copy(alpha = 0.28f + eyeGlow * 0.68f),
-                                start = Offset(eye.x - eyeRadius * 1.6f, eye.y),
-                                end = Offset(eye.x + eyeRadius * 1.6f, eye.y - eyeRadius * 0.15f),
-                                strokeWidth = (0.8f + eyeGlow * 0.8f).dp.toPx(),
-                                cap = StrokeCap.Round
-                            )
-                        }
-                        drawLine(Color(0x447F60AE), Offset(size.width * 0.5f, size.height * 0.36f), Offset(size.width * 0.5f, size.height * 0.48f), strokeWidth = 0.8.dp.toPx())
-                        // A restrained, pulsing mouth-light follows the speech waveform to suggest lip movement.
-                        val mouthWave = abs(sin(voiceMotion * 2f * PI.toFloat()))
-                        val mouthWidth = size.width * if (speechFinished) 0.024f else (0.022f + mouthWave * 0.014f)
-                        val mouthHeight = size.height * if (speechFinished) 0.004f else (0.006f + mouthWave * 0.014f)
-                        val mouthCenter = Offset(size.width * 0.5f, size.height * 0.385f)
-                        drawOval(
-                            brush = Brush.radialGradient(
-                                listOf(Color(0xFFBDA5FF).copy(alpha = if (speechFinished) 0.22f else 0.3f + mouthWave * 0.45f), Color.Transparent),
-                                center = mouthCenter,
-                                radius = mouthWidth * 1.7f
+                        // A narrow vertical glimmer suggests a hidden presence without facial animation.
+                        drawLine(
+                            brush = Brush.verticalGradient(
+                                listOf(Color.Transparent, Color(0xB9D8CBFF), Color(0x559C7BDF), Color.Transparent),
+                                startY = h * 0.24f,
+                                endY = h * 0.52f
                             ),
-                            topLeft = Offset(mouthCenter.x - mouthWidth / 2f, mouthCenter.y - mouthHeight / 2f),
-                            size = Size(mouthWidth, mouthHeight)
+                            start = Offset(w * 0.5f, h * 0.25f),
+                            end = Offset(w * 0.5f, h * 0.5f),
+                            strokeWidth = 1.2.dp.toPx(),
+                            cap = StrokeCap.Round
                         )
+                        drawCircle(
+                            brush = Brush.radialGradient(
+                                listOf(Color(0xD8E5DBFF), Color(0x559F82D5), Color.Transparent),
+                                center = Offset(w * 0.5f, h * 0.34f),
+                                radius = extent * 0.085f
+                            ),
+                            radius = extent * 0.085f,
+                            center = Offset(w * 0.5f, h * 0.34f)
+                        )
+                    }
                     }
                     Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color(0xFFB9A1FF).copy(alpha = 0.8f), modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp).size(21.dp))
                 }
 
                 Spacer(Modifier.height(8.dp))
-                Text("طيف الذات", color = Violet, style = MaterialTheme.typography.bodySmall, letterSpacing = 2.2.sp)
+                Text("طيف الروح", color = Violet, style = MaterialTheme.typography.bodySmall, letterSpacing = 2.2.sp)
                 Spacer(Modifier.height(13.dp))
 
                 AnimatedContent(
