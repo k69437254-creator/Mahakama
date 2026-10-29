@@ -1422,7 +1422,6 @@ fun SettingsScreen(userState: UserState, onSaveName: (String) -> Unit, onToggleM
             }
         }
         Spacer(Modifier.height(15.dp))
-        Text("صُممت المحاكمة للاستكشاف والتأمل، لا للتشخيص النفسي. يمكنك مراجعة قراءاتك أو رفضها؛ فالسياق جزءٌ من الحقيقة.", color = MutedText, style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(24.dp))
     }
 }
