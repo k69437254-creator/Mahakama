@@ -25,6 +25,10 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
     private val mainHandler = Handler(Looper.getMainLooper())
     private var player: MediaPlayer? = null
     private var playerTrackId: String? = null
+    private var loadingPlayer: MediaPlayer? = null
+    private var playerLoading = false
+    private var playerGeneration = 0L
+    private var released = false
     private var selectedTrackId: String = "death"
     private var trackSwitchPending = false
     private var trackSwitchRunnable: Runnable? = null
@@ -163,20 +167,35 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
 
     @Synchronized
     fun release() {
+        released = true
+        playerGeneration++
+        playerLoading = false
+
         volumeAnimator?.cancel()
         volumeAnimator = null
         queuedText = null
         finishedCallback = null
         activeUtteranceId = null
         speaking = false
+
         trackSwitchRunnable?.let { mainHandler.removeCallbacks(it) }
         trackSwitchRunnable = null
         trackSwitchPending = false
+
         try { tts?.stop(); tts?.shutdown() } catch (_: Exception) { }
         tts = null
+
+        try {
+            loadingPlayer?.setOnPreparedListener(null)
+            loadingPlayer?.setOnErrorListener(null)
+            loadingPlayer?.release()
+        } catch (_: Exception) { }
+        loadingPlayer = null
+
         try { player?.release() } catch (_: Exception) { }
         player = null
         playerTrackId = null
+        currentMusicVolume = 0f
     }
 
     override fun onInit(status: Int) {
@@ -310,19 +329,105 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
 
     @Synchronized
     private fun ensurePlayer() {
-        if (player != null) return
-        val resourceId = when (selectedTrackId) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            mainHandler.post { ensurePlayer() }
+            return
+        }
+
+        if (released || player != null || playerLoading) return
+
+        val trackToLoad = selectedTrackId
+        val resourceId = when (trackToLoad) {
             "sin" -> R.raw.track_sin
             "fate" -> R.raw.track_fate
             else -> R.raw.track_death
         }
+
+        val generation = ++playerGeneration
+        var next: MediaPlayer? = null
+        playerLoading = true
+
         try {
-            player = MediaPlayer.create(appContext, resourceId)?.apply {
-                isLooping = true
-                setVolume(0f, 0f)
+            val created = MediaPlayer()
+            next = created
+            loadingPlayer = created
+
+            created.isLooping = true
+            created.setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+
+            created.setOnPreparedListener { prepared ->
+                synchronized(this) {
+                    if (released || generation != playerGeneration) {
+                        try { prepared.release() } catch (_: Exception) { }
+                        if (loadingPlayer === prepared) {
+                            loadingPlayer = null
+                            playerLoading = false
+                        }
+                        return@synchronized
+                    }
+
+                    if (selectedTrackId != trackToLoad) {
+                        try { prepared.release() } catch (_: Exception) { }
+                        loadingPlayer = null
+                        playerLoading = false
+                        ensurePlayer()
+                        return@synchronized
+                    }
+
+                    loadingPlayer = null
+                    playerLoading = false
+                    player = prepared
+                    playerTrackId = trackToLoad
+                    currentMusicVolume = 0f
+
+                    if (AmbientAudioPolicy.shouldPlay(appIsForeground, muted)) {
+                        try {
+                            if (!prepared.isPlaying) prepared.start()
+                        } catch (e: IllegalStateException) {
+                            Log.w(TAG, "Ambient audio could not start", e)
+                        }
+                        fadeMusicTo(
+                            ambientTargetVolume(speaking),
+                            if (speaking) 520L else 950L
+                        )
+                    } else {
+                        setMusicVolume(0f)
+                    }
+                }
             }
-            if (player != null) playerTrackId = selectedTrackId
+
+            created.setOnErrorListener { failed, what, extra ->
+                synchronized(this) {
+                    if (generation == playerGeneration) {
+                        loadingPlayer = null
+                        playerLoading = false
+                    }
+                    try { failed.release() } catch (_: Exception) { }
+                    Log.e(TAG, "Ambient audio preparation failed: $what/$extra")
+                }
+                true
+            }
+
+            appContext.resources.openRawResourceFd(resourceId).use { descriptor ->
+                created.setDataSource(
+                    descriptor.fileDescriptor,
+                    descriptor.startOffset,
+                    descriptor.length
+                )
+            }
+
+            created.prepareAsync()
         } catch (e: Exception) {
+            if (generation == playerGeneration) {
+                playerLoading = false
+                loadingPlayer = null
+            }
+            try { next?.release() } catch (_: Exception) { }
             Log.e(TAG, "Ambient track could not be loaded", e)
         }
     }
