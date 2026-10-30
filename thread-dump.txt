@@ -1,0 +1,1549 @@
+--------- beginning of main
+10-30 07:30:10.268 D/AppFlingMode(  839): [CheckAppFlingHint] 109 com.termux 90
+10-30 07:30:10.268 D/ReflectedParamUpdater(10115): extent() != 1 for single value type: algo.buffers.pool-ids.values
+10-30 07:30:10.268 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:8925003
+10-30 07:30:10.268 I/libPowerHal(  839): [setGPUFreq] MTKPOWER_HINT_REMOTE_ANIMA user set gpu freq min:0, max:-1
+10-30 07:30:10.268 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level max: 0
+10-30 07:30:10.268 I/libPowerHal(  839): [setGPUFreq] Soft min/max = (0, 0); Hard min/max = (31, 0)
+10-30 07:30:10.268 I/libPowerHal(  839): [setGPUFreq] final min/max = (0, 0)
+10-30 07:30:10.268 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level: 0
+10-30 07:30:10.268 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level max: 0
+10-30 07:30:10.270 I/Process ( 1616): String at 0: 0x77749be401 = ProcessCapacityNormal
+--------- beginning of system
+10-30 07:30:10.270 D/TranCPUBooster( 1616): [setAffinity] Pid:878 mask:6-7
+10-30 07:30:10.273 D/WrappedLauncherAnimationRunner( 2200): onCreateAnimation animationRunnerImpl = com.android.quickstep.src.com.android.launcher3.QuickstepAppTransitionManagerImpl$d@6476a71
+10-30 07:30:10.273 D/QuickstepAppTransitionManagerImpl( 2200): onCreateAnimation
+10-30 07:30:10.273 I/BufferQueueDebug(  878): [com.termux/com.termux.app.TermuxActivity#4700373](this:0xb400007bd187c738,id:-1,api:0,p:-1,c:-1) BufferQueue core=(878:/system/bin/surfaceflinger)
+10-30 07:30:10.275 I/CCodecConfig(10115): query failed after returning 7 values (BAD_INDEX)
+10-30 07:30:10.275 D/CCodecConfig(10115): c2 config diff is Dict {
+10-30 07:30:10.275 D/CCodecConfig(10115):   c2::u32 coded.bitrate.value = 64000
+10-30 07:30:10.275 D/CCodecConfig(10115):   c2::u32 input.buffers.max-size.value = 32768
+10-30 07:30:10.275 D/CCodecConfig(10115):   c2::u32 input.delay.value = 0
+10-30 07:30:10.275 D/CCodecConfig(10115):   string input.media-type.value = "audio/vorbis"
+10-30 07:30:10.275 D/CCodecConfig(10115):   string output.media-type.value = "audio/raw"
+10-30 07:30:10.275 D/CCodecConfig(10115):   c2::u32 raw.channel-count.value = 1
+10-30 07:30:10.275 D/CCodecConfig(10115):   c2::u32 raw.sample-rate.value = 48000
+10-30 07:30:10.275 D/CCodecConfig(10115): }
+10-30 07:30:10.276 D/MediaCodec(10115): [0x761371fa00] setState: 2
+10-30 07:30:10.276 D/MediaCodec(10115): [0x761371fa00] [c2.android.vorbis.decoder] configure
+10-30 07:30:10.276 D/MediaCodec(10115): flushMediametrics
+10-30 07:30:10.276 D/MediaCodec(10115): [0x761371fa00] setState: 3
+10-30 07:30:10.276 D/CCodec  (10115): [c2.android.vorbis.decoder] buffers are bound to CCodec for this session
+10-30 07:30:10.276 D/CCodecConfig(10115): no c2 equivalents for durationUs
+10-30 07:30:10.276 D/CCodecConfig(10115): no c2 equivalents for track-id
+10-30 07:30:10.276 D/CCodecConfig(10115): no c2 equivalents for csd-1
+10-30 07:30:10.276 D/CCodecConfig(10115): no c2 equivalents for flags
+10-30 07:30:10.277 D/SmartPanelService( 3812): MSG_TASK_FOCUS
+10-30 07:30:10.277 I/BufferQueueProducer(  878): [com.transsion.XOSLauncher/com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher#4700359](this:0xb400007bd18242c8,id:-1,api:0,p:-1,c:878) queueBuffer: fps=70.57 dur=1006.14 max=123.69 min=9.34
+10-30 07:30:10.277 E/libPowerHal(  839): kswapd0_bind:1, scn:0xb40000759a41efd8
+10-30 07:30:10.278 D/CCodecConfig(10115): c2 config diff is   c2::u32 coded.bitrate.value = 96000
+10-30 07:30:10.278 D/CCodecConfig(10115):   c2::u32 raw.sample-rate.value = 44100
+10-30 07:30:10.279 E/WindowManager( 1616): isFocusOnThunderbackWindow false mFocusMultiWindowId: 276 newFocus: 0 thunderback: false
+10-30 07:30:10.279 W/Codec2Client(10115): query -- param skipped: index = 1107298332.
+10-30 07:30:10.279 D/CCodec  (10115): encoding statistics level = 0
+10-30 07:30:10.279 D/CCodec  (10115): setup formats input: AMessage(what = 0x00000000) = {
+10-30 07:30:10.279 D/CCodec  (10115):   int32_t bitrate = 96000
+10-30 07:30:10.279 D/CCodec  (10115):   int32_t channel-count = 1
+10-30 07:30:10.279 D/CCodec  (10115):   int32_t max-input-size = 32768
+10-30 07:30:10.279 D/CCodec  (10115):   string mime = "audio/vorbis"
+10-30 07:30:10.279 D/CCodec  (10115):   int32_t sample-rate = 44100
+10-30 07:30:10.279 D/CCodec  (10115): }
+10-30 07:30:10.279 D/CCodec  (10115): setup formats output: AMessage(what = 0x00000000) = {
+10-30 07:30:10.279 D/CCodec  (10115):   int32_t channel-count = 1
+10-30 07:30:10.279 D/CCodec  (10115):   string mime = "audio/raw"
+10-30 07:30:10.279 D/CCodec  (10115):   int32_t sample-rate = 44100
+10-30 07:30:10.279 D/CCodec  (10115):   int32_t channel-mask = 1
+10-30 07:30:10.279 D/CCodec  (10115):   int32_t android._config-pcm-encoding = 2
+10-30 07:30:10.279 D/CCodec  (10115): }
+10-30 07:30:10.280 W/WindowManager( 1616): Changing focus from null to Window{9bb1b8f u0 com.termux/com.termux.app.TermuxActivity} displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:524 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6395 com.android.server.wm.WindowManagerService.relayoutWindow:2645 com.android.server.wm.Session.relayout:277 
+10-30 07:30:10.279 I/hwcomposer(  824): [HWCDisplay] [Display_0 (type:1)] fps:87.496193,dur:1005.76,max:20.88,min:6.01  
+10-30 07:30:10.280 I/CCodecConfig(10115): query failed after returning 7 values (BAD_INDEX)
+10-30 07:30:10.280 D/MediaCodec(10115): [0x761371fa00] setState: 4
+10-30 07:30:10.280 D/MediaCodec(10115): [0x761371fa00] setState: 5
+10-30 07:30:10.281 D/CCodec  (10115): [video-detector] start
+10-30 07:30:10.281 D/CCodec  (10115): [video-detector] updateRefreshRateForVideoScene internal api_id=52, video_state=1, current_fps=30, getpid video_session_id=10115
+10-30 07:30:10.283 W/PackageConfigPersister( 1616): App-specific configuration not found for packageName: com.openai.chatgpt and userId: 0
+10-30 07:30:10.284 W/PackageConfigPersister( 1616): App-specific configuration not found for packageName: com.openai.chatgpt and userId: 0
+10-30 07:30:10.287 I/WindowManager( 1616): Relayout Window{9bb1b8f u0 com.termux/com.termux.app.TermuxActivity}: oldVis=8 newVis=0 focusMayChange = true requestedWidth = 1080 requestedHeight = 2460 outFrames = ClientWindowFrames{frame=[0,0][1080,2460] display=[0,0][1080,2460] parentFrame=[0,0][0,0] parentClippedByDisplayCutout=false} outSurfaceControl = Surface(name=com.termux/com.termux.app.TermuxActivity)/@0x9e4b8e0
+10-30 07:30:10.289 W/Codec2Client(10115): query -- param skipped: index = 1342179345.
+10-30 07:30:10.289 W/Codec2Client(10115): query -- param skipped: index = 2415921170.
+10-30 07:30:10.290 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.291 D/CCodecBufferChannel(10115): [c2.android.vorbis.decoder#920] Created input block pool with allocatorID 16 => poolID 51 - OK (0)
+10-30 07:30:10.291 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.292 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.292 D/BufferPoolAccessor2.0( 1241): bufferpool2 0xb400006f453ceec8 : 0(0 size) total buffers - 0(0 size) used buffers - 8/10 (recycle/alloc) - 2/9 (fetch/transfer)
+10-30 07:30:10.292 D/BufferPoolAccessor2.0( 1241): Destruction - bufferpool2 0xb400006f453ceec8 cached: 0/0M, 0/0% in use; allocs: 10, 80% recycled; transfers: 9, 78% unfetched
+10-30 07:30:10.293 I/THubApi ( 3812): getDisplayId : 0
+10-30 07:30:10.293 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.293 D/BufferQueueConsumer(10115): [](id:2783000000d2,api:0,p:-1,c:10115) connect: controlledByApp=false
+10-30 07:30:10.293 I/CCodecBufferChannel(10115): [c2.android.vorbis.decoder#920] Created output block pool with allocatorID 16 => poolID 201162 - OK
+10-30 07:30:10.293 D/AAL     ( 1229): 10-30 07:30:10.272 BL= 289,ESS= 256, 10-30 07:30:10.282 BL= 288,ESS= 256, 
+10-30 07:30:10.294 D/CCodecBufferChannel(10115): [c2.android.vorbis.decoder#920] Configured output block pool ids 201162 => OK
+10-30 07:30:10.294 D/CCodecBufferChannel(10115): [0x75d350f7e0] [c2.android.vorbis.decoder#920] start: output->outputDelay 0, output->numSlots 4
+10-30 07:30:10.294 E/Codec2-ComponentInterface( 1241): We have a failed config
+10-30 07:30:10.294 D/CCodecBuffers(10115): [c2.android.vorbis.decoder#920:1D-Output.Impl[N]] converted 0 buffers to array mode of 4
+10-30 07:30:10.295 D/C2MtkComponentStore(  826): setDmaBufUsage: usage 5, flags 0, heapName mtk_mm for decoder.
+10-30 07:30:10.296 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.298 D/SimpleC2Component( 1241): Using output block pool with poolID 201162 => got 201162 - 0
+10-30 07:30:10.299 D/MediaCodec(10115): [0x761371fa00] setState: 6
+10-30 07:30:10.299 I/SmartPanel_SmartPanelService( 3812): onTaskFocusChanged isSplitScreen: false
+10-30 07:30:10.299 I/SmartPanel_SmartPanelService( 3812): focuse task null
+10-30 07:30:10.299 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.300 D/SmartEventManager( 3812): dispatchEvent event: SmartEvent(action=on_task_focus_changed, topClassName=com.termux.app.TermuxActivity, topPackageName=com.termux, extras=Bundle[{is_split_screen=false, is_resume=true, game_package_name=}])
+10-30 07:30:10.300 I/SmartPanel_MultiWindowUtils( 3812): pkg in multi window
+10-30 07:30:10.301 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.303 I/mtkpower@impl(  839): [setMode] type:6, enabled:1
+10-30 07:30:10.303 E/mtkpower@impl(  839): [setMode] unknown type
+10-30 07:30:10.306 I/BufferQueueProducer(  878): [FramebufferSurface](this:0xb400007b814e0040,id:-1,api:1,p:878,c:878) queueBuffer: fps=51.69 dur=1006.08 max=425.34 min=8.94
+10-30 07:30:10.307 D/CCodecBuffers(10115): [c2.android.vorbis.decoder#920:1D-Input.Impl[N]] converted 4 buffers to array mode of 4
+10-30 07:30:10.314 D/C2MtkComponentStore(  826): setDmaBufUsage: usage 5, flags 0, heapName mtk_mm for decoder.
+10-30 07:30:10.321 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.321 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.324 I/THubApi ( 3812): isTheMainScreen classname: com.termux.app.TermuxActivity  pkg:com.termux
+10-30 07:30:10.324 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.326 D/TranActivityTaskManagerService( 1616): isTheMainScreen, displayId = 0, classname = com.termux.app.TermuxActivity
+10-30 07:30:10.326 D/Game_Utils( 3812): getTopPkgNew = com.termux.app.TermuxActivity, com.termux
+10-30 07:30:10.326 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.326 D/AppBlackList( 3812): checkInBlackList isGuidePage= false， isSmartPanelGesture= false
+10-30 07:30:10.326 D/AppBlackList( 3812): checkInBlackList inBlackList= false， pkgAndCls= com.termux/com.termux.app.TermuxActivity
+10-30 07:30:10.327 I/THubApi ( 3812): isTheMainScreen classname: com.termux.app.TermuxActivity  pkg:com.termux
+10-30 07:30:10.327 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.328 I/SimpleEventAdapt( 4031): onActivityEvent get com.transsion.XOSLauncher, com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher,false
+10-30 07:30:10.329 I/SimpleEventAdapt( 4031): notifyEvent2  activity_event
+10-30 07:30:10.329 I/SimpleEventAdapt( 4031): notifyEvent  1
+10-30 07:30:10.329 I/SimpleEventAdapt( 4031): onActivityEvent get com.termux, com.termux.app.TermuxActivity,true
+10-30 07:30:10.329 I/SimpleEventAdapt( 4031): notifyEvent2  activity_event
+10-30 07:30:10.329 I/SimpleEventAdapt( 4031): notifyEvent  1
+10-30 07:30:10.330 I/SimpleEventAdapt( 4031): onAppForegroundEvent get com.transsion.XOSLauncher, false
+10-30 07:30:10.330 I/SimpleEventAdapt( 4031): notifyEvent2  app_foreground
+10-30 07:30:10.330 I/SimpleEventAdapt( 4031): notifyEvent  1
+10-30 07:30:10.330 I/SimpleEventAdapt( 4031): onAppForegroundEvent get com.termux, true
+10-30 07:30:10.330 I/SimpleEventAdapt( 4031): notifyEvent2  app_foreground
+10-30 07:30:10.330 I/SimpleEventAdapt( 4031): notifyEvent  1
+10-30 07:30:10.330 I/SimpleEventAdapt( 4031): onAppStartEvent get com.termux,start true
+10-30 07:30:10.330 I/CacheManager( 4031):  save new data to cache activity_event
+10-30 07:30:10.330 I/bsc     ( 4031): notifyDataChange in activity_event, 1
+10-30 07:30:10.331 I/DataServiceImplV2( 4031): StandardDataService notifyDataChange  in 
+10-30 07:30:10.331 I/DataServiceImplV2( 4031): StandardDataService notifyDataChange  curServiceName StandardDataService type:activity_event
+10-30 07:30:10.332 I/ApiInvoke( 4031): ApiChannel1.2.172: found local channel DataCenter
+10-30 07:30:10.332 I/CacheManager( 4031):  save new data to cache activity_event
+10-30 07:30:10.332 I/bsc     ( 4031): notifyDataChange in activity_event, 1
+10-30 07:30:10.332 D/AAL     ( 1229): 10-30 07:30:10.318 BL= 289,ESS= 256, 
+10-30 07:30:10.332 I/DataServiceImplV2( 4031): StandardDataService notifyDataChange  in 
+10-30 07:30:10.332 D/TranActivityTaskManagerService( 1616): isTheMainScreen, displayId = 0, classname = com.termux.app.TermuxActivity
+10-30 07:30:10.333 D/Game_Utils( 3812): getTopPkgNew = com.termux.app.TermuxActivity, com.termux
+10-30 07:30:10.333 I/CacheManager( 4031):  save new data to cache app_foreground
+10-30 07:30:10.333 I/bsc     ( 4031): notifyDataChange in app_foreground, 1
+10-30 07:30:10.333 I/DataServiceImplV2( 4031): StandardDataService notifyDataChange  in 
+10-30 07:30:10.334 I/CacheManager( 4031):  save new data to cache app_foreground
+10-30 07:30:10.334 I/bsc     ( 4031): notifyDataChange in app_foreground, 1
+10-30 07:30:10.335 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.336 I/ApiInvoke( 4031): ApiChannel1.2.172: found remote channel DataCenter
+10-30 07:30:10.336 I/ApiInvoke( 4031): ApiRequest1.2.172: channels size , 2
+10-30 07:30:10.336 I/DataServiceImplV2( 4031): StandardDataService notifyDataChange  in 
+10-30 07:30:10.336 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.341 I/ApiInvoke( 4031): SubscribeManager1.2.172: copy subscriber size = 12
+10-30 07:30:10.342 I/Kolun_AI( 4031): SystemEventSubscribe: onPublishData {"type":"activity_event","time":1793334610329,"data":"{\"className\":\"com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher\",\"isResumed\":false,\"packageName\":\"com.transsion.XOSLauncher\"}","provider":"dc","dc_version":2030200000,"data_version":1,"user_id":0}
+10-30 07:30:10.342 I/Kolun_AI( 4031): SystemEventSubscribe: publisher.getMatcher() activity_event
+10-30 07:30:10.342 D/GameModeManager( 3812): handlerActivityStart isResume = true  pkgName = com.transsion.common.smartutils.util.s0$b@bb942e2.packageName
+10-30 07:30:10.342 I/ApiInvoke( 4031): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher activity_event
+10-30 07:30:10.342 I/ApiInvoke( 4031): ApiRequest1.2.172: do publishData to local, matcher = activity_event
+10-30 07:30:10.342 W/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData, GLOBAL_SUBSCRIBE size 4
+10-30 07:30:10.342 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000003,0.023691,0.000504, totalTime 0.024198 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:10.342 W/ApiInvoke( 4031): ApiRequest1.2.172: do publishData to remote activity_event
+10-30 07:30:10.343 I/DataServiceImplV2( 4031): StandardDataService notifyDataChange  curServiceName StandardDataService type:activity_event
+10-30 07:30:10.343 D/BarrageWindowManager( 3812): closeFloatWindow
+10-30 07:30:10.344 D/BarrageWindow( 3812): close barrage
+10-30 07:30:10.344 I/ApiInvoke( 4031): ApiChannel1.2.172: found local channel DataCenter
+10-30 07:30:10.344 I/ApiInvoke( 4031): ApiChannel1.2.172: found remote channel DataCenter
+10-30 07:30:10.344 I/ApiInvoke( 4031): ApiRequest1.2.172: channels size , 2
+10-30 07:30:10.344 I/ApiInvoke( 4031): SubscribeManager1.2.172: copy subscriber size = 12
+10-30 07:30:10.344 I/Kolun_AI( 4031): SystemEventSubscribe: onPublishData {"type":"activity_event","time":1793334610331,"data":"{\"className\":\"com.termux.app.TermuxActivity\",\"isResumed\":true,\"packageName\":\"com.termux\"}","provider":"dc","dc_version":2030200000,"data_version":1,"user_id":0}
+10-30 07:30:10.344 I/Kolun_AI( 4031): SystemEventSubscribe: publisher.getMatcher() activity_event
+10-30 07:30:10.344 I/ApiInvoke( 4031): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher activity_event
+10-30 07:30:10.344 I/ApiInvoke( 4031): ApiRequest1.2.172: do publishData to local, matcher = activity_event
+10-30 07:30:10.344 W/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData, GLOBAL_SUBSCRIBE size 4
+10-30 07:30:10.344 W/ApiInvoke( 4031): ApiRequest1.2.172: do publishData to remote activity_event
+10-30 07:30:10.345 I/DataServiceImplV2( 4031): StandardDataService notifyDataChange  curServiceName StandardDataService type:app_foreground
+10-30 07:30:10.345 I/ApiInvoke( 9158): SubscribeManager1.2.172: copy subscriber size = 11
+10-30 07:30:10.345 I/ApiInvoke( 9158): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher activity_event
+10-30 07:30:10.345 I/SmartPanel_MultiWindowUtils( 3812): pkg in multi window
+10-30 07:30:10.345 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.347 I/ApiInvoke( 4031): ApiChannel1.2.172: found local channel DataCenter
+10-30 07:30:10.347 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 9158,"channels": [AssistantChannel]} success 
+10-30 07:30:10.347 I/ApiInvoke( 4031): ApiChannel1.2.172: found remote channel DataCenter
+10-30 07:30:10.347 I/ApiInvoke( 4031): ApiRequest1.2.172: channels size , 2
+10-30 07:30:10.347 I/ApiInvoke( 4031): SubscribeManager1.2.172: copy subscriber size = 12
+10-30 07:30:10.347 I/Kolun_AI( 4031): SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1793334610332,"data":"{\"isForeground\":false,\"packageName\":\"com.transsion.XOSLauncher\"}","provider":"dc","dc_version":2030200000,"data_version":1,"user_id":0}
+10-30 07:30:10.347 I/Kolun_AI( 4031): SystemEventSubscribe: publisher.getMatcher() app_foreground
+10-30 07:30:10.347 I/ApiInvoke( 4031): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher app_foreground
+10-30 07:30:10.347 I/Kolun_AI( 4031): kj1:onBusEvent AppForegroundEvent   com.transsion.XOSLauncher, false, kj1
+10-30 07:30:10.348 I/Kolun_AI( 4031): kj1:checkGameOut  com.transsion.XOSLauncher, 
+10-30 07:30:10.348 I/ApiInvoke( 4031): ApiRequest1.2.172: do publishData to local, matcher = app_foreground
+10-30 07:30:10.348 I/Kolun_AI( 4031): AppPredictManager:onBusEvent com.transsion.XOSLauncher false
+10-30 07:30:10.348 W/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData, GLOBAL_SUBSCRIBE size 4
+10-30 07:30:10.348 W/ApiInvoke( 4031): ApiRequest1.2.172: do publishData to remote app_foreground
+10-30 07:30:10.348 I/DataServiceImplV2( 4031): StandardDataService notifyDataChange  curServiceName StandardDataService type:app_foreground
+10-30 07:30:10.348 I/ApiInvoke( 4031): ApiChannel1.2.172: found local channel DataCenter
+10-30 07:30:10.348 I/ApiInvoke( 4031): ApiChannel1.2.172: found remote channel DataCenter
+10-30 07:30:10.348 I/ApiInvoke( 4031): ApiRequest1.2.172: channels size , 2
+10-30 07:30:10.351 I/ApiInvoke( 4031): SubscribeManager1.2.172: copy subscriber size = 12
+10-30 07:30:10.351 I/Kolun_AI( 4031): SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1793334610333,"data":"{\"isForeground\":true,\"packageName\":\"com.termux\"}","provider":"dc","dc_version":2030200000,"data_version":1,"user_id":0}
+10-30 07:30:10.352 I/Kolun_AI( 4031): SystemEventSubscribe: publisher.getMatcher() app_foreground
+10-30 07:30:10.353 I/ApiInvoke( 4031): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher app_foreground
+10-30 07:30:10.353 I/Kolun_AI( 4031): AppPredictManager:onPackageChanged AppForegroundEvent com.transsion.XOSLauncher false currentTime ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٠
+10-30 07:30:10.353 I/ApiInvoke( 4031): ApiRequest1.2.172: do publishData to local, matcher = app_foreground
+10-30 07:30:10.353 W/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData, GLOBAL_SUBSCRIBE size 4
+10-30 07:30:10.353 W/ApiInvoke( 4031): ApiRequest1.2.172: do publishData to remote app_foreground
+10-30 07:30:10.353 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.354 I/Kolun_AI( 4031): kj1:onBusEvent AppForegroundEvent   com.termux, true, kj1
+10-30 07:30:10.354 I/Kolun_AI( 4031): kj1:checkGameIn  com.termux, 
+10-30 07:30:10.354 I/Kolun_AI( 4031): AppPredictManager:onBusEvent com.termux true
+10-30 07:30:10.354 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 2200,"channels": [com.transsion.XOSLauncher]} success 
+10-30 07:30:10.354 I/ApiInvoke( 4031): SubscribeManager1.2.172: copy subscriber size = 12
+10-30 07:30:10.355 I/Kolun_AI( 4031): SystemEventSubscribe: onPublishData {"type":"activity_event","time":1793334610329,"data":"{\"className\":\"com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher\",\"isResumed\":false,\"packageName\":\"com.transsion.XOSLauncher\"}","provider":"dc","dc_version":2030200000,"data_version":1,"user_id":0}
+10-30 07:30:10.355 I/Kolun_AI( 4031): SystemEventSubscribe: publisher.getMatcher() activity_event
+10-30 07:30:10.355 I/Kolun_AI( 4031): AppPredictManager:onPackageChanged AppForegroundEvent com.termux true currentTime ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٠
+10-30 07:30:10.355 I/ApiInvoke( 4031): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher activity_event
+10-30 07:30:10.355 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 0,"channels": [CommonChannel]} success 
+10-30 07:30:10.355 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.356 I/ApiInvoke( 9158): SubscribeManager1.2.172: copy subscriber size = 11
+10-30 07:30:10.356 I/ApiInvoke( 9158): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher activity_event
+10-30 07:30:10.356 D/NVRAM   (  842): NVM_GetLIDByName /mnt/vendor/nvdata/APCFG/APRDEB/PRODUCT_PAYTRIGGER 
+10-30 07:30:10.357 D/VideoAssistantManager( 3812): handlerVideoStart isResume = true  currentPackage =   pkgName = com.transsion.common.smartutils.util.s0$b@d0e8673.packageName
+10-30 07:30:10.357 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 9158,"channels": [AssistantChannel]} success 
+10-30 07:30:10.357 D/NVRAM   (  842): NVRAM: NVM_GetLIDByName Lid =82 
+10-30 07:30:10.358 D/NVRAM   (  842): fail to open /sys/class/BOOT/BOOT/boot/boot_mode: 
+10-30 07:30:10.358 D/NVRAM   (  842): Tran: Nvdata Resotre successeded! continue ...
+10-30 07:30:10.358 D/NVRAM   (  842): 82 is in new nvram partition!!!
+10-30 07:30:10.358 D/NVRAM   (  842): New NVRAM partition name is /dev/block/by-name/proinfo.
+10-30 07:30:10.360 D/NVRAM   (  842): Read Done!Size is 2048
+10-30 07:30:10.361 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:10.362 D/NVRAM   (  842): 82 is in new nvram partition!!!
+10-30 07:30:10.363 D/os.permission.PermissionInfo( 1616): checkPermission 10173:android.permission.INTERACT_ACROSS_USERS:true
+10-30 07:30:10.363 I/os.permission( 1616): Grant permission: android.permission.INTERACT_ACROSS_USERS to uid: 10173
+10-30 07:30:10.363 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.361 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 2200,"channels": [com.transsion.XOSLauncher]} success 
+10-30 07:30:10.366 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.366 I/ApiInvoke( 4031): SubscribeManager1.2.172: copy subscriber size = 12
+10-30 07:30:10.366 I/Kolun_AI( 4031): SystemEventSubscribe: onPublishData {"type":"activity_event","time":1793334610331,"data":"{\"className\":\"com.termux.app.TermuxActivity\",\"isResumed\":true,\"packageName\":\"com.termux\"}","provider":"dc","dc_version":2030200000,"data_version":1,"user_id":0}
+10-30 07:30:10.366 I/Kolun_AI( 4031): SystemEventSubscribe: publisher.getMatcher() activity_event
+10-30 07:30:10.366 I/ApiInvoke( 4031): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher activity_event
+10-30 07:30:10.366 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 0,"channels": [CommonChannel]} success 
+10-30 07:30:10.367 I/THubApi ( 3812): isTheMainScreen classname: com.termux.app.TermuxActivity  pkg:com.termux
+10-30 07:30:10.367 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.367 D/SysUI_Bubbles(23585): onLocusVisibilityChanged: LocusId[16_chars] visible=false
+10-30 07:30:10.368 D/ApkController( 2180): onTaskStackChanged 
+10-30 07:30:10.370 I/ApiInvoke( 9158): SubscribeManager1.2.172: copy subscriber size = 11
+10-30 07:30:10.370 D/Kolun.DataCenterImpl( 9158):  onPublishDataapp_foreground, {"type":"app_foreground","time":1793334610332,"data":"{\"isForeground\":false,\"packageName\":\"com.transsion.XOSLauncher\"}","provider":"dc","dc_version":2030200000,"data_version":1,"user_id":0}
+10-30 07:30:10.370 D/Kolun.DataCenterManager( 9158):  launcher pkg : com.transsion.XOSLauncher, pkg : com.transsion.XOSLauncher, false
+10-30 07:30:10.370 I/ApiInvoke( 9158): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher app_foreground
+10-30 07:30:10.371 D/Kolun.RequirementManager( 9158):  sendEvent() called with: event = [com.transsion.kolun.assistant.common.components.event.LauncherHomeEvent@f3c797b]
+10-30 07:30:10.371 D/Kolun.Api( 9158):  get y44 from cache
+10-30 07:30:10.371 D/Kolun.RequirementManager( 9158):  sendEvent
+10-30 07:30:10.371 I/Kolun.EventBusImpl( 9158):  dispatchEvent: com.transsion.kolun.assistant.common.components.event.LauncherHomeEvent@f3c797b
+10-30 07:30:10.371 D/Kolun.Api( 9158):  get ez3 from cache
+10-30 07:30:10.371 D/TranActivityTaskManagerService( 1616): isTheMainScreen, displayId = 0, classname = com.termux.app.TermuxActivity
+10-30 07:30:10.372 D/Kolun.Api( 9158):  get CardInterfaceImpl from cache
+10-30 07:30:10.372 D/Game_Utils( 3812): getTopPkgNew = com.termux.app.TermuxActivity, com.termux
+10-30 07:30:10.373 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 9158,"channels": [AssistantChannel]} success 
+10-30 07:30:10.376 D/Kolun.MoverCard( 9158):  isShowNotification : false, false
+10-30 07:30:10.376 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.377 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.378 D/ApkController( 2180): [handleMessage] --> start 1
+10-30 07:30:10.379 I/THubApi ( 3812): isTheMainScreen classname: com.termux.app.TermuxActivity  pkg:com.termux
+10-30 07:30:10.379 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.379 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 2200,"channels": [com.transsion.XOSLauncher]} success 
+10-30 07:30:10.379 I/ApiInvoke( 4031): SubscribeManager1.2.172: copy subscriber size = 12
+10-30 07:30:10.380 I/Kolun_AI( 4031): SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1793334610332,"data":"{\"isForeground\":false,\"packageName\":\"com.transsion.XOSLauncher\"}","provider":"dc","dc_version":2030200000,"data_version":1,"user_id":0}
+10-30 07:30:10.380 I/Kolun_AI( 4031): SystemEventSubscribe: publisher.getMatcher() app_foreground
+10-30 07:30:10.380 I/ApiInvoke( 4031): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher app_foreground
+10-30 07:30:10.380 I/Kolun_AI( 4031): kj1:onBusEvent AppForegroundEvent   com.transsion.XOSLauncher, false, kj1
+10-30 07:30:10.380 I/Kolun_AI( 4031): kj1:checkGameOut  com.transsion.XOSLauncher, 
+10-30 07:30:10.380 I/Kolun_AI( 4031): AppPredictManager:onBusEvent com.transsion.XOSLauncher false
+10-30 07:30:10.380 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 0,"channels": [CommonChannel]} success 
+10-30 07:30:10.381 I/Kolun_AI( 4031): AppPredictManager:onPackageChanged AppForegroundEvent com.transsion.XOSLauncher false currentTime ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٠
+10-30 07:30:10.381 I/ApiInvoke( 9158): SubscribeManager1.2.172: copy subscriber size = 11
+10-30 07:30:10.381 D/Kolun.DataCenterImpl( 9158):  onPublishDataapp_foreground, {"type":"app_foreground","time":1793334610333,"data":"{\"isForeground\":true,\"packageName\":\"com.termux\"}","provider":"dc","dc_version":2030200000,"data_version":1,"user_id":0}
+10-30 07:30:10.381 I/ApiInvoke( 9158): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher app_foreground
+10-30 07:30:10.383 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 9158,"channels": [AssistantChannel]} success 
+10-30 07:30:10.386 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 2200,"channels": [com.transsion.XOSLauncher]} success 
+10-30 07:30:10.386 I/ApiInvoke( 4031): SubscribeManager1.2.172: copy subscriber size = 12
+10-30 07:30:10.386 I/Kolun_AI( 4031): SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1793334610333,"data":"{\"isForeground\":true,\"packageName\":\"com.termux\"}","provider":"dc","dc_version":2030200000,"data_version":1,"user_id":0}
+10-30 07:30:10.386 I/Kolun_AI( 4031): SystemEventSubscribe: publisher.getMatcher() app_foreground
+10-30 07:30:10.387 I/ApiInvoke( 4031): SubscribeManager1.2.172: publishData success host DataCenter#StandardDataService matcher app_foreground
+10-30 07:30:10.387 I/Kolun_AI( 4031): kj1:onBusEvent AppForegroundEvent   com.termux, true, kj1
+10-30 07:30:10.387 I/Kolun_AI( 4031): kj1:checkGameIn  com.termux, 
+10-30 07:30:10.387 I/Kolun_AI( 4031): AppPredictManager:onBusEvent com.termux true
+10-30 07:30:10.387 I/ApiInvoke( 4031): SubscribeBusServerImpl1.2.172: onPublishData to {"pid": 0,"channels": [CommonChannel]} success 
+10-30 07:30:10.387 I/Kolun_AI( 4031): AppPredictManager:onPackageChanged AppForegroundEvent com.termux true currentTime ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٠
+10-30 07:30:10.388 D/TranActivityTaskManagerService( 1616): isTheMainScreen, displayId = 0, classname = com.termux.app.TermuxActivity
+10-30 07:30:10.388 D/Game_Utils( 3812): getTopPkgNew = com.termux.app.TermuxActivity, com.termux
+10-30 07:30:10.388 D/AppBlackList( 3812): checkInBlackList isGuidePage= false， isSmartPanelGesture= false
+10-30 07:30:10.388 D/AppBlackList( 3812): checkInBlackList inBlackList= false， pkgAndCls= com.termux/com.termux.app.TermuxActivity
+10-30 07:30:10.388 D/SmartPanelService( 3812): MSG_ACTIVITY_CHECK
+10-30 07:30:10.388 I/SmartPanel_SmartPanelPresenter1( 3812): hasLoadData true  data size = 8
+10-30 07:30:10.389 D/PanelController( 3812): checkCanShow canShow: true
+10-30 07:30:10.390 D/NVRAM   (  842): NVM_GetLIDByName /mnt/vendor/nvdata/APCFG/APRDEB/PRODUCT_PAYTRIGGER 
+10-30 07:30:10.390 D/NVRAM   (  842): NVRAM: NVM_GetLIDByName Lid =82 
+10-30 07:30:10.390 D/NVRAM   (  842): fail to open /sys/class/BOOT/BOOT/boot/boot_mode: 
+10-30 07:30:10.390 D/NVRAM   (  842): Tran: Nvdata Resotre successeded! continue ...
+10-30 07:30:10.390 D/NVRAM   (  842): 82 is in new nvram partition!!!
+10-30 07:30:10.390 D/NVRAM   (  842): New NVRAM partition name is /dev/block/by-name/proinfo.
+10-30 07:30:10.392 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.394 D/NVRAM   (  842): Read Done!Size is 2048
+10-30 07:30:10.394 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.395 D/NVRAM   (  842): 82 is in new nvram partition!!!
+10-30 07:30:10.396 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.398 I/TranSettings( 3812): TranThubSettings
+10-30 07:30:10.398 I/SmartPanel_GameModeManager( 3812): checkAndHandleAPP cursor: count = 0
+10-30 07:30:10.398 D/BarrageWindowManager( 3812): closeFloatWindow
+10-30 07:30:10.398 D/BarrageWindow( 3812): close barrage
+10-30 07:30:10.399 I/SmartPanel_VideoDataRepository( 3812): checkVideoApp curosr: count = 0
+10-30 07:30:10.400 I/WifiHAL (20406): Get link layer stats
+10-30 07:30:10.401 I/WifiHAL (20406): GetLinkStatsCommand::create
+10-30 07:30:10.401 D/android.hardware.wifi@1.0-service-lazy(20406): WifiRequest::create vendor command to iface 37, vendor_id=0x1a11, subcmd=0x1200, res=0
+10-30 07:30:10.401 I/android.hardware.wifi@1.0-service-lazy(20406): WifiCommand::requestResponse err=-14
+10-30 07:30:10.401 I/WifiHAL (20406): wifi_get_link_stats: result=-1
+10-30 07:30:10.401 E/WifiVendorHal( 1616): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1176) failed {.code = ERROR_UNKNOWN, .description = unknown}
+10-30 07:30:10.415 D/NVRAM   (  842): NVM_GetLIDByName /mnt/vendor/nvdata/APCFG/APRDEB/PRODUCT_PAYTRIGGER 
+10-30 07:30:10.416 D/NVRAM   (  842): NVRAM: NVM_GetLIDByName Lid =82 
+10-30 07:30:10.416 D/NVRAM   (  842): fail to open /sys/class/BOOT/BOOT/boot/boot_mode: 
+10-30 07:30:10.416 D/NVRAM   (  842): Tran: Nvdata Resotre successeded! continue ...
+10-30 07:30:10.416 D/NVRAM   (  842): 82 is in new nvram partition!!!
+10-30 07:30:10.416 D/NVRAM   (  842): New NVRAM partition name is /dev/block/by-name/proinfo.
+10-30 07:30:10.418 D/NVRAM   (  842): Read Done!Size is 2048
+10-30 07:30:10.419 D/NVRAM   (  842): 82 is in new nvram partition!!!
+10-30 07:30:10.420 D/CCodecBufferChannel(10115): [c2.android.vorbis.decoder#920] input EOS
+10-30 07:30:10.422 D/ActivityTaskManager( 1616): getRecentTasksImpl call by 10151 flags = 2, 3 task(s):
+10-30 07:30:10.422 D/mol_a.a(L:46)(16706): handleEventInternal, pkg:com.transsion.XOSLauncher, cmp:com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, type:32
+10-30 07:30:10.422 D/ActivityTaskManager( 1616): Recent Task 0: taskId = 4824, comp = null
+10-30 07:30:10.422 D/ActivityTaskManager( 1616): Recent Task 1: taskId = 4830, comp = null
+10-30 07:30:10.422 I/TranActivityTaskManager(16706): tran getTopActivityComponent
+10-30 07:30:10.422 D/ActivityTaskManager( 1616): Recent Task 2: taskId = 4833, comp = null
+10-30 07:30:10.423 I/TranActivityTaskManager(16706): tran getFocusedWinPkgName
+10-30 07:30:10.425 I/BaseFilesVerify( 1616): Base File verify start
+10-30 07:30:10.429 D/MediaCodec(10115): [0x761371fa00] [c2.android.vorbis.decoder] stop
+10-30 07:30:10.429 D/MediaCodec(10115): [0x761371fa00] setState: 9
+10-30 07:30:10.429 W/BaseXMLFilesVerify( 1616): isGrammarAndSemanticsLegal file = /data/system/users/0/settings_global.xml
+10-30 07:30:10.430 D/CCodec  (10115): [video-detector] updateRefreshRateForVideoScene internal api_id=52, video_state=3, current_fps=30, getpid video_session_id=10115
+10-30 07:30:10.431 D/CCodecBufferChannel(10115): [c2.android.vorbis.decoder#920] MediaCodec discarded an unknown buffer
+10-30 07:30:10.431 D/CCodecBufferChannel(10115): [c2.android.vorbis.decoder#920] MediaCodec discarded an unknown buffer
+10-30 07:30:10.431 D/CCodecBufferChannel(10115): [c2.android.vorbis.decoder#920] MediaCodec discarded an unknown buffer
+10-30 07:30:10.431 W/BaseXMLFilesVerify( 1616): format is normal
+10-30 07:30:10.432 W/BaseXMLFilesVerify( 1616): verifyRuleGrammarFormat verifyRuleresult :true
+10-30 07:30:10.432 D/MediaCodec(10115): [0x761371fa00] [c2.android.vorbis.decoder] kWhatStopCompleted
+10-30 07:30:10.432 D/MediaCodec(10115): [0x761371fa00] setState: 2
+10-30 07:30:10.432 D/MediaCodec(10115): [0x761371fa00] [c2.android.vorbis.decoder] release
+10-30 07:30:10.433 D/MediaCodec(10115): [0x761371fa00] setState: 10
+10-30 07:30:10.434 I/hw-BpHwBinder(10115): onLastStrongRef automatically unlinking death recipients
+10-30 07:30:10.434 I/hw-BpHwBinder( 1241): onLastStrongRef automatically unlinking death recipients
+10-30 07:30:10.434 I/hw-BpHwBinder( 1241): onLastStrongRef automatically unlinking death recipients
+10-30 07:30:10.435 D/BufferPoolAccessor2.0( 1241): Destruction - bufferpool2 0xb400006f453c2c88 cached: 0/0M, 0/0% in use; allocs: 0, 0% recycled; transfers: 0, 0% unfetched
+10-30 07:30:10.435 D/MediaCodec(10115): [0x761371fa00] [c2.android.vorbis.decoder] kWhatReleaseCompleted
+10-30 07:30:10.435 D/MediaCodec(10115): [0x761371fa00] setState: 0
+10-30 07:30:10.436 D/MediaCodec(10115): [0x761371fa00] ~MediaCodec
+10-30 07:30:10.436 D/MediaCodec(10115): flushMediametrics
+10-30 07:30:10.443 W/BaseXMLFilesVerify( 1616): isGrammarAndSemanticsLegal file = /data/system/users/0/settings_global.xmlsecnew.bak
+10-30 07:30:10.445 W/BaseXMLFilesVerify( 1616): format is normal
+10-30 07:30:10.445 W/BaseXMLFilesVerify( 1616): verifyRuleGrammarFormat verifyRuleresult :true
+10-30 07:30:10.452 D/BLASTBufferQueue(10115): [VRI[TermuxActivity]#210](f:0,a:1) acquireNextBufferLocked size=1080x2460 mFrameNumber=1 applyTransaction=true mTimestamp=3019413511567816(auto) mPendingTransactions.size=0 graphicBufferId=43443594200312 transform=0
+10-30 07:30:10.454 D/BufferStateLayer(  878): com.termux/com.termux.app.TermuxActivity#4700373 setBuffer frameId=1, bufferId=43443594200312 fenceId=154, w= 1080, h=2460
+10-30 07:30:10.462 D/AAL     ( 1229): 10-30 07:30:10.360 BL= 290,ESS= 256, 10-30 07:30:10.395 BL= 291,ESS= 256, 10-30 07:30:10.416 BL= 292,ESS= 256, 10-30 07:30:10.440 BL= 293,ESS= 256, 10-30 07:30:10.462 BL= 294,ESS= 256, 
+10-30 07:30:10.464 W/adbd    (23403): timed out while waiting for FUNCTIONFS_BIND, trying again
+10-30 07:30:10.464 I/adbd    (23403): UsbFfs: connection terminated: monitor thread finished
+10-30 07:30:10.464 I/SmartPanel_SmartPanelService( 3812): onWindowsDrawn pkgName: com.termux, className: com.termux.app.TermuxActivity launchState=3 windowsDrawnDelayMs =290
+10-30 07:30:10.464 D/SmartEventManager( 3812): dispatchEvent event: SmartEvent(action=on_windows_drawn, topClassName=com.termux.app.TermuxActivity, topPackageName=com.termux, extras=null)
+10-30 07:30:10.492 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.493 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.494 I/THubApi ( 3812): isTheMainScreen classname: com.termux.app.TermuxActivity  pkg:com.termux
+10-30 07:30:10.494 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.498 D/TranActivityTaskManagerService( 1616): isTheMainScreen, displayId = 0, classname = com.termux.app.TermuxActivity
+10-30 07:30:10.499 D/Game_Utils( 3812): getTopPkgNew = com.termux.app.TermuxActivity, com.termux
+10-30 07:30:10.503 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.505 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.513 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.514 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.516 I/THubApi ( 3812): isTheMainScreen classname: com.termux.app.TermuxActivity  pkg:com.termux
+10-30 07:30:10.516 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.518 D/TranActivityTaskManagerService( 1616): isTheMainScreen, displayId = 0, classname = com.termux.app.TermuxActivity
+10-30 07:30:10.518 D/Game_Utils( 3812): getTopPkgNew = com.termux.app.TermuxActivity, com.termux
+10-30 07:30:10.524 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.525 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.528 I/adbd    (23403): opening control endpoint /dev/usb-ffs/adb/ep0
+10-30 07:30:10.528 D/GameModeManager( 3812): handlerActivityStart isResume = true  pkgName = com.transsion.common.smartutils.util.s0$b@c187930.packageName
+10-30 07:30:10.528 D/BarrageWindowManager( 3812): closeFloatWindow
+10-30 07:30:10.528 D/BarrageWindow( 3812): close barrage
+10-30 07:30:10.530 I/SmartPanel_GameModeManager( 3812): checkAndHandleAPP cursor: count = 0
+10-30 07:30:10.530 D/InputMethodManager(10115): invalidateInput servedInputConnection: RemoteInputConnectionImpl{connection=com.termux.view.TerminalView$2@ed3d742 finished=false mParentInputMethodManager.isActive()=true mServedView=com.termux.view.TerminalView{caafd4f VFED.V.L. .F....ID 0,0-1062,2123 #7f080191 app:id/terminal_view aid=1073741824}} sessionid: 0
+10-30 07:30:10.530 D/BarrageWindowManager( 3812): closeFloatWindow
+10-30 07:30:10.530 D/BarrageWindow( 3812): close barrage
+10-30 07:30:10.533 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.535 I/TranActivityManager( 3812): TranThubActivityManager
+--------- beginning of kernel
+10-30 07:29:57.522 I/[T200001] init(    0): processing action (sys.usb.ffs.ready=1) from (/vendor/etc/init/hw/init.mt6768.usb.rc:785)
+10-30 07:30:10.536 I/THubApi ( 3812): isTheMainScreen classname: com.termux.app.TermuxActivity  pkg:com.termux
+10-30 07:30:10.536 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.538 D/TranActivityTaskManagerService( 1616): isTheMainScreen, displayId = 0, classname = com.termux.app.TermuxActivity
+10-30 07:30:10.538 D/Game_Utils( 3812): getTopPkgNew = com.termux.app.TermuxActivity, com.termux
+10-30 07:29:57.528 I/[wlan][19148]nicEventLayer0ExtMagic(19148): (NIC INFO) Amsdu update event ucWlanIdx[5] ucLen[0] ucMaxMpduCount[0]
+10-30 07:30:10.541 I/input_debug( 1616): package: com.termux isPassWordInput: false inputType: 0 mMethodMap: true isKeyguardShowing: false enable: 0 isSplitScreen: false
+10-30 07:30:10.541 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.544 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.546 E/ANRdebug( 2200): finish::
+10-30 07:30:10.549 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.550 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.553 D/InputMethodManagerService( 1616): showCurrentInputLocked getTouchFromScreen: true
+10-30 07:30:10.554 I/ficy    (10166): (REDACTED) HDM. appOpsListener %s %s
+10-30 07:30:10.554 I/ficy    (10166): (REDACTED) HDM. Ignoring irrelevant audio permission changes for package %s
+10-30 07:30:10.556 D/VideoAssistantManager( 3812): handlerVideoStart isResume = true  currentPackage =   pkgName = com.transsion.common.smartutils.util.s0$b@67869a9.packageName
+10-30 07:30:10.557 I/SmartPanel_SmartPanelPresenter1( 3812): hasLoadData true  data size = 8
+10-30 07:30:10.560 D/PanelController( 3812): checkCanShow canShow: true
+10-30 07:30:10.561 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:10.561 D/TranWindowManagerService( 1616): hookIMEVisibleChanged(), show:true
+10-30 07:30:10.561 I/FloatWindow( 1616): hookInputMethodShown inputShown: true
+10-30 07:30:10.561 I/PowerHalWrapper( 1616): amsBoostNotify pid:2200,activity:com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, package:com.transsion.XOSLauncher, mProcessCreatePackcom.aram.mahakama 
+10-30 07:30:10.561 I/PowerHalWrapper( 1616): state: 0 
+10-30 07:30:10.561 I/mtkpower_client( 1616): [Legacy][PowerHal_Wrap_notifyAppState] com.transsion.XOSLauncher/com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher pid=2200 state:0
+10-30 07:30:10.561 I/game_scn( 1616): collectForegroundAppList packName=com.transsion.XOSLauncher, actName=com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, pid=2200, uid=10173, state:PAUSED
+10-30 07:30:10.561 I/game_scn( 1616): powerNotifyForegroundApp multi_resumed_app_info: pid: 10115, packname: com.termux, actname: com.termux.app.TermuxActivity
+10-30 07:30:10.562 I/PowerHalWrapper( 1616): amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:false 
+10-30 07:30:10.563 I/Process ( 1616): String at 0: 0x77749be401 = SFMainPolicy
+10-30 07:30:10.563 I/TranSourceConnectManagerImpl( 1616): hookInputMethodShown inputShown: true
+10-30 07:30:10.563 D/TranCPUBooster( 1616): do not to reset kswapd cpu mask because is boosting
+10-30 07:30:10.569 D/SmartEventManager( 3812): dispatchEvent event: SmartEvent(action=activity_stop, topClassName=com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, topPackageName=com.transsion.XOSLauncher, extras=null)
+10-30 07:30:10.570 I/SmartPanel_ModeManager( 3812): ASP pkgName: com.transsion.XOSLauncher  className = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+10-30 07:30:10.572 I/mtkpower_client( 1616): perf_lock_rel, hdl:8925003, tid:2898
+10-30 07:30:10.572 I/libPowerHal(  839): [perfNotifyAppState] pack:com.transsion.XOSLauncher, act:com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, state:0, pid:2200, uid:10173, fps:90
+10-30 07:30:10.576 I/libPowerHal(  839): [unsetGPUFreq] current min:0, max:0; scn_gpu_min:0, scn_gpu_max:-1; scn_gpu_min(HL):-1, scn_gpu_max(HL):-1
+10-30 07:30:10.577 I/libPowerHal(  839): [setGPUFreq] Soft min/max = (0, 0); Hard min/max = (31, 0)
+10-30 07:30:10.577 I/libPowerHal(  839): [setGPUFreq] final min/max = (0, 0)
+10-30 07:30:10.577 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level: 0
+10-30 07:30:10.577 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level max: 0
+10-30 07:30:10.578 W/native  (10166): W0000 00:00:1793334610.577722    8250 lag_detector.cc:58] Pipeline lagging by 1.142742574s. Continue processing samples.
+10-30 07:30:10.581 D/AAL     ( 1229): 10-30 07:30:10.483 BL= 295,ESS= 256, 10-30 07:30:10.516 BL= 296,ESS= 256, 10-30 07:30:10.538 BL= 297,ESS= 256, 10-30 07:30:10.560 BL= 298,ESS= 256, 10-30 07:30:10.581 BL= 299,ESS= 256, 
+10-30 07:30:10.582 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000001,0.022779,0.000532, totalTime 0.023312 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:10.591 I/mtkpower@impl(  839): [setMode] type:6, enabled:0
+10-30 07:30:10.591 E/mtkpower@impl(  839): [setMode] unknown type
+10-30 07:30:10.593 E/libPowerHal(  839): kswapd0_unbind:0, scn:0xb40000759a41efd8
+10-30 07:30:10.593 I/libPowerHal(  839): [PD] MTKPOWER_HINT_REMOTE_ANIMA update cmd:10000002 param:0
+10-30 07:30:10.594 D/InputMethodManager(10115): showSoftInput() view=com.termux.view.TerminalView{caafd4f VFED.V.L. .F...... 0,0-1062,2123 #7f080191 app:id/terminal_view aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+10-30 07:30:10.604 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000130,0.022130,0.000602, totalTime 0.022862 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:10.604 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.608 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.609 V/TranSecureKeyboardManagerImpl( 1616): getServiceLocked mInputMethodService = null this: com.transsion.hubcore.sk.TranSecureKeyboardManagerImpl@960eaae
+10-30 07:30:10.610 I/THubApi ( 3812): isTheMainScreen classname: com.termux.app.TermuxActivity  pkg:com.termux
+10-30 07:30:10.610 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.610 I/GED     ( 1616): ged_boost_gpu_freq, level 100, eOrigin 2, final_idx 31, oppidx_max 31, oppidx_min 0
+10-30 07:30:10.610 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.612 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.613 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.614 D/InputMethodManagerService( 1616): showCurrentInputLocked getTouchFromScreen: true
+10-30 07:30:10.614 D/BLASTBufferQueue( 2200): [VRI[QuickstepLauncher]#16437](f:0,a:1) destructor()
+10-30 07:30:10.614 D/BufferQueueConsumer( 2200): [VRI[QuickstepLauncher]#16437(BLAST Consumer)16437](id:89800004035,api:0,p:-1,c:2200) disconnect
+10-30 07:30:10.614 D/TranWindowManagerService( 1616): hookIMEVisibleChanged(), show:true
+10-30 07:30:10.614 I/FloatWindow( 1616): hookInputMethodShown inputShown: true
+10-30 07:30:10.614 I/TranSourceConnectManagerImpl( 1616): hookInputMethodShown inputShown: true
+10-30 07:30:10.619 D/perfectkeboard(15070): mLongPressDelay = 175
+10-30 07:30:10.620 D/SharedPreferencesPolicy( 2200): checkFinishers msg.what :159,msg.obj:android.app.servertransaction.ClientTransaction@5dbe3984
+10-30 07:30:10.623 W/SoundPool(15070): Use of stream types is deprecated for operations other than volume control
+10-30 07:30:10.623 W/SoundPool(15070): See the documentation of SoundPool() for what to use instead with android.media.AudioAttributes to qualify your playback use case
+10-30 07:30:10.626 D/TranActivityTaskManagerService( 1616): isTheMainScreen, displayId = 0, classname = com.termux.app.TermuxActivity
+10-30 07:30:10.627 D/Game_Utils( 3812): getTopPkgNew = com.termux.app.TermuxActivity, com.termux
+10-30 07:30:10.627 I/TranSettings( 3812): TranThubSettings
+10-30 07:30:10.628 I/SmartPanel_VideoDataRepository( 3812): checkVideoApp curosr: count = 0
+10-30 07:30:10.630 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.638 D/MethodReflexUtil( 2200): getWindowCornerRadius getMethod = public static float com.android.internal.policy.ScreenDecorationsUtils.getWindowCornerRadius(android.content.Context)
+10-30 07:30:10.642 D/SystemBarUtils-( 2200): setDarkMode activity do not hasWindowFocus! com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher@1fbafc9
+10-30 07:30:10.646 I/Athena  ( 2200): Athena Worker, p(t.java:١٧)
+10-30 07:30:10.646 I/Athena  ( 2200): save Track tid = 10709999,{"_eparam":{"_s_id":"9e3adbf7-ce53-415e-9712-bb85bf6b4245","_s_t":0,"_pkg":"","_s_s":1793331197771,"_t":1405},"net":1,"event":"app_active"}
+10-30 07:30:10.647 D/MediaCodec(15070): CreateByType: pid -1(15070)
+10-30 07:30:10.647 I/Process ( 1616): String at 0: 0x77749be401 = SFMainPolicy
+10-30 07:30:10.647 D/MediaCodec(15070): CreateByType: mime audio/vorbis, encoder 0 pid -1
+10-30 07:30:10.647 D/TranCPUBooster( 1616): [setAffinity] Pid:143 mask:0-7
+10-30 07:30:10.648 D/MediaCodecList(15070): codecHandlesFormat: no format, so no extra checks
+10-30 07:30:10.648 D/MediaCodecList(15070): codecHandlesFormat: no format, so no extra checks
+10-30 07:30:10.650 D/CCodecBufferChannel(15070): mBufferCountDebug=0 mIsUserLoad=1
+10-30 07:30:10.650 D/MediaCodec(15070): [0xe10334b0] init: CCodec 0xf26b5b70, CCodecBufferChannel 0xe13cbdd0
+10-30 07:30:10.651 D/MediaCodec(15070): [0xe10334b0] setState: 1
+10-30 07:30:10.651 D/CCodec  (15070): allocate(c2.android.vorbis.decoder)
+10-30 07:30:10.653 I/BufferQueueDebug(  878): [InputMethod#4700377](this:0xb400007bd1779508,id:-1,api:0,p:-1,c:-1) BufferQueue core=(878:/system/bin/surfaceflinger)
+10-30 07:30:10.657 D/TranThreePointMenuWindow(23585): [ThreePointMenuMiddle] hideByStatusBar => false
+10-30 07:30:10.657 I/CCodec  (15070): setting up 'default' as default (vendor) store
+10-30 07:30:10.660 W/SensorService( 1616): Dropping 1 cached events (984/984) to save 1/1 new events. 199 events previously dropped
+10-30 07:30:10.660 I/WindowManager( 1616): Relayout Window{8f2fc86 u0 InputMethod}: oldVis=8 newVis=0 focusMayChange = true requestedWidth = 1080 requestedHeight = 1049 outFrames = ClientWindowFrames{frame=[0,1411][1080,2460] display=[0,108][1080,2460] parentFrame=[0,0][0,0] parentClippedByDisplayCutout=false} outSurfaceControl = Surface(name=InputMethod)/@0x6a4e2c3
+10-30 07:30:10.663 D/BufferQueueConsumer(15070): [](id:3ade0000929d,api:0,p:-1,c:15070) connect: controlledByApp=false
+10-30 07:30:10.663 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.664 I/CCodec  (15070): Created component [c2.android.vorbis.decoder]
+10-30 07:30:10.664 D/CCodecBufferChannel(15070): [0xe13cbdd0] setComponent: mName c2.android.vorbis.decoder#624, mPipelineWatcher 0xe13cbf80
+10-30 07:30:10.664 D/CCodecBufferChannel(15070): PipelineWatcher debug info [c2.android.vorbis.decoder#624] enable=0
+10-30 07:30:10.665 D/CCodecConfig(15070): read media type: audio/vorbis
+10-30 07:30:10.668 I/THubApi ( 3812): isTheMainScreen classname: com.termux.app.TermuxActivity  pkg:com.termux
+10-30 07:30:10.668 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.669 D/ReflectedParamUpdater(15070): extent() != 1 for single value type: algo.buffers.max-count.values
+10-30 07:30:10.669 D/ReflectedParamUpdater(15070): extent() != 1 for single value type: output.subscribed-indices.values
+10-30 07:30:10.670 D/ReflectedParamUpdater(15070): extent() != 1 for single value type: input.buffers.allocator-ids.values
+10-30 07:30:10.670 D/ReflectedParamUpdater(15070): extent() != 1 for single value type: output.buffers.allocator-ids.values
+10-30 07:30:10.670 D/ReflectedParamUpdater(15070): extent() != 1 for single value type: algo.buffers.allocator-ids.values
+10-30 07:30:10.670 D/ReflectedParamUpdater(15070): extent() != 1 for single value type: output.buffers.pool-ids.values
+10-30 07:30:10.671 D/ReflectedParamUpdater(15070): extent() != 1 for single value type: algo.buffers.pool-ids.values
+10-30 07:30:10.673 I/CCodecConfig(15070): query failed after returning 7 values (BAD_INDEX)
+10-30 07:30:10.674 D/CCodecConfig(15070): c2 config diff is Dict {
+10-30 07:30:10.674 D/CCodecConfig(15070):   c2::u32 coded.bitrate.value = 64000
+10-30 07:30:10.674 D/CCodecConfig(15070):   c2::u32 input.buffers.max-size.value = 32768
+10-30 07:30:10.674 D/CCodecConfig(15070):   c2::u32 input.delay.value = 0
+10-30 07:30:10.674 D/CCodecConfig(15070):   string input.media-type.value = "audio/vorbis"
+10-30 07:30:10.674 D/CCodecConfig(15070):   string output.media-type.value = "audio/raw"
+10-30 07:30:10.674 D/CCodecConfig(15070):   c2::u32 raw.channel-count.value = 1
+10-30 07:30:10.674 D/CCodecConfig(15070):   c2::u32 raw.sample-rate.value = 48000
+10-30 07:30:10.674 D/CCodecConfig(15070): }
+10-30 07:30:10.675 D/MediaCodec(15070): [0xe10334b0] setState: 2
+10-30 07:30:10.675 D/MediaCodec(15070): [0xe10334b0] [c2.android.vorbis.decoder] configure
+10-30 07:30:10.675 D/MediaCodec(15070): flushMediametrics
+10-30 07:30:10.675 D/MediaCodec(15070): [0xe10334b0] setState: 3
+10-30 07:30:10.675 D/CCodec  (15070): [c2.android.vorbis.decoder] buffers are bound to CCodec for this session
+10-30 07:30:10.675 D/CCodecConfig(15070): no c2 equivalents for durationUs
+10-30 07:30:10.675 D/CCodecConfig(15070): no c2 equivalents for track-id
+10-30 07:30:10.676 D/CCodecConfig(15070): no c2 equivalents for csd-1
+10-30 07:30:10.676 D/CCodecConfig(15070): no c2 equivalents for flags
+10-30 07:30:10.677 D/CCodecConfig(15070): c2 config diff is   c2::u32 coded.bitrate.value = 499821
+10-30 07:30:10.677 D/CCodecConfig(15070):   c2::u32 raw.channel-count.value = 2
+10-30 07:30:10.677 D/CCodecConfig(15070):   c2::u32 raw.sample-rate.value = 44100
+10-30 07:29:57.668 I/        (26352): [K]        8%        23585             ndroid.systemui            896833169(ns)           -800
+10-30 07:30:10.680 W/Codec2Client(15070): query -- param skipped: index = 1107298332.
+10-30 07:29:57.668 I/        (26352): [K]        6%          869                 audioserver            680308531(ns)          -1000
+10-30 07:29:57.668 I/        (26352): [K]        5%          529                        logd            506673253(ns)          -1000
+10-30 07:29:57.668 I/        (26352): [K]  Cpus Usage [35], [31], [30], [28], [27] [28], [27], [29]
+10-30 07:29:57.668 I/        (26352): freeze_cpustat_tne is effective
+10-30 07:29:57.668 I/        (26352): [K]  user[15],system[11],iowait[00],irq[02],idle[70]
+10-30 07:29:57.668 I/        (26352): [K][Perf] TRAN Perf Statistic done
+10-30 07:30:10.681 D/CCodec  (15070): encoding statistics level = 0
+10-30 07:30:10.681 D/CCodec  (15070): setup formats input: AMessage(what = 0x00000000) = {
+10-30 07:30:10.681 D/CCodec  (15070):   int32_t bitrate = 499821
+10-30 07:30:10.681 D/CCodec  (15070):   int32_t channel-count = 2
+10-30 07:30:10.681 D/CCodec  (15070):   int32_t max-input-size = 32768
+10-30 07:30:10.681 D/CCodec  (15070):   string mime = "audio/vorbis"
+10-30 07:30:10.681 D/CCodec  (15070):   int32_t sample-rate = 44100
+10-30 07:30:10.681 D/CCodec  (15070): }
+10-30 07:30:10.681 D/CCodec  (15070): setup formats output: AMessage(what = 0x00000000) = {
+10-30 07:30:10.681 D/CCodec  (15070):   int32_t channel-count = 2
+10-30 07:30:10.681 D/CCodec  (15070):   string mime = "audio/raw"
+10-30 07:30:10.681 D/CCodec  (15070):   int32_t sample-rate = 44100
+10-30 07:30:10.681 D/CCodec  (15070):   int32_t channel-mask = 3
+10-30 07:30:10.681 D/CCodec  (15070):   int32_t android._config-pcm-encoding = 2
+10-30 07:30:10.681 D/CCodec  (15070): }
+10-30 07:30:10.681 I/CCodecConfig(15070): query failed after returning 7 values (BAD_INDEX)
+10-30 07:30:10.681 D/MediaCodec(15070): [0xe10334b0] setState: 4
+10-30 07:30:10.681 D/MediaCodec(15070): [0xe10334b0] setState: 5
+10-30 07:30:10.681 D/CCodec  (15070): [video-detector] start
+10-30 07:30:10.682 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000001,0.023908,0.000803, totalTime 0.024712 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:10.685 D/CCodec  (15070): [video-detector] updateRefreshRateForVideoScene internal api_id=52, video_state=1, current_fps=30, getpid video_session_id=15070
+10-30 07:30:10.688 W/OnBackInvokedCallback(10115): OnBackInvokedCallback is not enabled for the application.
+10-30 07:30:10.688 W/OnBackInvokedCallback(10115): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+10-30 07:30:10.688 D/TranActivityTaskManagerService( 1616): isTheMainScreen, displayId = 0, classname = com.termux.app.TermuxActivity
+10-30 07:30:10.688 W/Codec2Client(15070): query -- param skipped: index = 1342179345.
+10-30 07:30:10.688 W/Codec2Client(15070): query -- param skipped: index = 2415921170.
+10-30 07:30:10.688 D/Game_Utils( 3812): getTopPkgNew = com.termux.app.TermuxActivity, com.termux
+10-30 07:30:10.690 D/CCodecBufferChannel(15070): [c2.android.vorbis.decoder#624] Created input block pool with allocatorID 16 => poolID 2428 - OK (0)
+10-30 07:30:10.690 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.693 I/CCodecBufferChannel(15070): [c2.android.vorbis.decoder#624] Created output block pool with allocatorID 16 => poolID 201164 - OK
+10-30 07:30:10.693 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.693 D/CCodecBufferChannel(15070): [c2.android.vorbis.decoder#624] Configured output block pool ids 201164 => OK
+10-30 07:30:10.693 D/CCodecBufferChannel(15070): [0xe13cbdd0] [c2.android.vorbis.decoder#624] start: output->outputDelay 0, output->numSlots 4
+10-30 07:30:10.694 E/Codec2-ComponentInterface( 1241): We have a failed config
+10-30 07:30:10.694 D/CCodecBuffers(15070): [c2.android.vorbis.decoder#624:1D-Output.Impl[N]] converted 0 buffers to array mode of 4
+10-30 07:30:10.695 D/C2MtkComponentStore(  826): setDmaBufUsage: usage 5, flags 0, heapName mtk_mm for decoder.
+10-30 07:30:10.695 D/GameModeManager( 3812): handlerActivityStart isResume = true  pkgName = com.transsion.common.smartutils.util.s0$b@32cab2e.packageName
+10-30 07:30:10.695 D/BarrageWindowManager( 3812): closeFloatWindow
+10-30 07:30:10.695 D/BarrageWindow( 3812): close barrage
+10-30 07:30:10.697 I/SmartPanel_GameModeManager( 3812): checkAndHandleAPP cursor: count = 0
+10-30 07:30:10.697 D/BarrageWindowManager( 3812): closeFloatWindow
+10-30 07:30:10.697 D/BarrageWindow( 3812): close barrage
+10-30 07:30:10.698 I/SmartPanel_ModeManager( 3812): ASP pkgName: com.transsion.XOSLauncher  className = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+10-30 07:30:10.702 D/MediaCodec(15070): [0xe10334b0] setState: 6
+10-30 07:30:10.703 W/hw-IPCThreadState( 1241): Transaction failed because process frozen.
+10-30 07:30:10.704 W/Codec2-types(15070): registerSender -- returned error: 4.
+10-30 07:30:10.704 E/Codec2-types(15070): Failed to send buffer with BufferPool. Error: 4.
+10-30 07:30:10.704 E/Codec2-types(15070): Invalid block data in C2ConstLinearBlock.
+10-30 07:30:10.704 E/Codec2-types(15070): Invalid C2BufferData::linearBlocks. (Destination index = 0.)
+10-30 07:30:10.704 E/Codec2-types(15070): Invalid C2Buffer::data.
+10-30 07:29:57.693 I/[T429867] binder(    0): 1241:29867 transaction failed 29202/0, size 76-8 line 3754
+10-30 07:30:10.704 E/Codec2-types(15070): Invalid C2FrameData::buffers[0].
+10-30 07:30:10.704 E/Codec2-types(15070): Invalid C2Work::input.
+10-30 07:30:10.704 E/Codec2Client(15070): queue -- bad input.
+10-30 07:30:10.704 W/MediaCodec(15070): Log queueInputBuffer error: 14
+10-30 07:30:10.704 E/MediaCodec(15070): queueCSDInputBuffer failed w/ error 14
+10-30 07:30:10.704 D/SimpleC2Component( 1241): Using output block pool with poolID 201164 => got 201164 - 0
+10-30 07:30:10.704 D/AAL     ( 1229): 10-30 07:30:10.605 BL= 300,ESS= 256, 10-30 07:30:10.626 BL= 301,ESS= 256, 10-30 07:30:10.658 BL= 302,ESS= 256, 10-30 07:30:10.681 BL= 303,ESS= 256, 10-30 07:30:10.704 BL= 304,ESS= 256, 
+10-30 07:30:10.706 W/hw-IPCThreadState( 1241): Transaction failed because process frozen.
+10-30 07:30:10.706 W/Codec2-types(15070): registerSender -- returned error: 4.
+10-30 07:30:10.706 E/Codec2-types(15070): Failed to send buffer with BufferPool. Error: 4.
+10-30 07:30:10.706 E/Codec2-types(15070): Invalid block data in C2ConstLinearBlock.
+10-30 07:30:10.706 E/Codec2-types(15070): Invalid C2BufferData::linearBlocks. (Destination index = 0.)
+10-30 07:30:10.706 E/Codec2-types(15070): Invalid C2Buffer::data.
+10-30 07:30:10.706 E/Codec2-types(15070): Invalid C2FrameData::buffers[0].
+10-30 07:29:57.695 I/[T229867] binder(    0): 1241:29867 transaction failed 29202/0, size 76-8 line 3754
+10-30 07:30:10.706 E/Codec2-types(15070): Invalid C2Work::input.
+10-30 07:30:10.706 E/Codec2Client(15070): queue -- bad input.
+10-30 07:30:10.706 W/MediaCodec(15070): Log queueInputBuffer error: 14
+10-30 07:30:10.706 E/MediaCodec(15070): queueCSDInputBuffer failed w/ error 14
+10-30 07:30:10.707 W/NdkMediaFormat(15070): got NULL format
+10-30 07:30:10.707 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.707 E/SoundPool::Sound(15070): decode: decode error: -10000
+10-30 07:30:10.707 D/MediaCodec(15070): [0xe10334b0] [c2.android.vorbis.decoder] stop
+10-30 07:30:10.708 D/MediaCodec(15070): [0xe10334b0] [c2.android.vorbis.decoder] release
+10-30 07:30:10.708 D/BLASTBufferQueue(30897): [VRI[QuickstepLauncher]#11](f:0,a:1) destructor()
+10-30 07:30:10.708 D/BufferQueueConsumer(30897): [VRI[QuickstepLauncher]#11(BLAST Consumer)11](id:78b10000000b,api:0,p:-1,c:30897) disconnect
+10-30 07:30:10.708 D/MediaCodec(15070): [0xe10334b0] setState: 10
+10-30 07:30:10.709 D/CCodec  (15070): [video-detector] updateRefreshRateForVideoScene internal api_id=52, video_state=3, current_fps=30, getpid video_session_id=15070
+10-30 07:30:10.710 I/KolunCardManager_template(30897): removeStub => KolunCardStub{mDisplayState=KolunDisplayState{state=COMPACT, orientation=VERTICAL}, mClientModuleRes=ClientModuleRes{moduleName='com.transsion.XOSLauncher', lightRes=null, darkRes=com.transsion.kolun.cardtemplate.style.CardStyleRes@6fcb2459}}
+10-30 07:30:10.710 D/SharedPreferencesPolicy(30897): checkFinishers msg.what :122,msg.obj:BindServiceData{token=android.os.BinderProxy@a33ee53 intent=Intent { act=com.scene.zeroscreen.overlay.service.OverlayScreenService cmp=com.transsion.XOSLauncher/com.scene.zeroscreen.overlay.service.OverlayScreenService (has extras) }}
+10-30 07:30:10.710 D/SharedPreferencesPolicy(30897): checkFinishers msg.what :116,msg.obj:android.os.BinderProxy@a33ee53
+10-30 07:30:10.710 D/SharedPreferencesPolicy(30897): sWork:[]
+10-30 07:30:10.710 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.711 D/os.permission.PermissionInfo( 1616): checkPermission 10173:android.permission.INTERACT_ACROSS_USERS_FULL:true
+10-30 07:30:10.711 I/os.permission( 1616): Grant permission: android.permission.INTERACT_ACROSS_USERS_FULL to uid: 10173
+10-30 07:30:10.711 I/THubApi ( 3812): isTheMainScreen classname: com.termux.app.TermuxActivity  pkg:com.termux
+10-30 07:30:10.711 I/TranActivityTaskManager( 3812): TranThubActivityTaskManager
+10-30 07:30:10.712 D/CCodecBufferChannel(15070): [c2.android.vorbis.decoder#624] MediaCodec discarded an unknown buffer
+10-30 07:30:10.713 D/CCodecBufferChannel(15070): [c2.android.vorbis.decoder#624] MediaCodec discarded an unknown buffer
+10-30 07:30:10.713 D/CCodecBufferChannel(15070): [c2.android.vorbis.decoder#624] MediaCodec discarded an unknown buffer
+10-30 07:30:10.714 D/SharedPreferencesPolicy(30897): checkFinishers msg.what :119,msg.obj:android.app.ActivityThread$ContextCleanupInfo@70cc489
+10-30 07:30:10.714 D/CCodecBufferChannel(15070): [c2.android.vorbis.decoder#624] MediaCodec discarded an unknown buffer
+10-30 07:30:10.716 E/phonemaster_log(21636): onForegroundActivitiesChanged: 10173  false
+10-30 07:30:10.720 I/BufferQueueDebug(  878): [com.transsion.XOSLauncher/com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher#4700358](this:0xb400007bd18b8408,id:-1,api:0,p:-1,c:878) onDestructor()
+10-30 07:30:10.724 I/tmw_    ( 2294): notifyInputMethodShow: true mFocusOnMultiDisplay: false
+10-30 07:30:10.729 I/hw-BpHwBinder(15070): onLastStrongRef automatically unlinking death recipients
+10-30 07:30:10.731 D/TPMS    ( 3458): getTopPackageName pkgName: com.termux
+10-30 07:30:10.731 D/BufferPoolAccessor2.0(15070): Destruction - bufferpool2 0xec0151a8 cached: 0/0M, 0/0% in use; allocs: 5, 0% recycled; transfers: 0, 0% unfetched
+10-30 07:30:10.731 I/BufferQueueDebug(  878): [com.transsion.XOSLauncher/com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher#4700359](this:0xb400007bd18242c8,id:-1,api:0,p:-1,c:878) onDestructor()
+10-30 07:30:10.731 D/MediaCodec(15070): [0xe10334b0] [c2.android.vorbis.decoder] kWhatReleaseCompleted
+10-30 07:30:10.731 D/MediaCodec(15070): [0xe10334b0] setState: 0
+10-30 07:30:10.732 I/hw-BpHwBinder( 1241): onLastStrongRef automatically unlinking death recipients
+10-30 07:30:10.733 D/BufferPoolAccessor2.0( 1241): Destruction - bufferpool2 0xb400006f453ceec8 cached: 0/0M, 0/0% in use; allocs: 0, 0% recycled; transfers: 0, 0% unfetched
+10-30 07:30:10.733 I/mtkpower@impl(  839): [setMode] type:5, enabled:0
+10-30 07:30:10.733 D/MediaCodec(15070): [0xe10334b0] ~MediaCodec
+10-30 07:30:10.734 I/PowerHalWrapper( 1616): amsBoostStop AMS_BOOST_PACK_SWITCH:true, AMS_BOOST_ACT_SWITCH:false, AMS_BOOST_PROCESS_CREATE:false 
+10-30 07:30:10.734 I/libPowerHal(  839): [unsetGPUFreq] current min:0, max:0; scn_gpu_min:0, scn_gpu_max:-1; scn_gpu_min(HL):-1, scn_gpu_max(HL):-1
+10-30 07:30:10.734 I/libPowerHal(  839): LAUNCH: set gpu opp level: 31
+10-30 07:30:10.734 I/libPowerHal(  839): LAUNCH: set gpu opp level max: 0
+10-30 07:30:10.734 D/BufferPoolAccessor2.0( 1241): Destruction - bufferpool2 0xb400006f453d2648 cached: 0/0M, 0/0% in use; allocs: 0, 0% recycled; transfers: 0, 0% unfetched
+10-30 07:30:10.734 I/libPowerHal(  839): [setGPUFreq] Soft min/max = (31, 0); Hard min/max = (31, 0)
+10-30 07:30:10.734 I/libPowerHal(  839): [setGPUFreq] final min/max = (31, 0)
+10-30 07:30:10.734 I/libPowerHal(  839): LAUNCH: set gpu opp level: 31
+10-30 07:30:10.734 I/libPowerHal(  839): LAUNCH: set gpu opp level max: 0
+10-30 07:30:10.735 I/libPowerHal(  839): [PD] LAUNCH update cmd:300c000 param:0
+10-30 07:30:10.736 I/mtkpower@impl(  839): [mtkPowerHint] hint:22, hold:500, ext:0, ext_hold:0
+10-30 07:30:10.736 D/AppFlingMode(  839): [CheckAppFlingHint] 22 com.termux 90
+10-30 07:30:10.736 D/MediaCodec(15070): flushMediametrics
+10-30 07:30:10.736 D/TranActivityTaskManagerService( 1616): isTheMainScreen, displayId = 0, classname = com.termux.app.TermuxActivity
+10-30 07:30:10.736 D/Game_Utils( 3812): getTopPkgNew = com.termux.app.TermuxActivity, com.termux
+10-30 07:30:10.737 W/Looper  ( 1616): Slow dispatch took 128ms main h=com.android.server.accessibility.AccessibilityManagerService$MainHandler c=<recycled PooledLambda@5e776c> m=0
+10-30 07:30:10.738 E/SoundPool::Sound(15070): doLoad: unable to load sound
+10-30 07:30:10.740 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.740 I/mtkpower_client( 1616): perf_lock_rel, hdl:8924968, tid:3232
+10-30 07:30:10.741 I/mtkpower_client( 1616): perf_cus_lock_hint hint:109, dur:1000
+10-30 07:30:10.741 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000002,0.022525,0.000992, totalTime 0.023520 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:10.741 D/BLASTBufferQueue(15070): [VRI[InputMethod]#37533](f:0,a:1) acquireNextBufferLocked size=1080x1049 mFrameNumber=1 applyTransaction=true mTimestamp=3019413800375277(auto) mPendingTransactions.size=0 graphicBufferId=64725157376293 transform=0
+10-30 07:30:10.741 D/AppFlingMode(  839): [CheckAppFlingHint] 109 com.termux 90
+10-30 07:30:10.743 I/libPowerHal(  839): [setGPUFreq] MTKPOWER_HINT_REMOTE_ANIMA user set gpu freq min:0, max:-1
+10-30 07:30:10.743 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level: 0
+10-30 07:30:10.743 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level max: 0
+10-30 07:30:10.744 I/libPowerHal(  839): [setGPUFreq] Soft min/max = (0, 0); Hard min/max = (31, 0)
+10-30 07:30:10.744 I/libPowerHal(  839): [setGPUFreq] final min/max = (0, 0)
+10-30 07:30:10.744 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level: 0
+10-30 07:30:10.744 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level max: 0
+10-30 07:30:10.744 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:8925005
+10-30 07:30:10.744 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.746 D/VideoAssistantManager( 3812): handlerVideoStart isResume = true  currentPackage =   pkgName = com.transsion.common.smartutils.util.s0$b@9c116cf.packageName
+10-30 07:30:10.746 I/SmartPanel_SmartPanelPresenter1( 3812): hasLoadData true  data size = 8
+10-30 07:30:10.747 D/PanelController( 3812): checkCanShow canShow: true
+10-30 07:30:10.747 D/InsetsController(10115): show(ime(), fromIme=true)
+10-30 07:30:10.748 I/mtkpower_client( 1616): perf_lock_rel, hdl:8925005, tid:3232
+10-30 07:30:10.751 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.752 I/SimpleEventAdapt( 4031): onAppStartEvent get com.transsion.XOSLauncher,start false
+10-30 07:30:10.752 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.753 I/WindowManager( 1616):   onAnimationFinished on win=Window{f3799f8 u0 NavigationBar0}
+10-30 07:30:10.753 D/BufferStateLayer(  878): InputMethod#4700377 setBuffer frameId=1, bufferId=64725157376293 fenceId=202, w= 1080, h=1049
+10-30 07:30:10.753 I/TranActivityManager( 3812): TranThubActivityManager
+10-30 07:30:10.754 I/TranSettings( 3812): TranThubSettings
+10-30 07:30:10.755 D/TranThreePointMenuWindow(23585): [ThreePointMenuMiddle] hideByStatusBar => false
+10-30 07:30:10.755 I/SmartPanel_VideoDataRepository( 3812): checkVideoApp curosr: count = 0
+10-30 07:30:10.756 E/libPowerHal(  839): kswapd0_bind:1, scn:0xb40000759a41efd8
+10-30 07:30:10.757 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{8f2fc86 u0 InputMethod}
+10-30 07:30:10.758 I/libPowerHal(  839): [unsetGPUFreq] current min:0, max:0; scn_gpu_min:0, scn_gpu_max:-1; scn_gpu_min(HL):-1, scn_gpu_max(HL):-1
+10-30 07:30:10.758 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level: 31
+10-30 07:30:10.758 D/TranThreePointMenuWindow(23585): [ThreePointMenuMiddle] hideByStatusBar => false
+10-30 07:30:10.758 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level max: 0
+10-30 07:30:10.758 I/libPowerHal(  839): [setGPUFreq] Soft min/max = (31, 0); Hard min/max = (31, 0)
+10-30 07:30:10.758 I/libPowerHal(  839): [setGPUFreq] final min/max = (31, 0)
+10-30 07:30:10.758 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level: 31
+10-30 07:30:10.758 I/libPowerHal(  839): MTKPOWER_HINT_REMOTE_ANIMA: set gpu opp level max: 0
+10-30 07:30:10.758 D/GameModeHelperService( 1616): onImeWindowVisibleChanged true
+10-30 07:30:10.758 V/TranSecureKeyboardManagerImpl( 1616): mVisible = false , isVisible = true , mNeedShow = false mCurrentUserId: 0
+10-30 07:30:10.760 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:10.768 E/libPowerHal(  839): kswapd0_unbind:0, scn:0xb40000759a41efd8
+10-30 07:30:10.768 I/libPowerHal(  839): [PD] MTKPOWER_HINT_REMOTE_ANIMA update cmd:10000002 param:0
+10-30 07:30:10.773 I/tmw_    ( 2294): notifyInputMethodShow: true mFocusOnMultiDisplay: false
+10-30 07:29:57.725 I/[T500903] Task-Turbo(    0): Task-Turbo: task_turbo_feats is change to 0 successfully
+10-30 07:29:57.770 I/[T101073] [DISP]mtk_disp_set_hrt_bw(    0): no need to set module hrt bw for legacy!
+10-30 07:29:57.770 I/        (    0): [T101073] [DISP]mtk_disp_hrt_mmclk_request_mt6768 layer_num = 40, volt = 700000
+10-30 07:30:10.790 D/SysUI_NavBarView(23585): disableFlag=0
+10-30 07:30:10.824 D/AAL     ( 1229): 10-30 07:30:10.725 BL= 305,ESS= 256, 10-30 07:30:10.748 BL= 306,ESS= 256, 10-30 07:30:10.770 BL= 307,ESS= 256, 10-30 07:30:10.802 BL= 308,ESS= 256, 10-30 07:30:10.824 BL= 309,ESS= 256, 
+10-30 07:30:10.868 E/OemNetd (  807): transmitAppUidToNetwork uid=(0)
+10-30 07:30:10.881 D/mol_a.a(L:46)(16706): handleEventInternal, pkg:inputmethod.latin.perfectkeyboard, cmp:android.inputmethodservice.SoftInputWindow, type:32
+10-30 07:30:10.881 I/TranActivityTaskManager(16706): tran getTopActivityComponent
+10-30 07:30:10.882 I/TranActivityTaskManager(16706): tran getFocusedWinPkgName
+10-30 07:30:10.902 D/SurfaceFlinger(  878): calculateTimeoutTime, triggerInterval = 1 sec + 112588231 nsec
+10-30 07:30:10.904 D/AppFlingMode(  839): [CheckAppFlingHint] 25 com.termux 90
+10-30 07:30:10.905 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:10.905 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:10.906 D/ScreenCapControl(16706): onFingerDown: 2270, 108, 0
+10-30 07:29:57.893 W/        (  572): <I>CTS-Plat Point[0] DOWN: x=170, y=2270
+10-30 07:30:10.908 D/EdgeBackGestureHandler(23585): isWithinTouchRegion: false withinRange:false
+10-30 07:30:10.908 D/SysUI_EdgeBackGestureHandler(23585): Gesture [FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE  edgeLeft:٧٢,edgeRight:٧٢]
+10-30 07:30:10.931 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:10.931 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:10.946 D/AAL     ( 1229): 10-30 07:30:10.846 BL= 310,ESS= 256, 10-30 07:30:10.868 BL= 311,ESS= 256, 10-30 07:30:10.891 BL= 312,ESS= 256, 10-30 07:30:10.913 BL= 313,ESS= 256, 10-30 07:30:10.946 BL= 314,ESS= 256, 
+10-30 07:30:10.957 I/TranActivityTaskManager(16706): tran getFocusedWinPkgName
+10-30 07:30:10.958 I/TranActivityTaskManager(16706): tran getTopActivityComponent
+10-30 07:30:10.960 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:10.962 I/TranActivityTaskManager(16706): tran isIMEShowing
+10-30 07:30:10.962 D/mol_MolService.run(L:134)(16706): ----MolService focused pkg:com.termux, cmp:com.termux.app.TermuxActivity, curType:SCENE_UNKOWN, molAlive:true, asAlive:true, asCrashed:false, imeVis:true, this:com.transsion.mol.service.MolService@293ac19
+10-30 07:30:10.968 D/SurfaceFlinger(  878): [SF client] NEW(0xb400007ae1501790) for (15070:inputmethod.latin.perfectkeyboard)
+10-30 07:30:10.971 D/VRI[PopupWindow:f8256f2](15070): hardware acceleration = true, forceHwAccelerated = false
+10-30 07:30:10.979 I/libPowerHal(  839): [PD] MTKPOWER_HINT_APP_TOUCH update cmd:3408b00 param:0
+10-30 07:29:57.967 W/        (    0): [T100572] <I>CTS-Plat Point[0] UP: x=170, y=2270
+10-30 07:30:10.979 D/InputTransport(15070): Create ARC handle: 0xe1dcfa10
+10-30 07:30:10.980 D/CoreBackPreview( 1616): Window{d66f896 u0 PopupWindow:f8256f2}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@f8e4804, mPriority=0}
+10-30 07:30:10.995 D/SurfaceFlinger(  878): [SF client] NEW(0xb400007ae14f0a10) for (15070:inputmethod.latin.perfectkeyboard)
+10-30 07:30:10.995 D/SharedPreferencesPolicy(30897): checkFinishers msg.what :131,msg.obj:android.app.ActivityThread$ProviderRefCount@7051caf
+10-30 07:30:10.997 D/VRI[]   (15070): hardware acceleration = true, forceHwAccelerated = false
+10-30 07:30:11.004 D/CoreBackPreview( 1616): Window{7120822 u0 inputmethod.latin.perfectkeyboard}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@ca9e070, mPriority=0}
+10-30 07:30:11.005 D/InputTransport(15070): Create ARC handle: 0xe2af0d30
+10-30 07:30:11.014 I/BufferQueueDebug(  878): [PopupWindow:f8256f2#4700380](this:0xb400007bd18fc988,id:-1,api:0,p:-1,c:-1) BufferQueue core=(878:/system/bin/surfaceflinger)
+10-30 07:30:11.026 D/BufferQueueConsumer(15070): [](id:3ade0000929e,api:0,p:-1,c:15070) connect: controlledByApp=false
+10-30 07:29:58.014 I/[T119149] [wlan][19149]halSetFWOwn(    0): (INIT INFO) FW OWN:1, IntSta:0x00000010
+10-30 07:30:11.033 D/BLASTBufferQueue(15070): [VRI[PopupWindow:f8256f2]#37534](f:0,a:1) acquireNextBufferLocked size=248x204 mFrameNumber=1 applyTransaction=true mTimestamp=3019414093121354(auto) mPendingTransactions.size=0 graphicBufferId=64725157376294 transform=0
+10-30 07:30:11.035 W/Parcel  (15070): Expecting binder but got null!
+10-30 07:30:11.041 D/BufferStateLayer(  878): PopupWindow:f8256f2#4700380 setBuffer frameId=1, bufferId=64725157376294 fenceId=195, w= 248, h=204
+10-30 07:30:11.044 I/BufferQueueDebug(  878): [#4700381](this:0xb400007bd182cb78,id:-1,api:0,p:-1,c:-1) BufferQueue core=(878:/system/bin/surfaceflinger)
+10-30 07:30:11.054 D/BufferQueueConsumer(15070): [](id:3ade0000929f,api:0,p:-1,c:15070) connect: controlledByApp=false
+10-30 07:30:11.056 I/config_debug(15070): updateDecorCaptionStatus: {0.85004 418mcc20mnc [ar_EG,en_US] ldrtl sw360dp w360dp h784dp 480dpi nrml long port night finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2460) mAppBounds=Rect(0, 108 - 1080, 2460) mMaxBounds=Rect(0, 0 - 1080, 2460) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mMultiWindowMode=undefined mMultiWindowId=-1 mWindowResiable=-1 mInLargeScreen=-1 mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0 mDisplayUniqueId=0} s.25628 fontWeightAdjustment=0} fromMultiWindow: true
+10-30 07:30:11.066 W/InputManager-JNI( 1616): Input channel object '304856b SnapshotStartingWindow for taskId=4824 (client)' was disposed without first being removed with the input manager!
+10-30 07:30:11.067 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{304856b u0 SnapshotStartingWindow for taskId=4824}
+10-30 07:30:11.068 D/AAL     ( 1229): 10-30 07:30:10.968 BL= 315,ESS= 256, 10-30 07:30:10.990 BL= 316,ESS= 256, 10-30 07:30:11.013 BL= 317,ESS= 256, 10-30 07:30:11.034 BL= 318,ESS= 256, 10-30 07:30:11.068 BL= 319,ESS= 256, 
+10-30 07:30:11.068 D/BLASTBufferQueue(15070): [VRI[]#37535](f:0,a:1) acquireNextBufferLocked size=1218x858 mFrameNumber=1 applyTransaction=true mTimestamp=3019414128535585(auto) mPendingTransactions.size=0 graphicBufferId=64725157376303 transform=0
+10-30 07:30:11.071 W/Parcel  (15070): Expecting binder but got null!
+10-30 07:30:11.073 D/BufferStateLayer(  878): #4700381 setBuffer frameId=1, bufferId=64725157376303 fenceId=364, w= 1218, h=858
+10-30 07:30:11.073 I/mtkpower_client( 1616): perf_cus_lock_hint hint:101, dur:150
+10-30 07:30:11.074 D/AppFlingMode(  839): [CheckAppFlingHint] 101 com.termux 90
+10-30 07:30:11.074 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:8925007
+10-30 07:30:11.080 W/SensorService( 1616): Dropping 1 cached events (984/984) to save 1/1 new events. 99 events previously dropped
+10-30 07:30:11.081 I/libPerfCtl(  839): xgfGetFPS pid:2200 fps:81
+10-30 07:30:11.081 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:11.081 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 90,fg->pid:10115
+10-30 07:30:11.081 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:11.081 I/libPerfCtl(  839): xgfGetFPS pid:10115 fps:32
+10-30 07:30:11.081 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:11.081 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 90,fg->pid:10115
+10-30 07:30:11.081 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:11.081 I/libPowerHal(  839): [updateFPS] pid(10115) : 90 => 60
+10-30 07:30:11.081 I/libPowerHal(  839): [perfNotifyAppState] pack:com.termux, act:com.termux.app.TermuxActivity, state:5, pid:10115, uid:10304, fps:60
+10-30 07:30:11.082 D/View    (15070): [Warning] assignParent to null: this = android.widget.PopupWindow$PopupDecorView{850331c V.E...... R......D 0,0-248,204}
+10-30 07:30:11.082 I/UxUtility(  839): notifyForegroundApp pack:com.termux, uid:10304
+10-30 07:30:11.082 I/TouchUtility(  839): notifyAppState error = NULL
+10-30 07:30:11.082 I/libPerfCtl(  839): xgfGetFPS pid:15070 fps:-1
+10-30 07:30:11.082 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:11.082 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:11.082 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:11.082 I/libPerfCtl(  839): xgfGetFPS pid:22134 fps:-1
+10-30 07:30:11.082 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:11.082 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:11.082 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:11.082 I/libPerfCtl(  839): xgfGetFPS pid:23585 fps:-1
+10-30 07:30:11.082 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:11.082 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:11.082 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:11.082 I/libPerfCtl(  839): xgfGetFPS pid:30897 fps:-1
+10-30 07:30:11.082 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:11.082 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:11.082 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:11.082 D/BLASTBufferQueue(15070): [VRI[PopupWindow:f8256f2]#37534](f:0,a:1) destructor()
+10-30 07:30:11.083 D/BufferQueueConsumer(15070): [VRI[PopupWindow:f8256f2]#37534(BLAST Consumer)37534](id:3ade0000929e,api:0,p:-1,c:15070) disconnect
+10-30 07:30:11.083 I/mtkpower_client( 1616): perf_cus_lock_hint hint:103, dur:1000
+10-30 07:30:11.083 D/AppFlingMode(  839): [CheckAppFlingHint] 103 com.termux 60
+10-30 07:30:11.083 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:0
+10-30 07:30:11.084 W/InputManager-JNI( 1616): Input channel object 'd66f896 PopupWindow:f8256f2 (client)' was disposed without first being removed with the input manager!
+10-30 07:30:11.085 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{d66f896 u0 PopupWindow:f8256f2}
+10-30 07:30:11.090 D/WindowManager( 1616): setParent old=Window{8f2fc86 u0 InputMethod},new=null,this window=Window{d66f896 u0 PopupWindow:f8256f2 EXITING},callers=com.android.server.wm.WindowContainer.removeChild:851 com.android.server.wm.WindowContainer.removeImmediately:907 com.android.server.wm.WindowState.removeImmediately:2693 com.android.server.wm.WindowState.removeIfPossible:2907 com.android.server.wm.WindowState.removeIfPossible:2744 com.android.server.wm.WindowManagerService.removeWindow:2205 
+10-30 07:30:11.091 I/WindowManager( 1616):   onAnimationFinished on win=Window{d66f896 u0 PopupWindow:f8256f2}
+10-30 07:30:11.093 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{7120822 u0 inputmethod.latin.perfectkeyboard}
+10-30 07:30:11.097 I/mtkpower_client( 1616): perf_cus_lock_hint hint:101, dur:150
+10-30 07:30:11.097 D/AppFlingMode(  839): [CheckAppFlingHint] 101 com.termux 60
+10-30 07:30:11.097 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:8925008
+10-30 07:30:11.100 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000001,0.019967,0.002850, totalTime 0.022817 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:11.102 D/InputTransport(15070): Destroy ARC handle: 0xe1dcfa10
+10-30 07:30:11.102 W/WindowManager( 1616): Failed looking up window session=Session{35e97a 15070:u0a10193} callers=com.android.server.wm.WindowManagerService.windowForClientLocked:6240 com.android.server.wm.Session.setOnBackInvokedCallbackInfo:959 android.view.IWindowSession$Stub.onTransact:1209 
+10-30 07:30:11.102 E/WindowManager( 1616): setOnBackInvokedCallback(): No window state for package:inputmethod.latin.perfectkeyboard
+10-30 07:30:11.107 I/mtkpower_client( 1616): perf_cus_lock_hint hint:101, dur:220
+10-30 07:30:11.107 D/AppFlingMode(  839): [CheckAppFlingHint] 101 com.termux 60
+10-30 07:30:11.107 I/BufferQueueDebug(  878): [PopupWindow:f8256f2#4700380](this:0xb400007bd18fc988,id:-1,api:0,p:-1,c:878) onDestructor()
+10-30 07:30:11.108 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:8925009
+10-30 07:30:11.109 W/AccessibilityManagerService( 1616):  wait for adding window timeout: 739204
+10-30 07:30:11.142 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{43a54d8 u0 Toast}
+10-30 07:30:11.142 D/ToastLog(23585): [android.os.Binder@38618ef] Hide toast for [com.android.systemui]
+10-30 07:30:11.161 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:11.179 D/AAL     ( 1229): 10-30 07:30:11.090 BL= 320,ESS= 256, 10-30 07:30:11.112 BL= 321,ESS= 256, 10-30 07:30:11.134 BL= 322,ESS= 256, 10-30 07:30:11.156 BL= 323,ESS= 256, 10-30 07:30:11.179 BL= 324,ESS= 256, 
+10-30 07:30:11.186 I/BufferQueueProducer(  878): [Toast#4700353](this:0xb400007bd17048f8,id:-1,api:0,p:-1,c:878) queueBuffer: fps=7.06 dur=2125.58 max=1960.01 min=10.47
+10-30 07:30:11.225 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925007
+10-30 07:30:11.234 D/mol_a.a(L:46)(16706): handleEventInternal, pkg:inputmethod.latin.perfectkeyboard, cmp:android.app.AlertDialog, type:32
+10-30 07:30:11.234 D/WindowManager( 1616): setParent old=ActivityRecord{1e60bdb u0 com.termux/.app.TermuxActivity} t4824},new=null,this window=Window{304856b u0 SnapshotStartingWindow for taskId=4824},callers=com.android.server.wm.WindowContainer.removeChild:851 com.android.server.wm.ActivityRecord.removeChild:4666 com.android.server.wm.ActivityRecord.removeChild:446 com.android.server.wm.WindowContainer.removeImmediately:907 com.android.server.wm.WindowState.removeImmediately:2693 com.android.server.wm.WindowState.destroySurface:3921 
+10-30 07:30:11.234 I/TranActivityTaskManager(16706): tran getTopActivityComponent
+10-30 07:30:11.237 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925004
+10-30 07:30:11.237 I/libPowerHal(  839): [PD] MTKPOWER_HINT_PACK_SWITCH update cmd:1408300 param:0
+10-30 07:30:11.247 I/WindowManager( 1616):   onAnimationFinished on win=Window{304856b u0 SnapshotStartingWindow for taskId=4824}
+10-30 07:30:11.250 I/libPowerHal(  839): [PD] MTKPOWER_HINT_PACK_SWITCH update cmd:1000000 param:-1
+10-30 07:30:11.250 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925008
+10-30 07:30:11.257 I/TranActivityTaskManager(16706): tran getFocusedWinPkgName
+10-30 07:30:11.262 I/BufferQueueDebug(  878): [SnapshotStartingWindow for taskId=4824#4700367](this:0xb400007bd16b4d38,id:-1,api:0,p:-1,c:878) onDestructor()
+10-30 07:30:11.280 I/hwcomposer(  824): [HWCDisplay] [Display_0 (type:1)] fps:68.971878,dur:1000.41,max:167.58,min:5.21  
+10-30 07:29:58.285 I/[wlan][19149]halSetDriverOwn(19149): (INIT INFO) DRIVER OWN Done[2160 us]
+10-30 07:30:11.310 D/CoreBackPreview( 1616): Window{43a54d8 u0 Toast}: Setting back callback null
+10-30 07:30:11.312 D/AAL     ( 1229): 10-30 07:30:11.213 BL= 325,ESS= 256, 10-30 07:30:11.234 BL= 326,ESS= 256, 10-30 07:30:11.268 BL= 327,ESS= 256, 10-30 07:30:11.289 BL= 328,ESS= 256, 10-30 07:30:11.312 BL= 329,ESS= 256, 
+10-30 07:30:11.319 D/View    (23585): [Warning] assignParent to null: this = android.widget.LinearLayout{305f294 V.E...... ......ID 0,0-216,108}
+10-30 07:30:11.323 W/InputManager-JNI( 1616): Input channel object '43a54d8 Toast (client)' was disposed without first being removed with the input manager!
+10-30 07:30:11.324 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{43a54d8 u0 Toast}
+10-30 07:30:11.327 D/WindowManager( 1616): setParent old=WindowToken{351609f type=2005 android.os.Binder@42bba3e},new=null,this window=Window{43a54d8 u0 Toast},callers=com.android.server.wm.WindowContainer.removeChild:851 com.android.server.wm.WindowContainer.removeImmediately:907 com.android.server.wm.WindowState.removeImmediately:2693 com.android.server.wm.WindowState.removeIfPossible:2907 com.android.server.wm.WindowState.removeIfPossible:2744 com.android.server.wm.WindowManagerService.removeWindow:2205 
+10-30 07:30:11.328 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925009
+10-30 07:30:11.329 I/libPowerHal(  839): [setClusterFreq] MTKPOWER_HINT_LAUNCHER_ANIMA: sysfs_freq set cpu freq: -1 -1 -1 -1 
+10-30 07:30:11.329 D/WindowManager( 1616): setParent old=Leaf:3:12@121269165,new=null,this window=WindowToken{351609f type=2005 android.os.Binder@42bba3e},callers=com.android.server.wm.WindowContainer.removeChild:851 com.android.server.wm.WindowContainer.removeImmediately:907 com.android.server.wm.WindowToken.removeImmediately:353 com.android.server.wm.WindowManagerService.postWindowRemoveCleanupLocked:2251 com.android.server.wm.WindowState.removeImmediately:2735 com.android.server.wm.WindowState.removeIfPossible:2907 
+10-30 07:29:58.319 I/        (    0): [T526300] update cpufreq limit idx min 15---max 0,freq min 500000 ---max 1800000
+10-30 07:29:58.319 I/        (    0): [T526300] update cpufreq limit idx min 15---max 0,freq min 850000 ---max 2000000
+10-30 07:30:11.335 D/BLASTBufferQueue(23585): [VRI[Toast]#50125](f:0,a:1) destructor()
+10-30 07:30:11.336 D/BufferQueueConsumer(23585): [VRI[Toast]#50125(BLAST Consumer)50125](id:5c210000c3f7,api:0,p:-1,c:23585) disconnect
+10-30 07:30:11.337 E/WindowManager( 1616): isFocusOnThunderbackWindow false mFocusMultiWindowId: 276 newFocus: -1 thunderback: false
+10-30 07:30:11.338 W/WindowManager( 1616): Changing focus from Window{9bb1b8f u0 com.termux/com.termux.app.TermuxActivity} to Window{7120822 u0 inputmethod.latin.perfectkeyboard} displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:524 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6395 com.android.server.wm.WindowState.removeIfPossible:2916 com.android.server.wm.WindowState.removeIfPossible:2744 
+10-30 07:30:11.342 D/InputTransport(23585): Destroy ARC handle: 0xb4000074e36b05b0
+10-30 07:30:11.342 E/tran_ihh(  800): Failed to open file /proc/tran_flash_error_record/tran_ihh_cloudctl!
+10-30 07:30:11.343 W/NotificationService( 1616): Toast already killed. pkg=com.android.systemui token=android.os.BinderProxy@9c89691
+10-30 07:30:11.343 I/BufferQueueDebug(  878): [Toast#4700353](this:0xb400007bd17048f8,id:-1,api:0,p:-1,c:878) onDestructor()
+10-30 07:30:11.346 I/WindowManager( 1616):   onAnimationFinished on win=Window{7120822 u0 inputmethod.latin.perfectkeyboard}
+10-30 07:30:11.361 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:11.434 D/AAL     ( 1229): 10-30 07:30:11.333 BL= 330,ESS= 256, 10-30 07:30:11.367 BL= 331,ESS= 256, 10-30 07:30:11.388 BL= 332,ESS= 256, 10-30 07:30:11.411 BL= 333,ESS= 256, 10-30 07:30:11.433 BL= 334,ESS= 256, 
+10-30 07:30:11.443 I/system_server( 1616): Background young concurrent mark compact GC freed 18MB AllocSpace bytes, 187(3804KB) LOS objects, 10% free, 188MB/209MB, paused 2.683ms,9.290ms total 301.016ms
+10-30 07:30:11.450 I/AiAiTextClassifier( 3411): onDestroyTextClassificationSession = TextClassificationSessionId {34abfd0d-550e-44d6-b1b8-3af68107ad74}
+10-30 07:30:11.461 I/BufferQueueProducer(  878): [com.termux/com.termux.app.TermuxActivity#4700373](this:0xb400007bd187c738,id:-1,api:0,p:-1,c:878) queueBuffer: fps=13.91 dur=1006.21 max=597.98 min=10.41
+10-30 07:30:11.469 D/mol_a.a(L:46)(16706): handleEventInternal, pkg:inputmethod.latin.perfectkeyboard, cmp:android.app.AlertDialog, type:32
+10-30 07:30:11.469 I/TranActivityTaskManager(16706): tran getTopActivityComponent
+10-30 07:30:11.470 I/TranActivityTaskManager(16706): tran getFocusedWinPkgName
+10-30 07:30:11.476 W/System  ( 1616): A resource failed to call HardwareBuffer.close. 
+10-30 07:30:11.529 W/AccessibilityManagerService( 1616):  wait for adding window timeout: 948349
+10-30 07:29:58.519 I/[T319148] [wlan][wlan][19148]asicFillCmdTxdInfo(    0): (INIT INFO) TX CMD: ID[0x85] SEQ[203] SET[0] LEN[60]
+10-30 07:29:58.519 I/[T319148] [wlan][wlan][19148]asicFillCmdTxdInfo(    0): (INIT INFO) TX CMD: ID[0x82] SEQ[204] SET[0] LEN[216]
+10-30 07:29:58.519 I/[T319148] [wlan][19148]wlanLinkQualityMonitor(    0): (SW4 INFO) Link Quality: Tx(rate:3900, total:0, retry:33450661299678611, fail:0, RTS fail:0, ACK fail:0), Rx(rate:2340, total:0, dup:30349, error:0), PER(0), Congestion(idle slot:0, diff:0, AwakeDur:0)
+10-30 07:30:11.535 W/adbd    (23403): timed out while waiting for FUNCTIONFS_BIND, trying again
+10-30 07:30:11.535 I/adbd    (23403): UsbFfs: connection terminated: monitor thread finished
+10-30 07:29:58.524 I/[T119149] [wlan][19149]wlanTxCmdDoneCb(    0): (TX INFO) Add command: 00000000bb15c042, nicCmdEventQueryStaStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x85, seq=203
+10-30 07:29:58.524 I/[T119149] [wlan][19149]kalDumpHifStats(    0): (HAL INFO) I[72693719 0] T[3666827 3666827 3666824 / 31542316 29528246 29528246 31542316] R[67962802 / 24451774] T_R[0 0 0 3 0]  R_R[0 0] Tok[0/768] Rfb[2102/2102] txreg[23578184] rxreg[65537534]
+10-30 07:29:58.525 I/[T319148] [wlan][19148]nicRxProcessEventPacket(    0): (RX INFO) Not static config event: id=0xFD, seq=202
+10-30 07:29:58.526 I/[T319148] [wlan][19148]nicGetPendingCmdInfo(    0): (TX INFO) Get command: 00000000bb15c042, nicCmdEventQueryStaStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x85, seq=203
+10-30 07:30:11.561 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:11.566 D/AAL     ( 1229): 10-30 07:30:11.455 BL= 335,ESS= 256, 10-30 07:30:11.477 BL= 336,ESS= 256, 10-30 07:30:11.511 BL= 337,ESS= 256, 10-30 07:30:11.532 BL= 338,ESS= 256, 10-30 07:30:11.566 BL= 339,ESS= 256, 
+10-30 07:30:11.589 I/adbd    (23403): opening control endpoint /dev/usb-ffs/adb/ep0
+10-30 07:29:58.587 W/[T400000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:29:58.587 W/[T400000] [name(    0): spm&][SPM] IdleDram wake up by  R12_AFE_IRQ_MCU_B, timer_out = 5, r13 = 0x84000400, debug_flag = 0x11000 0x0, r12 = 0x100000, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0xf3,  req_sta =  0x2000000, event_reg = 0x30000000, isr = 0x0, raw_ext_sta = 0x40069055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:11.632 D/mol_a.a(L:46)(16706): handleEventInternal, pkg:inputmethod.latin.perfectkeyboard, cmp:android.widget.FrameLayout, type:32
+10-30 07:30:11.632 I/TranActivityTaskManager(16706): tran getTopActivityComponent
+10-30 07:30:11.633 I/TranActivityTaskManager(16706): tran getFocusedWinPkgName
+10-30 07:29:58.626 W/[T500000] [name(    0): spm&][SPM] IdleDram wake up by  R12_SYS_TIMER_EVENT_B, timer_out = 31, r13 = 0xe604152d, debug_flag = 0x11000 0x0, r12 = 0x10000, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0x1f7,  req_sta =  0x20000ea, event_reg = 0x90100000, isr = 0x0, raw_ext_sta = 0x80065055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:11.677 D/AppFlingMode(  839): [CheckAppFlingHint] 25 com.termux 60
+10-30 07:30:11.679 E/libPowerHal(  839): [getCPUFreq] error cid:2, nClusterNum:2
+10-30 07:30:11.680 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:11.680 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:11.680 D/EdgeBackGestureHandler(23585): isWithinTouchRegion: false withinRange:false
+10-30 07:30:11.680 D/SysUI_EdgeBackGestureHandler(23585): Gesture [FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE  edgeLeft:٧٢,edgeRight:٧٢]
+10-30 07:30:11.681 D/ScreenCapControl(16706): onFingerDown: 1976, 108, 0
+10-30 07:30:11.682 I/libPowerHal(  839): [setClusterFreq] mtkpower@1.0-se: sysfs_freq set cpu freq: 1500000 -1 1710000 -1 
+10-30 07:29:58.673 I/        (    0): [T323119] update cpufreq limit idx min 5---max 0,freq min 1710000 ---max 2000000
+10-30 07:29:58.677 W/        (30905): <I>CTS-Core ESD protection work
+10-30 07:30:11.693 I/BufferQueueProducer(  878): [StatusBar#3330866](this:0xb400007bd1654018,id:-1,api:0,p:-1,c:878) queueBuffer: fps=1.26 dur=2387.50 max=2012.91 min=145.35
+10-30 07:30:11.698 D/AAL     ( 1229): 10-30 07:30:11.588 BL= 340,ESS= 256, 10-30 07:30:11.610 BL= 341,ESS= 256, 10-30 07:30:11.658 BL= 342,ESS= 256, 10-30 07:30:11.676 BL= 343,ESS= 256, 10-30 07:30:11.698 BL= 344,ESS= 256, 
+10-30 07:30:11.705 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:11.706 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:11.716 D/TranCellSignalStrengthImpl( 2180): [WCDMA] dbm: -63
+10-30 07:30:11.718 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:11.718 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 2
+10-30 07:30:11.718 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:11.719 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 2
+10-30 07:30:11.729 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:11.729 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:11.730 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:11.730 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:11.731 D/TranAbsListViewAppturboImpl(15070): reportScrollStateChange
+10-30 07:30:11.731 D/TranAppturboServiceImpl(15070): reportScrollStateChange
+10-30 07:30:11.731 D/TranAppturboServiceImpl(15070):  dont support slide jank stats.
+10-30 07:30:11.761 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:11.779 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925010
+10-30 07:30:11.780 I/libPowerHal(  839): [PD] MTKPOWER_HINT_APP_TOUCH update cmd:3408b00 param:0
+10-30 07:29:58.802 W/        (  572): <I>CTS-Plat Point[0] UP: x=418, y=2285
+10-30 07:30:11.814 I/ScrollIdentify(15070): on fling
+10-30 07:30:11.820 D/AAL     ( 1229): 10-30 07:30:11.720 BL= 345,ESS= 256, 10-30 07:30:11.742 BL= 346,ESS= 256, 10-30 07:30:11.764 BL= 347,ESS= 256, 10-30 07:30:11.798 BL= 348,ESS= 256, 10-30 07:30:11.820 BL= 349,ESS= 256, 
+10-30 07:30:11.866 W/AccessibilityManagerService( 1616):  wait for adding window timeout: 947711
+10-30 07:30:11.872 D/Griffin/CleanManager( 1616): dispatch clean index=11
+10-30 07:30:11.874 D/Griffin/IdleClean( 1616): clean coast 2ms
+10-30 07:30:11.883 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925011
+10-30 07:30:11.884 I/libPowerHal(  839): [setClusterFreq] mtkpower@1.0-se: sysfs_freq set cpu freq: -1 -1 -1 -1 
+10-30 07:30:11.884 I/libPowerHal(  839): [PD] mtkpower@1.0-se update cmd:1408300 param:0
+10-30 07:29:58.875 I/        (    0): [T526300] update cpufreq limit idx min 15---max 0,freq min 500000 ---max 1800000
+10-30 07:30:11.920 D/power@timer(  839): [mtkPowerTimer] visRead:0
+10-30 07:30:11.942 D/AAL     ( 1229): 10-30 07:30:11.842 BL= 350,ESS= 256, 10-30 07:30:11.864 BL= 351,ESS= 256, 10-30 07:30:11.887 BL= 352,ESS= 256, 10-30 07:30:11.908 BL= 353,ESS= 256, 10-30 07:30:11.942 BL= 354,ESS= 256, 
+10-30 07:30:11.961 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:11.967 D/mol_a.a(L:46)(16706): handleEventInternal, pkg:com.termux, cmp:com.termux.app.TermuxActivity, type:32
+10-30 07:30:11.967 I/TranActivityTaskManager(16706): tran getTopActivityComponent
+10-30 07:30:11.968 I/TranActivityTaskManager(16706): tran getFocusedWinPkgName
+10-30 07:30:12.015 D/SurfaceFlinger(  878): calculateTimeoutTime, triggerInterval = 1 sec + 198578846 nsec
+10-30 07:30:12.053 D/AAL     ( 1229): 10-30 07:30:11.964 BL= 355,ESS= 256, 10-30 07:30:11.986 BL= 356,ESS= 256, 10-30 07:30:12.008 BL= 357,ESS= 256, 10-30 07:30:12.030 BL= 358,ESS= 256, 10-30 07:30:12.052 BL= 359,ESS= 256, 
+10-30 07:30:12.064 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.075 I/hwcomposer(  824): [HWC] (0) displaySetActiveConfig config:1  
+10-30 07:30:12.081 I/libPerfCtl(  839): xgfGetFPS pid:2200 fps:-1
+10-30 07:30:12.081 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:12.081 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:12.081 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:12.081 I/libPerfCtl(  839): xgfGetFPS pid:10115 fps:97
+10-30 07:30:12.081 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:12.081 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:12.081 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:12.081 I/libPowerHal(  839): [updateFPS] pid(10115) : 60 => 90
+10-30 07:30:12.082 I/libPowerHal(  839): [perfNotifyAppState] pack:com.termux, act:com.termux.app.TermuxActivity, state:5, pid:10115, uid:10304, fps:90
+10-30 07:30:12.082 I/BufferQueueProducer(  878): [#4700381](this:0xb400007bd182cb78,id:-1,api:0,p:-1,c:878) queueBuffer: fps=32.71 dur=1008.74 max=365.02 min=10.77
+10-30 07:30:12.082 I/UxUtility(  839): notifyForegroundApp pack:com.termux, uid:10304
+10-30 07:30:12.082 I/TouchUtility(  839): notifyAppState error = NULL
+10-30 07:30:12.083 I/libPerfCtl(  839): xgfGetFPS pid:15070 fps:92
+10-30 07:30:12.083 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:12.083 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 90,fg->pid:10115
+10-30 07:30:12.083 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:12.083 I/libPerfCtl(  839): xgfGetFPS pid:22134 fps:-1
+10-30 07:30:12.083 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:12.083 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 90,fg->pid:10115
+10-30 07:30:12.083 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:12.083 I/libPerfCtl(  839): xgfGetFPS pid:23585 fps:91
+10-30 07:30:12.083 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:12.083 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 90,fg->pid:10115
+10-30 07:30:12.083 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:12.083 I/libPerfCtl(  839): xgfGetFPS pid:30897 fps:-1
+10-30 07:30:12.083 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:12.083 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 90,fg->pid:10115
+10-30 07:30:12.083 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:12.083 I/DisplayDeviceRepository( 1616): Display device changed: DisplayDeviceInfo{"شاشة مدمجة": uniqueId="local:0", 1080 x 2460, modeId 2, defaultModeId 2, supportedModes [{id=1, width=1080, height=2460, fps=90.0, alternativeRefreshRates=[60.0]}, {id=2, width=1080, height=2460, fps=60.0, alternativeRefreshRates=[90.0]}], colorMode 0, supportedColorModes [0], hdrCapabilities HdrCapabilities{mSupportedHdrTypes=[], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, allmSupported false, gameContentTypeSupported false, density 480, 396.588 x 396.572 dpi, appVsyncOff 2400001, presDeadline 28600000, cutout DisplayCutout{insets=Rect(0, 108 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(468, 0 - 612, 108), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1080 displayHeight=2460 physicalDisplayWidth=1080 physicalDisplayHeight=2460 density={3.0} cutoutSpec={M -24,0 L -24,36 L 24,36 L 24,0 Z @dp} rotation={0} scale={1.0} physicalPixelDisplaySizeRatio={1.0}}}}, touch INTERNAL, rotation 0, type INTERNAL, address {port=0}, deviceProductInfo null, state ON, frameRateOverride , brightnessMinimum 0.0, brightnessMaximum 1.0, brightnessDefault 0.2, FLAG_ALLOWED_TO_BE_DEFAULT_DISPLAY, FLAG_ROTATES_WITH_CONTENT, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, installOrientation 0}
+10-30 07:30:12.085 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000001,0.026986,0.000477, totalTime 0.027464 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:12.087 D/Griffin/DeviceState( 1616): virtualDisplayPackageName :{}
+10-30 07:29:59.076 I/        ( 1073): [DISP]mtk_drm_crtc_mode_check++ from 0 to 1
+10-30 07:29:59.076 I/        ( 1073): [DISP]mtk_crtc_disp_mode_switch_begin++ from 0 to 1
+10-30 07:29:59.076 I/[DISP]mtk_dsi_start_vdo_mode, vid_mode( 1073): 1
+10-30 07:29:59.076 I/[DISP][fps]( 1073): drm_invoke_fps_chg_callbacks,new_fps =60
+10-30 07:29:59.076 I/        ( 1073): [DISP]mtk_crtc_disp_mode_switch_begin--
+10-30 07:29:59.076 I/[DISP]mtk_disp_set_hrt_bw( 1073): no need to set module hrt bw for legacy!
+10-30 07:29:59.076 I/        ( 1073): [DISP]mtk_disp_hrt_mmclk_request_mt6768 layer_num = 40, volt = 700000
+10-30 07:30:12.108 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.124 W/VSyncPredictor(  878): VSyncPredictor::setPeriod current period =16666667
+10-30 07:30:12.132 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{3c5a3a7 u0 Toast}
+10-30 07:30:12.134 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.135 D/AppFlingMode(  839): [CheckAppFlingHint] 25 com.termux 90
+10-30 07:29:59.124 W/        (    0): [T100572] <I>CTS-Plat Point[0] DOWN: x=383, y=2075
+10-30 07:30:12.137 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:12.137 D/EdgeBackGestureHandler(23585): isWithinTouchRegion: false withinRange:false
+10-30 07:30:12.137 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:12.138 D/SysUI_EdgeBackGestureHandler(23585): Gesture [FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE  edgeLeft:٧٢,edgeRight:٧٢]
+10-30 07:30:12.138 D/ScreenCapControl(16706): onFingerDown: 2075, 108, 0
+10-30 07:30:12.161 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:12.164 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:12.164 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:12.166 D/ULogGuard( 1201): Monitoring: 16 threads, 0 requests, 0 time-bombs; 5 guards. ResetFlags = 0x7
+10-30 07:30:12.179 D/AAL     ( 1229): 10-30 07:30:12.085 BL= 360,ESS= 256, 10-30 07:30:12.113 BL= 361,ESS= 256, 10-30 07:30:12.146 BL= 362,ESS= 256, 
+10-30 07:30:12.189 I/libPowerHal(  839): [PD] MTKPOWER_HINT_APP_TOUCH update cmd:3408b00 param:0
+10-30 07:30:12.205 D/Griffin/CleanManager( 1616): dispatch clean index=12
+10-30 07:30:12.207 D/ActivityTaskManager( 1616): getRecentTasksImpl call by 1000 flags = 2, 4 task(s):
+10-30 07:30:12.207 D/ActivityTaskManager( 1616): Recent Task 0: taskId = 4824, comp = null
+10-30 07:30:12.207 D/ActivityTaskManager( 1616): Recent Task 1: taskId = 4830, comp = null
+10-30 07:30:12.207 D/ActivityTaskManager( 1616): Recent Task 2: taskId = 4833, comp = null
+10-30 07:30:12.207 D/ActivityTaskManager( 1616): Recent Task 3: taskId = 4825, comp = null
+10-30 07:30:12.210 W/PackageConfigPersister( 1616): App-specific configuration not found for packageName: com.openai.chatgpt and userId: 0
+10-30 07:30:12.212 D/CoreBackPreview( 1616): Window{7120822 u0 inputmethod.latin.perfectkeyboard}: Setting back callback null
+10-30 07:30:12.222 D/OpenGLRenderer(15070): endAllActiveAnimators on 0xe2babf10 (GridView) with handle 0xe0f0b790
+10-30 07:30:12.222 D/View    (15070): [Warning] assignParent to null: this = DecorView@65ff997[]
+10-30 07:30:12.226 W/InputManager-JNI( 1616): Input channel object '7120822 inputmethod.latin.perfectkeyboard (client)' was disposed without first being removed with the input manager!
+10-30 07:30:12.226 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{7120822 u0 inputmethod.latin.perfectkeyboard}
+10-30 07:30:12.230 E/WindowManager( 1616): isFocusOnThunderbackWindow false mFocusMultiWindowId: 276 newFocus: 0 thunderback: false
+10-30 07:30:12.231 W/WindowManager( 1616): Changing focus from Window{7120822 u0 inputmethod.latin.perfectkeyboard EXITING} to Window{9bb1b8f u0 com.termux/com.termux.app.TermuxActivity} displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:524 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6395 com.android.server.wm.WindowState.setupWindowForRemoveOnExit:2931 com.android.server.wm.WindowState.removeIfPossible:2899 
+10-30 07:30:12.236 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.237 D/BLASTBufferQueue(15070): [VRI[]#37535](f:0,a:3) destructor()
+10-30 07:30:12.237 D/BufferQueueConsumer(15070): [VRI[]#37535(BLAST Consumer)37535](id:3ade0000929f,api:0,p:-1,c:15070) disconnect
+10-30 07:30:12.242 D/InputTransport(15070): Destroy ARC handle: 0xe2af0d30
+10-30 07:30:12.243 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.247 I/mtkpower_client( 1616): perf_cus_lock_hint hint:101, dur:150
+10-30 07:30:12.247 V/WindowManager( 1616): Unknown focus tokens, dropping reportFocusChanged
+10-30 07:30:12.247 D/AppFlingMode(  839): [CheckAppFlingHint] 101 com.termux 90
+10-30 07:30:12.248 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:8925013
+10-30 07:30:12.248 I/libPowerHal(  839): [setClusterFreq] MTKPOWER_HINT_LAUNCHER_ANIMA: sysfs_freq set cpu freq: 1800000 -1 2000000 -1 
+10-30 07:30:12.251 I/mtkpower_client( 1616): perf_cus_lock_hint hint:103, dur:1000
+10-30 07:30:12.251 D/AppFlingMode(  839): [CheckAppFlingHint] 103 com.termux 90
+10-30 07:30:12.251 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:0
+10-30 07:30:12.265 W/OnBackInvokedCallback(10115): OnBackInvokedCallback is not enabled for the application.
+10-30 07:30:12.265 W/OnBackInvokedCallback(10115): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+10-30 07:30:12.282 I/hwcomposer(  824): [HWCDisplay] [Display_0 (type:1)] fps:60.841152,dur:1002.61,max:176.73,min:5.36  
+10-30 07:30:12.360 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:12.360 I/ApiInvoke( 4031): ApiChannel1.2.172: found local channel DataCenter
+10-30 07:30:12.361 I/DataStorageManager( 4031): query type alg_predict_query_record 1576013162750 1578585088300 2147483647,re ,index  0
+10-30 07:30:12.377 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000002,0.039727,0.000051, totalTime 0.039779 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:12.378 D/mol_a.a(L:46)(16706): handleEventInternal, pkg:com.termux, cmp:com.termux.app.TermuxActivity, type:32
+10-30 07:30:12.379 I/TranActivityTaskManager(16706): tran getTopActivityComponent
+10-30 07:30:12.380 I/TranActivityTaskManager(16706): tran getFocusedWinPkgName
+10-30 07:30:12.393 I/ApiInvoke( 4031): ApiChannel1.2.172: found local channel DataCenter
+10-30 07:30:12.394 I/DataStorageManager( 4031): query type alg_predict_query_record 1576013162750 1578585088300 2147483647,re ,index  0
+10-30 07:30:12.399 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925013
+10-30 07:30:12.400 I/libPowerHal(  839): [setClusterFreq] MTKPOWER_HINT_LAUNCHER_ANIMA: sysfs_freq set cpu freq: -1 -1 -1 -1 
+10-30 07:30:12.414 I/WindowManager( 1616):   onAnimationFinished on win=Window{7120822 u0 inputmethod.latin.perfectkeyboard}
+10-30 07:30:12.431 D/WindowManager( 1616): setParent old=Window{8f2fc86 u0 InputMethod},new=null,this window=Window{7120822 u0 inputmethod.latin.perfectkeyboard},callers=com.android.server.wm.WindowContainer.removeChild:851 com.android.server.wm.WindowContainer.removeImmediately:907 com.android.server.wm.WindowState.removeImmediately:2693 com.android.server.wm.WindowState.handleCompleteDeferredRemoval:5626 com.android.server.wm.WindowContainer.handleCompleteDeferredRemoval:1416 com.android.server.wm.WindowState.handleCompleteDeferredRemoval:5628 
+10-30 07:30:12.433 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.442 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.449 I/BufferQueueDebug(  878): [#4700381](this:0xb400007bd182cb78,id:-1,api:0,p:-1,c:878) onDestructor()
+10-30 07:29:59.446 I/[DISP]mtk_disp_set_hrt_bw(31899): no need to set module hrt bw for legacy!
+10-30 07:29:59.446 I/        (31899): [DISP]mtk_disp_hrt_mmclk_request_mt6768 layer_num = 30, volt = 700000
+10-30 07:29:59.474 I/[T119148] [wlan][19148]cnmTimerDoTimeOutCheck(    0): (CNM INFO) timer timeout, timer 00000000576a6dfc func qmHandleReorderBubbleTimeout.cfi_jt [wlan_drv_gen4m]
+10-30 07:30:12.496 D/AAL     ( 1229): 10-30 07:30:12.362 BL= 361,ESS= 256, 10-30 07:30:12.396 BL= 360,ESS= 256, 10-30 07:30:12.429 BL= 359,ESS= 256, 10-30 07:30:12.462 BL= 358,ESS= 256, 10-30 07:30:12.496 BL= 357,ESS= 256, 
+10-30 07:29:59.521 I/[wlan][19148]kalPerMonUpdate(19148): (SW4 INFO) ndevdrp:[0:0:0:2][0:0:0:0][0:0:0:0][0:0:0:0] drv[RM,IL,RI,RT,RM,RW,RA,RB,DT,NS,IB,HS,LS,DD,ME,BD,NI,DR,TE,CE,DN,FE,DE,IE,TME]:74385544,0,66485250,63849537,4294967538,62287869,74477,13672,1635524,37,0,2907,0,30352,0,157981,0,1443485,0,186,1635338,0,0,0,0
+10-30 07:29:59.522 I/[wlan][19148]kalSetPerfReport(19148): (SW4 INFO) Rate[702][0][0][0] RCPI[90][0][0][0]
+10-30 07:29:59.522 I/[wlan][wlan][19148]asicFillCmdTxdInfo(19148): (INIT INFO) TX CMD: ID[0x85] SEQ[206] SET[0] LEN[60]
+10-30 07:29:59.523 I/[wlan][19148]wlanLinkQualityMonitor(19148): (SW4 INFO) Link Quality: Tx(rate:3900, total:0, retry:33450661299678611, fail:0, RTS fail:0, ACK fail:0), Rx(rate:60, total:0, dup:30349, error:0), PER(0), Congestion(idle slot:0, diff:0, AwakeDur:0)
+10-30 07:29:59.524 I/[T419149] [wlan][19149]wlanTxCmdDoneCb(    0): (TX INFO) Add command: 0000000016c42a7c, nicCmdEventQueryStaStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x85, seq=206
+10-30 07:29:59.524 I/[T419149] [wlan][19149]wlanTxCmdDoneCb(    0): (TX INFO) Add command: 00000000bf39f848, nicCmdEventQueryStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x82, seq=207
+10-30 07:29:59.525 I/[T419149] [wlan][19149]kalDumpHifStats(    0): (HAL INFO) I[72693776 0] T[3666830 3666830 3666827 / 31542346 29528268 29528268 31542346] R[67962825 / 24451792] T_R[0 0 0 3 0]  R_R[0 0] Tok[0/768] Rfb[2102/2102] txreg[23578206] rxreg[65537570]
+10-30 07:29:59.525 I/[T519148] [wlan][19148]nicRxProcessEventPacket(    0): (RX INFO) Not static config event: id=0xFD, seq=205
+10-30 07:29:59.525 I/[T519148] [wlan][19148]nicRxProcessEventPacket(    0): (RX INFO) Not static config event: id=0x21, seq=206
+10-30 07:29:59.526 I/[T519148] [wlan][19148]nicGetPendingCmdInfo(    0): (TX INFO) Get command: 0000000016c42a7c, nicCmdEventQueryStaStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x85, seq=206
+10-30 07:30:12.561 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:12.593 W/adbd    (23403): timed out while waiting for FUNCTIONFS_BIND, trying again
+10-30 07:30:12.594 I/adbd    (23403): UsbFfs: connection terminated: monitor thread finished
+10-30 07:29:59.527 I/[T519148] [wlan][19148]nicGetPendingCmdInfo(    0): (TX INFO) Get command: 00000000bf39f848, nicCmdEventQueryStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x82, seq=207
+10-30 07:29:59.583 W/        (  572): <I>CTS-Plat Point[0] DOWN: x=966, y=2240
+10-30 07:30:12.595 D/AppFlingMode(  839): [CheckAppFlingHint] 25 com.termux 90
+10-30 07:30:12.596 E/libPowerHal(  839): [getCPUFreq] error cid:2, nClusterNum:2
+10-30 07:30:12.597 D/EdgeBackGestureHandler(23585): isWithinTouchRegion: false withinRange:false
+10-30 07:30:12.597 D/EdgeBackGestureHandler(23585): isWithinTouchRegion: false withinRange:false
+10-30 07:30:12.597 D/SysUI_EdgeBackGestureHandler(23585): Gesture [FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE  edgeLeft:٧٢,edgeRight:٧٢]
+10-30 07:30:12.598 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:12.598 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:12.598 D/ScreenCapControl(16706): onFingerDown: 2240, 108, 0
+10-30 07:30:12.599 I/libPowerHal(  839): [setClusterFreq] mtkpower@1.0-se: sysfs_freq set cpu freq: 1500000 -1 1710000 -1 
+10-30 07:29:59.590 I/        (26352): update cpufreq limit idx min 2---max 0,freq min 1500000 ---max 1800000
+10-30 07:30:12.609 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:12.609 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 2
+10-30 07:30:12.610 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:12.610 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 2
+10-30 07:30:12.624 I/adbd    (23403): opening control endpoint /dev/usb-ffs/adb/ep0
+10-30 07:29:59.614 I/        (    0): [T323409] read descriptors
+10-30 07:30:12.624 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:12.624 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 2
+10-30 07:29:59.614 I/        (    0): [T323409] read strings
+10-30 07:30:12.626 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:12.626 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:12.626 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:12.626 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:12.634 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:12.634 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:12.635 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:12.635 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:12.642 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:12.642 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:12.660 W/SensorService( 1616): Dropping 1 cached events (984/984) to save 1/1 new events. 199 events previously dropped
+10-30 07:30:12.666 D/SurfaceFlinger(  878): [SF client] NEW(0xb400007ae14fcd30) for (15070:inputmethod.latin.perfectkeyboard)
+10-30 07:30:12.669 D/VRI[PopupWindow:f8256f2](15070): hardware acceleration = true, forceHwAccelerated = false
+10-30 07:30:12.672 I/libPowerHal(  839): [PD] MTKPOWER_HINT_APP_TOUCH update cmd:3408b00 param:0
+10-30 07:30:12.675 D/CoreBackPreview( 1616): Window{905413d u0 PopupWindow:f8256f2}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@2dc8a83, mPriority=0}
+10-30 07:30:12.675 D/InputTransport(15070): Create ARC handle: 0xe0f0b790
+10-30 07:30:12.678 D/AAL     ( 1229): 10-30 07:30:12.529 BL= 356,ESS= 256, 10-30 07:30:12.579 BL= 355,ESS= 256, 10-30 07:30:12.612 BL= 354,ESS= 256, 10-30 07:30:12.645 BL= 353,ESS= 256, 10-30 07:30:12.678 BL= 352,ESS= 256, 
+10-30 07:30:12.679 I/BufferQueueProducer(  878): [InputMethod#4700377](this:0xb400007bd1779508,id:-1,api:0,p:-1,c:878) queueBuffer: fps=1.56 dur=1926.47 max=1627.78 min=66.48
+10-30 07:30:12.683 V/VRI[TermuxActivity](10115): [ANR Warning]Input routeing takes more than 6000ms since ١٩٧٠-٠١-٠١ ٠٣:٠٠:٠٠.٠٠٠, this = com.mediatek.view.impl.ViewDebugManagerImpl@ffc2466
+10-30 07:30:12.683 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$EarlyPostImeInputStage@4a285c1 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٢.٦٨١
+10-30 07:30:12.683 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$SyntheticInputStage@7637554 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٢.٦٨٢
+10-30 07:30:12.683 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$ViewPostImeInputStage@51d0ca7 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٢.٦٨١
+10-30 07:30:12.683 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$NativePostImeInputStage@239f166 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٢.٦٨١
+10-30 07:30:12.684 V/VRI[TermuxActivity](10115): [ANR Warning]Input routeing takes more than 6000ms since ١٩٧٠-٠١-٠١ ٠٣:٠٠:٠٠.٠٠٠, this = com.mediatek.view.impl.ViewDebugManagerImpl@ffc2466
+10-30 07:30:12.684 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$EarlyPostImeInputStage@4a285c1 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٢.٦٨٣
+10-30 07:30:12.684 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$SyntheticInputStage@7637554 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٢.٦٨٣
+10-30 07:30:12.684 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$ViewPostImeInputStage@51d0ca7 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٢.٦٨٣
+10-30 07:30:12.684 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$NativePostImeInputStage@239f166 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٢.٦٨٣
+10-30 07:30:12.683 W/bash    (32086): type=1400 audit(0.0:2359660): avc: granted { execute } for name="adb" dev="dm-60" ino=2971122 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c48,c257,c512,c768 tclass=file app=com.transsion.calculator
+10-30 07:30:12.683 W/bash    (32086): type=1400 audit(0.0:2359661): avc: granted { execute } for name="adb" dev="dm-60" ino=2971122 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c48,c257,c512,c768 tclass=file app=com.transsion.calculator
+10-30 07:30:12.683 W/bash    (32086): type=1400 audit(0.0:2359662): avc: granted { execute_no_trans } for path="/data/data/com.termux/files/usr/bin/adb" dev="dm-60" ino=2971122 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c48,c257,c512,c768 tclass=file app=com.transsion.calculator
+10-30 07:30:12.683 W/adb     (32086): type=1400 audit(0.0:2359663): avc: granted { execute } for path="/data/data/com.termux/files/usr/bin/adb" dev="dm-60" ino=2971122 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c48,c257,c512,c768 tclass=file app=com.transsion.calculator
+10-30 07:30:12.687 I/BufferQueueDebug(  878): [PopupWindow:f8256f2#4700389](this:0xb400007bd18b8408,id:-1,api:0,p:-1,c:-1) BufferQueue core=(878:/system/bin/surfaceflinger)
+10-30 07:30:12.687 W/adb     (32086): type=1400 audit(0.0:2359664): avc: denied { search } for name="tests" dev="dm-60" ino=119 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.transsion.calculator
+10-30 07:30:12.687 W/adb     (32086): type=1400 audit(0.0:2359665): avc: denied { search } for name="tests" dev="dm-60" ino=119 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.transsion.calculator
+10-30 07:30:12.687 W/adb     (32086): type=1400 audit(0.0:2359666): avc: denied { search } for name="tests" dev="dm-60" ino=119 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.transsion.calculator
+10-30 07:30:12.687 W/adb     (32086): type=1400 audit(0.0:2359667): avc: denied { search } for name="tests" dev="dm-60" ino=119 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.transsion.calculator
+10-30 07:30:12.691 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.698 D/BufferQueueConsumer(15070): [](id:3ade000092a0,api:0,p:-1,c:15070) connect: controlledByApp=false
+10-30 07:29:59.687 E/[T632086] audit(    0): rate limit exceeded
+10-30 07:30:12.704 D/BLASTBufferQueue(15070): [VRI[PopupWindow:f8256f2]#37536](f:0,a:1) acquireNextBufferLocked size=270x204 mFrameNumber=1 applyTransaction=true mTimestamp=3019415764288508(auto) mPendingTransactions.size=0 graphicBufferId=64725157376306 transform=0
+10-30 07:30:12.706 W/Parcel  (15070): Expecting binder but got null!
+10-30 07:30:12.712 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.712 D/BufferStateLayer(  878): PopupWindow:f8256f2#4700389 setBuffer frameId=1, bufferId=64725157376306 fenceId=386, w= 270, h=204
+10-30 07:30:12.712 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{905413d u0 PopupWindow:f8256f2}
+10-30 07:30:12.717 D/CoreBackPreview( 1616): Window{905413d u0 PopupWindow:f8256f2}: Setting back callback null
+10-30 07:30:12.719 I/mtkpower_client( 1616): perf_cus_lock_hint hint:103, dur:1000
+10-30 07:30:12.719 D/AppFlingMode(  839): [CheckAppFlingHint] 103 com.termux 90
+10-30 07:30:12.719 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:0
+10-30 07:30:12.722 I/adbd    (23403): adbd service requested 'shell,v2,TERM=xterm-256color,raw:kill -3 31630'
+10-30 07:30:12.723 D/View    (15070): [Warning] assignParent to null: this = android.widget.PopupWindow$PopupDecorView{9a46d9 V.E...... R......D 0,0-270,204}
+10-30 07:30:12.724 D/BLASTBufferQueue(15070): [VRI[PopupWindow:f8256f2]#37536](f:0,a:1) destructor()
+10-30 07:30:12.724 D/BufferQueueConsumer(15070): [VRI[PopupWindow:f8256f2]#37536(BLAST Consumer)37536](id:3ade000092a0,api:0,p:-1,c:15070) disconnect
+10-30 07:30:12.725 W/InputManager-JNI( 1616): Input channel object '905413d PopupWindow:f8256f2 (client)' was disposed without first being removed with the input manager!
+10-30 07:30:12.725 I/WindowManager( 1616):   isAnimating=true  okToAnimate=true  win=Window{905413d u0 PopupWindow:f8256f2}
+10-30 07:30:12.729 I/mtkpower_client( 1616): perf_cus_lock_hint hint:101, dur:70
+10-30 07:30:12.729 D/AppFlingMode(  839): [CheckAppFlingHint] 101 com.termux 90
+10-30 07:30:12.729 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.729 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:8925016
+10-30 07:30:12.729 I/mtkpower_client( 1616): perf_cus_lock_hint hint:101, dur:70
+10-30 07:30:12.729 D/AppFlingMode(  839): [CheckAppFlingHint] 101 com.termux 90
+10-30 07:30:12.730 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:8925017
+10-30 07:30:12.730 I/BufferQueueProducer(  878): [com.termux/com.termux.app.TermuxActivity#4700373](this:0xb400007bd187c738,id:-1,api:0,p:-1,c:878) queueBuffer: fps=29.94 dur=1269.08 max=353.96 min=9.34
+10-30 07:30:12.730 I/libPowerHal(  839): [setClusterFreq] MTKPOWER_HINT_LAUNCHER_ANIMA: sysfs_freq set cpu freq: 1800000 -1 2000000 -1 
+10-30 07:30:12.733 D/InputTransport(15070): Destroy ARC handle: 0xe0f0b790
+10-30 07:30:12.734 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.760 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:12.800 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925015
+10-30 07:30:12.800 I/libPowerHal(  839): [PD] mtkpower@1.0-se update cmd:1408300 param:0
+10-30 07:30:12.801 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925016
+10-30 07:30:12.802 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925017
+10-30 07:30:12.803 I/libPowerHal(  839): [setClusterFreq] MTKPOWER_HINT_LAUNCHER_ANIMA: sysfs_freq set cpu freq: -1 -1 -1 -1 
+10-30 07:30:12.815 I/WindowManager( 1616):   onAnimationFinished on win=Window{905413d u0 PopupWindow:f8256f2}
+10-30 07:30:12.816 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.830 D/WindowManager( 1616): setParent old=Window{8f2fc86 u0 InputMethod},new=null,this window=Window{905413d u0 PopupWindow:f8256f2},callers=com.android.server.wm.WindowContainer.removeChild:851 com.android.server.wm.WindowContainer.removeImmediately:907 com.android.server.wm.WindowState.removeImmediately:2693 com.android.server.wm.WindowState.handleCompleteDeferredRemoval:5626 com.android.server.wm.WindowContainer.handleCompleteDeferredRemoval:1416 com.android.server.wm.WindowState.handleCompleteDeferredRemoval:5628 
+10-30 07:30:12.831 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.836 I/BufferQueueDebug(  878): [PopupWindow:f8256f2#4700389](this:0xb400007bd18b8408,id:-1,api:0,p:-1,c:878) onDestructor()
+10-30 07:30:12.837 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:12.894 D/AAL     ( 1229): 10-30 07:30:12.711 BL= 351,ESS= 256, 10-30 07:30:12.745 BL= 350,ESS= 256, 10-30 07:30:12.795 BL= 349,ESS= 256, 10-30 07:30:12.828 BL= 348,ESS= 256, 
+10-30 07:30:12.961 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:13.010 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{43a54d8 u0 Toast}
+10-30 07:30:13.013 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:13.082 I/libPerfCtl(  839): xgfGetFPS pid:2200 fps:-1
+10-30 07:30:13.082 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:13.082 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 90,fg->pid:10115
+10-30 07:30:13.082 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:13.082 I/libPerfCtl(  839): xgfGetFPS pid:10115 fps:44
+10-30 07:30:13.082 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:13.082 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 90,fg->pid:10115
+10-30 07:30:13.082 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:13.082 I/libPowerHal(  839): [updateFPS] pid(10115) : 90 => 60
+10-30 07:30:13.083 I/libPowerHal(  839): [perfNotifyAppState] pack:com.termux, act:com.termux.app.TermuxActivity, state:5, pid:10115, uid:10304, fps:60
+10-30 07:30:13.084 I/UxUtility(  839): notifyForegroundApp pack:com.termux, uid:10304
+10-30 07:30:13.084 I/TouchUtility(  839): notifyAppState error = NULL
+10-30 07:30:13.084 I/libPerfCtl(  839): xgfGetFPS pid:15070 fps:51
+10-30 07:30:13.084 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:13.085 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:13.085 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:13.085 I/libPerfCtl(  839): xgfGetFPS pid:22134 fps:-1
+10-30 07:30:13.085 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:13.085 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:13.085 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:13.085 I/libPerfCtl(  839): xgfGetFPS pid:23585 fps:-1
+10-30 07:30:13.085 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:13.085 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:13.085 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:13.085 I/libPerfCtl(  839): xgfGetFPS pid:30897 fps:-1
+10-30 07:30:13.085 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:13.085 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:13.085 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:00.087 W/        (    0): [name:spm&]Power/swap op_cond = 0x1
+10-30 07:30:00.087 W/        (    0): [name:spm&][SPM] IdleDram wake up by  R12_AFE_IRQ_MCU_B, timer_out = 23, r13 = 0xe604052c, debug_flag = 0x11000 0x0, r12 = 0x100000, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0x1f3,  req_sta =  0x20000e8, event_reg = 0x90100000, isr = 0x0, raw_ext_sta = 0x80069055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:13.101 W/SensorService( 1616): Dropping 1 cached events (984/984) to save 1/1 new events. 100 events previously dropped
+10-30 07:30:00.107 W/[T500000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:00.107 W/[T500000] [name(    0): spm&][SPM] IdleDram wake up by  R12_AFE_IRQ_MCU_B, timer_out = 7, r13 = 0xe400152c, debug_flag = 0x11000 0x0, r12 = 0x100000, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0xf3,  req_sta =  0x20000ea, event_reg = 0x30000000, isr = 0x0, raw_ext_sta = 0x80069055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:13.161 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:13.201 W/AccessibilityManagerService( 1616):  wait for adding window timeout: 948351
+10-30 07:30:13.213 I/BaseFilesVerify( 1616): Base File verify start
+10-30 07:30:13.214 W/BaseFilesVerify( 1616): 4824_task.xmlis not in fileProtect list,can not protect this file
+10-30 07:30:13.214 D/SurfaceFlinger(  878): calculateTimeoutTime, triggerInterval = 1 sec + 17818846 nsec
+10-30 07:30:13.304 D/mol_a.a(L:46)(16706): handleEventInternal, pkg:inputmethod.latin.perfectkeyboard, cmp:android.widget.FrameLayout, type:32
+10-30 07:30:13.304 I/TranActivityTaskManager(16706): tran getTopActivityComponent
+10-30 07:30:13.306 I/TranActivityTaskManager(16706): tran getFocusedWinPkgName
+10-30 07:30:00.298 W/[T300000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:00.298 W/[T300000] [name(    0): spm&][SPM] IdleDram wake up by  R12_SYS_TIMER_EVENT_B, timer_out = 20, r13 = 0x6040000, debug_flag = 0x11300 0x0, r12 = 0x10001, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0x1f7,  req_sta =  0x2000000, event_reg = 0x90100000, isr = 0x0, raw_ext_sta = 0x4006a055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:00.307 W/        (    0): [name:spm&][SPM] IdleDram wake up by  R12_AFE_IRQ_MCU_B, timer_out = 31, r13 = 0xa6000400, debug_flag = 0x11000 0x0, r12 = 0x100000, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0x1f7,  req_sta =  0x2000000, event_reg = 0x90100000, isr = 0x0, raw_ext_sta = 0x40069055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:13.361 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:00.367 W/[T300000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:00.367 W/[T300000] [name(    0): spm&][SPM] IdleDram wake up by  R12_AFE_IRQ_MCU_B, timer_out = 4, r13 = 0xc400152c, debug_flag = 0x11000 0x0, r12 = 0x100000, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0x1f7,  req_sta =  0x20000ea, event_reg = 0x30000000, isr = 0x0, raw_ext_sta = 0x80069055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:13.383 D/AppFlingMode(  839): [CheckAppFlingHint] 25 com.termux 60
+10-30 07:30:13.384 E/libPowerHal(  839): [getCPUFreq] error cid:2, nClusterNum:2
+10-30 07:30:13.385 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:13.386 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:13.386 D/EdgeBackGestureHandler(23585): isWithinTouchRegion: false withinRange:false
+10-30 07:30:13.386 D/EdgeBackGestureHandler(23585): isWithinTouchRegion: false withinRange:false
+10-30 07:30:13.386 D/SysUI_EdgeBackGestureHandler(23585): Gesture [FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE  edgeLeft:٧٢,edgeRight:٧٢]
+10-30 07:30:13.386 D/ScreenCapControl(16706): onFingerDown: 2221, 108, 0
+10-30 07:30:13.387 I/libPowerHal(  839): [setClusterFreq] mtkpower@1.0-se: sysfs_freq set cpu freq: 1500000 -1 1710000 -1 
+10-30 07:30:00.387 W/[T100000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:00.387 W/[T100000] [name(    0): spm&][SPM] IdleDram wake up by  R12_EINT_EVENT_B, timer_out = 30, r13 = 0x86040400, debug_flag = 0x11000 0x0, r12 = 0x40, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0xf3,  req_sta =  0x2000000, event_reg = 0x90100000, isr = 0x0, raw_ext_sta = 0x40069055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:13.412 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:13.412 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:13.413 I/WifiHAL (20406): Get link layer stats
+10-30 07:30:13.413 I/WifiHAL (20406): GetLinkStatsCommand::create
+10-30 07:30:13.413 D/android.hardware.wifi@1.0-service-lazy(20406): WifiRequest::create vendor command to iface 37, vendor_id=0x1a11, subcmd=0x1200, res=0
+10-30 07:30:13.413 I/android.hardware.wifi@1.0-service-lazy(20406): WifiCommand::requestResponse err=-14
+10-30 07:30:13.413 I/WifiHAL (20406): wifi_get_link_stats: result=-1
+10-30 07:30:13.414 E/WifiVendorHal( 1616): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1176) failed {.code = ERROR_UNKNOWN, .description = unknown}
+10-30 07:30:00.403 I/[wlan][20406]mtk_cfg80211_vendor_llstats_get_info(20406): (REQ ERROR) EMI mapping not done
+10-30 07:30:00.408 I/[wlan][19149]halSetDriverOwn(19149): (INIT INFO) DRIVER OWN Done[3182 us]
+10-30 07:30:00.409 I/[wlan][19149]wlanTxCmdDoneCb(19149): (TX INFO) Add command: 00000000995710be, nicCmdEventQueryLinkSpeedEx.cfi_jt [wlan_drv_gen4m], cmd=0x81, seq=208
+10-30 07:30:00.411 I/[T419148] [wlan][19148]nicUpdateLinkQuality(    0): (RLM INFO) Rssi=-65, NewRssi=-65
+10-30 07:30:00.411 I/[T419148] [wlan][19148]nicGetPendingCmdInfo(    0): (TX INFO) Get command: 00000000995710be, nicCmdEventQueryLinkSpeedEx.cfi_jt [wlan_drv_gen4m], cmd=0x81, seq=208
+10-30 07:30:00.411 I/[T419148] [wlan][19148]connac_get_rx_rate_info(    0): (SW4 ERROR) prStaRecOfAP is null
+10-30 07:30:00.413 I/[T301169] [wlan][1169]mtk_cfg80211_get_station(    0): (REQ INFO) link speed=3900/3510, bw=0/4, rssi=-65, BSSID:[c0:25:**:**:**:5b],TxFail=0, TxTimeOut=0, TxOK=162679, RxOK=370145, FcsErr=7
+10-30 07:30:13.439 I/libPowerHal(  839): [PD] MTKPOWER_HINT_APP_TOUCH update cmd:3408b00 param:0
+10-30 07:30:00.427 W/        (  572): <I>CTS-Plat Point[0] UP: x=143, y=2221
+10-30 07:30:00.434 I/[T319149] [wlan][19149]halSetFWOwn(    0): (INIT INFO) FW OWN:1, IntSta:0x00080000
+10-30 07:30:13.449 D/SurfaceFlinger(  878): [SF client] NEW(0xb400007ae14f7770) for (15070:inputmethod.latin.perfectkeyboard)
+10-30 07:30:13.451 D/VRI[]   (15070): hardware acceleration = true, forceHwAccelerated = false
+10-30 07:30:13.454 E/WindowManager( 1616): isFocusOnThunderbackWindow false mFocusMultiWindowId: 276 newFocus: -1 thunderback: false
+10-30 07:30:13.454 W/WindowManager( 1616): Changing focus from Window{9bb1b8f u0 com.termux/com.termux.app.TermuxActivity} to Window{6922b56 u0 inputmethod.latin.perfectkeyboard} displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:524 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6395 com.android.server.wm.WindowManagerService.addWindow:2005 com.android.server.wm.Session.addToDisplayAsUser:225 
+10-30 07:30:13.459 D/CoreBackPreview( 1616): Window{6922b56 u0 inputmethod.latin.perfectkeyboard}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@19da6e2, mPriority=0}
+10-30 07:30:13.460 D/InputTransport(15070): Create ARC handle: 0xdf872010
+10-30 07:30:13.462 I/hwcomposer(  824): [HWCDisplay] [Display_0 (type:1)] fps:18.658442,dur:1179.09,max:610.83,min:11.44  
+10-30 07:30:13.476 I/BufferQueueDebug(  878): [#4700394](this:0xb400007bd17048f8,id:-1,api:0,p:-1,c:-1) BufferQueue core=(878:/system/bin/surfaceflinger)
+10-30 07:30:13.479 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:13.490 D/BufferQueueConsumer(15070): [](id:3ade000092a1,api:0,p:-1,c:15070) connect: controlledByApp=false
+10-30 07:30:13.491 I/config_debug(15070): updateDecorCaptionStatus: {0.85004 418mcc20mnc [ar_EG,en_US] ldrtl sw360dp w360dp h784dp 480dpi nrml long port night finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2460) mAppBounds=Rect(0, 108 - 1080, 2460) mMaxBounds=Rect(0, 0 - 1080, 2460) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mMultiWindowMode=undefined mMultiWindowId=-1 mWindowResiable=-1 mInLargeScreen=-1 mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0 mDisplayUniqueId=0} s.25628 fontWeightAdjustment=0} fromMultiWindow: true
+10-30 07:30:13.501 D/BLASTBufferQueue(15070): [VRI[]#37537](f:0,a:1) acquireNextBufferLocked size=1218x858 mFrameNumber=1 applyTransaction=true mTimestamp=3019416561287893(auto) mPendingTransactions.size=0 graphicBufferId=64725157376314 transform=0
+10-30 07:30:13.502 W/Parcel  (15070): Expecting binder but got null!
+10-30 07:30:13.505 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:13.506 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{6922b56 u0 inputmethod.latin.perfectkeyboard}
+10-30 07:30:13.511 D/BufferStateLayer(  878): #4700394 setBuffer frameId=1, bufferId=64725157376314 fenceId=436, w= 1218, h=858
+10-30 07:30:13.516 I/mtkpower_client( 1616): perf_cus_lock_hint hint:103, dur:1000
+10-30 07:30:13.517 D/AppFlingMode(  839): [CheckAppFlingHint] 103 com.termux 60
+10-30 07:30:13.517 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:0
+10-30 07:30:13.519 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:13.529 I/mtkpower_client( 1616): perf_cus_lock_hint hint:101, dur:220
+10-30 07:30:13.529 D/AppFlingMode(  839): [CheckAppFlingHint] 101 com.termux 60
+10-30 07:30:13.529 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:8925020
+10-30 07:30:13.530 I/libPowerHal(  839): [setClusterFreq] MTKPOWER_HINT_LAUNCHER_ANIMA: sysfs_freq set cpu freq: 1800000 -1 2000000 -1 
+10-30 07:30:00.520 I/        (    0): [T416755] update cpufreq limit idx min 0---max 0,freq min 1800000 ---max 1800000
+10-30 07:30:00.520 I/        (    0): [T416755] update cpufreq limit idx min 0---max 0,freq min 2000000 ---max 2000000
+10-30 07:30:00.533 I/[T119148] [wlan][19148]kalPerMonUpdate(    0): (SW4 INFO) <1012ms> Tput: 0(0.000mbps) [0:0:0:0][0:0:0:0][0:0:0:0][0:0:0:0] Pending:0/256 [0:0:0:0][0:0:0:0][0:0:0:0][0:0:0:0] Used:0/768/256 [0][0][0][0][0] LQ[0:0:0] lv:0 th:3 fg:0x9 Mo:[0:0:0:0] TxDp[ST:BS:FO:QM:DP]:1840:0:0:0:117825
+10-30 07:30:00.533 I/[T119148] [wlan][19148]kalPerMonUpdate(    0): (SW4 INFO) ndevdrp:[0:0:0:2][0:0:0:0][0:0:0:0][0:0:0:0] drv[RM,IL,RI,RT,RM,RW,RA,RB,DT,NS,IB,HS,LS,DD,ME,BD,NI,DR,TE,CE,DN,FE,DE,IE,TME]:74385550,0,66485250,63849537,4294967538,62287869,74477,13672,1635524,37,0,2907,0,30352,0,157981,0,1443485,0,186,1635338,0,0,0,0
+10-30 07:30:00.533 I/[T119148] [wlan][19148]cnmTimerDoTimeOutCheck(    0): (CNM INFO) timer timeout, timer 000000009e25d3f5 func kalPerMonHandler.cfi_jt [wlan_drv_gen4m]
+10-30 07:30:00.538 I/[T319149] [wlan][19149]wlanTxCmdDoneCb(    0): (TX INFO) Add command: 00000000831c0b94, nicCmdEventQueryStaStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x85, seq=209
+10-30 07:30:00.538 I/[T319149] [wlan][19149]kalDumpHifStats(    0): (HAL INFO) I[72693781 0] T[3666833 3666833 3666831 / 31542346 29528268 29528268 31542346] R[67962825 / 24451798] T_R[0 0 0 2 0]  R_R[0 0] Tok[0/768] Rfb[2102/2102] txreg[23578206] rxreg[65537575]
+10-30 07:30:00.540 I/[T119148] [wlan][19148]nicGetPendingCmdInfo(    0): (TX INFO) Get command: 00000000831c0b94, nicCmdEventQueryStaStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x85, seq=209
+10-30 07:30:13.557 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000001,0.039592,0.000068, totalTime 0.039661 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:13.560 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:00.540 I/[T119148] [wlan][19148]nicGetPendingCmdInfo(    0): (TX INFO) Get command: 000000007702a092, nicCmdEventQueryStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x82, seq=210
+10-30 07:30:00.560 I/[T101073] [DISP]mtk_disp_set_hrt_bw(    0): no need to set module hrt bw for legacy!
+10-30 07:30:00.560 I/        (    0): [T101073] [DISP]mtk_disp_hrt_mmclk_request_mt6768 layer_num = 40, volt = 700000
+10-30 07:30:00.562 I/[T419149] [wlan][19149]halSetFWOwn(    0): (INIT INFO) FW OWN:1, IntSta:0x00080000
+10-30 07:30:13.587 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925019
+10-30 07:30:13.587 I/libPowerHal(  839): [PD] mtkpower@1.0-se update cmd:1408300 param:0
+10-30 07:30:13.626 W/adbd    (23403): timed out while waiting for FUNCTIONFS_BIND, trying again
+10-30 07:30:13.626 I/adbd    (23403): UsbFfs: connection terminated: monitor thread finished
+10-30 07:30:13.637 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000001,0.039892,0.000058, totalTime 0.039951 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:13.667 D/mol_a.a(L:46)(16706): handleEventInternal, pkg:inputmethod.latin.perfectkeyboard, cmp:android.app.AlertDialog, type:32
+10-30 07:30:13.667 I/TranActivityTaskManager(16706): tran getTopActivityComponent
+10-30 07:30:13.668 I/TranActivityTaskManager(16706): tran getFocusedWinPkgName
+10-30 07:30:13.681 I/adbd    (23403): opening control endpoint /dev/usb-ffs/adb/ep0
+10-30 07:30:00.671 I/        (    0): [T323409] read descriptors
+10-30 07:30:00.671 I/        (    0): [T323409] read strings
+10-30 07:30:00.672 I/[T300001] init(    0): processing action (sys.usb.ffs.ready=1) from (/vendor/etc/init/hw/init.mt6768.usb.rc:785)
+10-30 07:30:13.693 I/BufferQueueProducer(  878): [StatusBar#3330866](this:0xb400007bd1654018,id:-1,api:0,p:-1,c:878) queueBuffer: fps=0.50 dur=2000.50 max=2000.50 min=2000.50
+10-30 07:30:00.697 W/        (    0): [T131899] <I>CTS-Core ESD protection work
+10-30 07:30:13.750 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925020
+10-30 07:30:13.750 I/libPowerHal(  839): [setClusterFreq] MTKPOWER_HINT_LAUNCHER_ANIMA: sysfs_freq set cpu freq: -1 -1 -1 -1 
+10-30 07:30:00.740 I/        (26352): update cpufreq limit idx min 15---max 0,freq min 500000 ---max 1800000
+10-30 07:30:00.740 I/        (26352): update cpufreq limit idx min 15---max 0,freq min 850000 ---max 2000000
+10-30 07:30:13.760 D/AAL     ( 1229): 10-30 07:30:13.609 BL= 349,ESS= 256, 10-30 07:30:13.643 BL= 350,ESS= 256, 10-30 07:30:13.693 BL= 351,ESS= 256, 10-30 07:30:13.726 BL= 352,ESS= 256, 10-30 07:30:13.760 BL= 353,ESS= 256, 
+10-30 07:30:13.761 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:13.762 I/WindowManager( 1616):   onAnimationFinished on win=Window{6922b56 u0 inputmethod.latin.perfectkeyboard}
+10-30 07:30:13.763 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:13.781 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:13.833 D/AppFlingMode(  839): [CheckAppFlingHint] 25 com.termux 60
+10-30 07:30:13.835 E/libPowerHal(  839): [getCPUFreq] error cid:2, nClusterNum:2
+10-30 07:30:13.836 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:13.835 D/EdgeBackGestureHandler(23585): isWithinTouchRegion: false withinRange:false
+10-30 07:30:13.836 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:13.836 D/SysUI_EdgeBackGestureHandler(23585): Gesture [FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE  edgeLeft:٧٢,edgeRight:٧٢]
+10-30 07:30:13.837 I/libPowerHal(  839): [setClusterFreq] mtkpower@1.0-se: sysfs_freq set cpu freq: 1500000 -1 1710000 -1 
+10-30 07:30:13.838 D/ScreenCapControl(16706): onFingerDown: 1958, 108, 0
+10-30 07:30:00.832 W/[T300000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:00.833 W/[T300000] [name(    0): spm&][SPM] IdleDram wake up by  R12_EINT_EVENT_B, timer_out = 30, r13 = 0x86046400, debug_flag = 0x11300 0x0, r12 = 0x40, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0xf3,  req_sta =  0x2000400, event_reg = 0x90100000, isr = 0x0, raw_ext_sta = 0x40059055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:13.861 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:13.861 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:00.863 W/[T500000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:00.863 W/[T500000] [name(    0): spm&][SPM] IdleDram wake up by  R12_EINT_EVENT_B, timer_out = 4, r13 = 0x6040000, debug_flag = 0x11000 0x0, r12 = 0x40, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0x1f7,  req_sta =  0x2000000, event_reg = 0x30000000, isr = 0x0, raw_ext_sta = 0x4006a055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:00.874 W/        (    0): [name:spm&]Power/swap op_cond = 0x1
+10-30 07:30:13.887 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:00.874 W/        (    0): [name:spm&][SPM] IdleDram wake up by  R12_EINT_EVENT_B, timer_out = 6, r13 = 0x86000400, debug_flag = 0x11000 0x0, r12 = 0x40, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0xf3,  req_sta =  0x2000000, event_reg = 0x30000000, isr = 0x0, raw_ext_sta = 0x40069055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:13.887 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:13.890 D/TranAbsListViewAppturboImpl(15070): reportScrollStateChange
+10-30 07:30:13.890 D/TranAppturboServiceImpl(15070): reportScrollStateChange
+10-30 07:30:13.890 D/TranAppturboServiceImpl(15070):  dont support slide jank stats.
+10-30 07:30:13.935 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925021
+10-30 07:30:13.936 I/libPowerHal(  839): [PD] MTKPOWER_HINT_APP_TOUCH update cmd:3408b00 param:0
+10-30 07:30:13.942 D/AAL     ( 1229): 10-30 07:30:13.793 BL= 354,ESS= 256, 10-30 07:30:13.826 BL= 355,ESS= 256, 10-30 07:30:13.859 BL= 356,ESS= 256, 10-30 07:30:13.909 BL= 357,ESS= 256, 10-30 07:30:13.942 BL= 358,ESS= 256, 
+10-30 07:30:13.960 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:14.038 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925022
+10-30 07:30:14.039 I/libPowerHal(  839): [setClusterFreq] mtkpower@1.0-se: sysfs_freq set cpu freq: -1 -1 -1 -1 
+10-30 07:30:14.039 I/libPowerHal(  839): [PD] mtkpower@1.0-se update cmd:1408300 param:0
+10-30 07:30:01.030 I/        (    0): [T213169] update cpufreq limit idx min 15---max 0,freq min 500000 ---max 1800000
+10-30 07:30:01.030 I/        (    0): [T213169] update cpufreq limit idx min 15---max 0,freq min 850000 ---max 2000000
+10-30 07:30:14.082 I/libPerfCtl(  839): xgfGetFPS pid:2200 fps:-1
+10-30 07:30:14.082 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:14.082 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:14.082 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:14.082 I/libPerfCtl(  839): xgfGetFPS pid:10115 fps:59
+10-30 07:30:14.082 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:14.082 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:14.082 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:14.082 I/libPerfCtl(  839): xgfGetFPS pid:15070 fps:52
+10-30 07:30:14.082 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:14.082 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:14.082 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:14.083 I/libPerfCtl(  839): xgfGetFPS pid:22134 fps:-1
+10-30 07:30:14.083 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:14.083 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:14.083 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:14.083 I/libPerfCtl(  839): xgfGetFPS pid:23585 fps:-1
+10-30 07:30:14.083 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:14.083 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:14.083 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:14.083 I/libPerfCtl(  839): xgfGetFPS pid:30897 fps:-1
+10-30 07:30:14.083 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:14.083 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:14.083 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:14.108 D/AAL     ( 1229): 10-30 07:30:13.975 BL= 359,ESS= 256, 10-30 07:30:14.009 BL= 360,ESS= 256, 10-30 07:30:14.042 BL= 361,ESS= 256, 10-30 07:30:14.075 BL= 362,ESS= 256, 
+10-30 07:30:14.161 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:01.214 W/[T400000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:01.214 W/[T400000] [name(    0): spm&][SPM] IdleDram wake up by  R12_EINT_EVENT_B, timer_out = 6, r13 = 0x26040000, debug_flag = 0x11000 0x0, r12 = 0x40, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0x1f7,  req_sta =  0x2000000, event_reg = 0x30000000, isr = 0x0, raw_ext_sta = 0x4006a055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:14.238 I/ScrollIdentify(15070): on fling
+10-30 07:30:01.347 W/        (    0): [name:spm&]Power/swap op_cond = 0x1
+10-30 07:30:14.361 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:14.463 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000002,0.025650,0.000097, totalTime 0.025750 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:14.476 I/hwcomposer(  824): [HWCDisplay] [Display_0 (type:1)] fps:31.529417,dur:1014.93,max:251.06,min:11.31  
+10-30 07:30:14.524 I/BufferQueueProducer(  878): [#4700394](this:0xb400007bd17048f8,id:-1,api:0,p:-1,c:878) queueBuffer: fps=17.76 dur=1013.45 max=316.28 min=15.78
+10-30 07:30:14.561 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:01.559 I/[wlan][19148]wlanLinkQualityMonitor(19148): (SW4 INFO) Link Quality: Tx(rate:3900, total:0, retry:33450661299678611, fail:0, RTS fail:0, ACK fail:0), Rx(rate:3510, total:0, dup:30349, error:0), PER(0), Congestion(idle slot:0, diff:0, AwakeDur:0)
+10-30 07:30:01.562 I/[wlan][19149]halSetDriverOwn(19149): (INIT INFO) DRIVER OWN Done[3286 us]
+10-30 07:30:01.563 I/[wlan][19149]wlanTxCmdDoneCb(19149): (TX INFO) Add command: 000000000654fe5e, nicCmdEventQueryStaStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x85, seq=211
+10-30 07:30:01.564 I/[wlan][19149]wlanTxCmdDoneCb(19149): (TX INFO) Add command: 00000000509df634, nicCmdEventQueryStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x82, seq=212
+10-30 07:30:01.564 I/[wlan][19149]kalDumpHifStats(19149): (HAL INFO) I[72693785 0] T[3666835 3666835 3666833 / 31542346 29528268 29528268 31542346] R[67962825 / 24451801] T_R[0 0 0 2 0]  R_R[0 0] Tok[0/768] Rfb[2102/2102] txreg[23578206] rxreg[65537578]
+10-30 07:30:01.565 I/[T219148] [wlan][19148]nicRxProcessEventPacket(    0): (RX INFO) Not static config event: id=0x21, seq=211
+10-30 07:30:01.566 I/[T219148] [wlan][19148]nicGetPendingCmdInfo(    0): (TX INFO) Get command: 000000000654fe5e, nicCmdEventQueryStaStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x85, seq=211
+10-30 07:30:01.566 I/[T219148] [wlan][19148]nicGetPendingCmdInfo(    0): (TX INFO) Get command: 00000000509df634, nicCmdEventQueryStatistics.cfi_jt [wlan_drv_gen4m], cmd=0x82, seq=212
+10-30 07:30:01.587 I/[T319149] [wlan][19149]halSetFWOwn(    0): (INIT INFO) FW OWN:1, IntSta:0x00080000
+10-30 07:30:14.681 W/SensorService( 1616): Dropping 1 cached events (984/984) to save 1/1 new events. 201 events previously dropped
+10-30 07:30:14.685 W/adbd    (23403): timed out while waiting for FUNCTIONFS_BIND, trying again
+10-30 07:30:14.685 I/adbd    (23403): UsbFfs: connection terminated: monitor thread finished
+10-30 07:30:14.698 D/TLinkBrush_DATA( 1616): [NetdEvent]Wifi connect true, screen state true, do nothing!
+10-30 07:30:14.698 D/TLinkBrush_DATA( 1616): [NetdEvent]Wifi connect true, screen state true, do nothing!
+10-30 07:30:14.741 I/adbd    (23403): opening control endpoint /dev/usb-ffs/adb/ep0
+10-30 07:30:01.731 I/        (    0): [T423409] read descriptors
+10-30 07:30:01.731 I/        (    0): [T423409] read strings
+10-30 07:30:01.734 I/[T200001] init(    0): processing action (sys.usb.ffs.ready=1) from (/vendor/etc/init/hw/init.mt6768.usb.rc:785)
+10-30 07:30:14.761 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:01.767 W/[T400000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:01.767 W/[T400000] [name(    0): spm&][SPM] IdleDram wake up by  R12_AFE_IRQ_MCU_B, timer_out = 22, r13 = 0xa6000400, debug_flag = 0x11000 0x0, r12 = 0x100000, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0x1f7,  req_sta =  0x2000000, event_reg = 0x90100000, isr = 0x0, raw_ext_sta = 0x40069055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:14.874 D/Hiber/importantScene( 1616): uid:10340 speed :8
+10-30 07:30:14.875 D/Hiber/appStateMachine( 1616): uid:10340 enter FrozenState
+10-30 07:30:14.910 D/Hiber/cgroup( 1616): runningPids : [22134] for uid=10340 pkgName=com.openai.chatgpt type=third
+10-30 07:30:14.910 D/Hiber/cgroup( 1616): writeDevFile pid: 22134
+10-30 07:30:14.911 I/Hiber/sceneManager( 1616): freeze uid: 10340 com.openai.chatgpt pids:[22134] costTime=36ms
+10-30 07:30:14.911 D/Hiber/hiberManager( 1616): msg for start proxy frozen state
+10-30 07:30:14.912 D/Hiber/hiberManager( 1616): try idle uid[10340] by hiber ,bgTime>0 ? true,isIdled before ? false ,isCurAllowListed ? false ,isProcStateBackground?true
+10-30 07:30:14.912 D/Hiber/hiberManager( 1616): try idle uid[10340] by hiber
+10-30 07:30:14.912 D/Hiber/proxyManager( 1616): p_service: 10340
+10-30 07:30:14.912 D/Hiber/proxyManager( 1616): p_job: 10340 pkgName=com.openai.chatgpt
+10-30 07:30:14.912 D/Hiber/proxyManager( 1616): pj_job: 10340 pkgName=com.openai.chatgpt which=2
+10-30 07:30:14.912 D/Hiber/hiberManager( 1616): proxy alarm (uid=١٠٣٤٠, pkgName=com.openai.chatgpt)
+10-30 07:30:14.913 D/Hiber/proxyManager( 1616): p_alarm: uid=10340, pkgName=com.openai.chatgpt
+10-30 07:30:14.913 D/Hiber/alarmManagerServiceExtImpl( 1616): proxyAlarms leave, uid=10340, packageName=com.openai.chatgpt
+10-30 07:30:01.906 W/[T200000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:14.953 D/AppFlingMode(  839): [CheckAppFlingHint] 25 com.termux 60
+10-30 07:30:14.955 E/libPowerHal(  839): [getCPUFreq] error cid:2, nClusterNum:2
+10-30 07:30:14.955 D/EdgeBackGestureHandler(23585): isWithinTouchRegion: false withinRange:false
+10-30 07:30:14.955 D/SysUI_EdgeBackGestureHandler(23585): Gesture [FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE  edgeLeft:٧٢,edgeRight:٧٢]
+10-30 07:30:14.956 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:14.956 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:14.957 I/libPowerHal(  839): [setClusterFreq] mtkpower@1.0-se: sysfs_freq set cpu freq: 1500000 -1 1710000 -1 
+10-30 07:30:14.958 D/ScreenCapControl(16706): onFingerDown: 1761, 108, 0
+10-30 07:30:01.948 I/        (    0): [T213169] update cpufreq limit idx min 2---max 0,freq min 1500000 ---max 1800000
+10-30 07:30:01.948 I/        (    0): [T213169] update cpufreq limit idx min 5---max 0,freq min 1710000 ---max 2000000
+10-30 07:30:14.960 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:14.982 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:14.982 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:01.987 W/[T300000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:01.987 W/[T300000] [name(    0): spm&][SPM] IdleDram wake up by  R12_AFE_IRQ_MCU_B, timer_out = 5, r13 = 0x86040400, debug_flag = 0x11000 0x0, r12 = 0x100000, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0xf3,  req_sta =  0x2000000, event_reg = 0x30000000, isr = 0x0, raw_ext_sta = 0x40069055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:15.004 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:15.004 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:15.005 I/ficy    (10166): (REDACTED) HDM. appOpsListener %s %s
+10-30 07:30:15.005 I/ficy    (10166): (REDACTED) HDM. Ignoring irrelevant audio permission changes for package %s
+10-30 07:30:15.008 I/libPowerHal(  839): [PD] MTKPOWER_HINT_APP_TOUCH update cmd:3408b00 param:0
+10-30 07:30:02.007 W/        (    0): [name:spm&]Power/swap op_cond = 0x1
+10-30 07:30:02.007 W/        (    0): [name:spm&][SPM] IdleDram wake up by  R12_AFE_IRQ_MCU_B, timer_out = 15, r13 = 0x6040000, debug_flag = 0x11000 0x0, r12 = 0x100000, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0x1f7,  req_sta =  0x2000000, event_reg = 0x90100000, isr = 0x0, raw_ext_sta = 0x4006a055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:15.024 D/CoreBackPreview( 1616): Window{6922b56 u0 inputmethod.latin.perfectkeyboard}: Setting back callback null
+10-30 07:30:15.033 D/OpenGLRenderer(15070): endAllActiveAnimators on 0xe2baba70 (GridView) with handle 0xe1dfead0
+10-30 07:30:15.033 D/View    (15070): [Warning] assignParent to null: this = DecorView@1550a8b[]
+10-30 07:30:15.035 W/InputManager-JNI( 1616): Input channel object '6922b56 inputmethod.latin.perfectkeyboard (client)' was disposed without first being removed with the input manager!
+10-30 07:30:15.035 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{6922b56 u0 inputmethod.latin.perfectkeyboard}
+10-30 07:30:15.038 E/WindowManager( 1616): isFocusOnThunderbackWindow false mFocusMultiWindowId: 276 newFocus: 0 thunderback: false
+10-30 07:30:15.038 W/WindowManager( 1616): Changing focus from Window{6922b56 u0 inputmethod.latin.perfectkeyboard EXITING} to Window{9bb1b8f u0 com.termux/com.termux.app.TermuxActivity} displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:524 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6395 com.android.server.wm.WindowState.setupWindowForRemoveOnExit:2931 com.android.server.wm.WindowState.removeIfPossible:2899 
+10-30 07:30:15.041 I/mtkpower_client( 1616): perf_cus_lock_hint hint:101, dur:150
+10-30 07:30:15.041 D/AppFlingMode(  839): [CheckAppFlingHint] 101 com.termux 60
+10-30 07:30:15.042 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:8925025
+10-30 07:30:15.042 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:15.043 I/libPowerHal(  839): [setClusterFreq] MTKPOWER_HINT_LAUNCHER_ANIMA: sysfs_freq set cpu freq: 1800000 -1 2000000 -1 
+10-30 07:30:15.053 D/InputTransport(15070): Destroy ARC handle: 0xdf872010
+10-30 07:30:15.055 D/BLASTBufferQueue(15070): [VRI[]#37537](f:0,a:3) destructor()
+10-30 07:30:15.055 D/BufferQueueConsumer(15070): [VRI[]#37537(BLAST Consumer)37537](id:3ade000092a1,api:0,p:-1,c:15070) disconnect
+10-30 07:30:15.055 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:15.059 I/BufferQueueProducer(  878): [com.termux/com.termux.app.TermuxActivity#4700373](this:0xb400007bd187c738,id:-1,api:0,p:-1,c:878) queueBuffer: fps=4.29 dur=2329.09 max=1415.80 min=16.21
+10-30 07:30:15.061 I/mtkpower_client( 1616): perf_cus_lock_hint hint:103, dur:1000
+10-30 07:30:15.061 D/AppFlingMode(  839): [CheckAppFlingHint] 103 com.termux 60
+10-30 07:30:15.061 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:0
+10-30 07:30:15.063 V/WindowManager( 1616): Unknown focus tokens, dropping reportFocusChanged
+10-30 07:30:15.082 I/libPerfCtl(  839): xgfGetFPS pid:2200 fps:-1
+10-30 07:30:15.082 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:15.082 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:15.082 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:15.082 I/libPerfCtl(  839): xgfGetFPS pid:10115 fps:-1
+10-30 07:30:15.082 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:15.082 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: 60,fg->pid:10115
+10-30 07:30:15.082 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:15.082 I/libPowerHal(  839): [updateFPS] pid(10115) : 60 => -1
+10-30 07:30:15.083 I/libPowerHal(  839): [perfNotifyAppState] pack:com.termux, act:com.termux.app.TermuxActivity, state:5, pid:10115, uid:10304, fps:-1
+10-30 07:30:15.083 I/UxUtility(  839): notifyForegroundApp pack:com.termux, uid:10304
+10-30 07:30:15.083 I/TouchUtility(  839): notifyAppState error = NULL
+10-30 07:30:15.084 I/libPerfCtl(  839): xgfGetFPS pid:15070 fps:59
+10-30 07:30:15.084 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:15.084 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: -1,fg->pid:10115
+10-30 07:30:15.084 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:15.084 I/libPerfCtl(  839): xgfGetFPS pid:22134 fps:-1
+10-30 07:30:15.084 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:15.084 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: -1,fg->pid:10115
+10-30 07:30:15.084 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:15.084 I/libPerfCtl(  839): xgfGetFPS pid:23585 fps:-1
+10-30 07:30:15.084 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:15.084 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: -1,fg->pid:10115
+10-30 07:30:15.084 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:15.084 I/libPerfCtl(  839): xgfGetFPS pid:30897 fps:-1
+10-30 07:30:15.084 I/AppThermalMode(  839): [perfNotifyThermalState] hdl:0
+10-30 07:30:15.084 I/AppThermalMode(  839): [findAppThermalIdx] Fail: appThermalModeEnable: 0,currentFPS: -1,fg->pid:10115
+10-30 07:30:15.084 I/AppThermalMode(  839): [perfNotifyThermalState] appThermalIdx -1:
+10-30 07:30:15.093 W/OnBackInvokedCallback(10115): OnBackInvokedCallback is not enabled for the application.
+10-30 07:30:15.093 W/OnBackInvokedCallback(10115): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+10-30 07:30:15.120 W/SensorService( 1616): Dropping 1 cached events (984/984) to save 1/1 new events. 100 events previously dropped
+10-30 07:30:15.158 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925024
+10-30 07:30:15.158 I/libPowerHal(  839): [PD] mtkpower@1.0-se update cmd:1408300 param:0
+10-30 07:30:15.160 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:15.167 D/ULogGuard( 1201): Monitoring: 16 threads, 0 requests, 0 time-bombs; 5 guards. ResetFlags = 0x7
+10-30 07:30:15.191 I/WindowManager( 1616):   onAnimationFinished on win=Window{6922b56 u0 inputmethod.latin.perfectkeyboard}
+10-30 07:30:15.193 I/mtkpower@impl(  839): [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:8925025
+10-30 07:30:15.193 I/libPowerHal(  839): [setClusterFreq] MTKPOWER_HINT_LAUNCHER_ANIMA: sysfs_freq set cpu freq: -1 -1 -1 -1 
+10-30 07:30:02.183 I/        (26352): update cpufreq limit idx min 15---max 0,freq min 500000 ---max 1800000
+10-30 07:30:15.194 D/SurfaceFlinger(  878): calculateTimeoutTime, triggerInterval = 1 sec + 196241538 nsec
+10-30 07:30:15.207 D/mol_a.a(L:46)(16706): handleEventInternal, pkg:com.termux, cmp:com.termux.app.TermuxActivity, type:32
+10-30 07:30:15.207 I/TranActivityTaskManager(16706): tran getTopActivityComponent
+10-30 07:30:15.209 D/WindowManager( 1616): setParent old=Window{8f2fc86 u0 InputMethod},new=null,this window=Window{6922b56 u0 inputmethod.latin.perfectkeyboard},callers=com.android.server.wm.WindowContainer.removeChild:851 com.android.server.wm.WindowContainer.removeImmediately:907 com.android.server.wm.WindowState.removeImmediately:2693 com.android.server.wm.WindowState.handleCompleteDeferredRemoval:5626 com.android.server.wm.WindowContainer.handleCompleteDeferredRemoval:1416 com.android.server.wm.WindowState.handleCompleteDeferredRemoval:5628 
+10-30 07:30:15.213 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:15.221 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:15.224 I/TranActivityTaskManager(16706): tran getFocusedWinPkgName
+10-30 07:30:15.225 I/BufferQueueDebug(  878): [#4700394](this:0xb400007bd17048f8,id:-1,api:0,p:-1,c:878) onDestructor()
+10-30 07:30:02.223 I/[DISP]mtk_disp_set_hrt_bw(30905): no need to set module hrt bw for legacy!
+10-30 07:30:15.260 D/BufferPoolAccessor2.0( 1241): evictor expired: 1, evicted: 0
+10-30 07:30:15.293 D/AAL     ( 1229): 10-30 07:30:15.139 BL= 361,ESS= 256, 10-30 07:30:15.173 BL= 360,ESS= 256, 10-30 07:30:15.206 BL= 359,ESS= 256, 10-30 07:30:15.257 BL= 358,ESS= 256, 10-30 07:30:15.293 BL= 357,ESS= 256, 
+10-30 07:30:02.287 W/[T100000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:02.287 W/[T100000] [name(    0): spm&][SPM] IdleDram wake up by  R12_AFE_IRQ_MCU_B, timer_out = 7, r13 = 0x86000400, debug_flag = 0x11000 0x0, r12 = 0x100000, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0xf3,  req_sta =  0x2000000, event_reg = 0x30000000, isr = 0x0, raw_ext_sta = 0x40069055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:02.298 W/[T500000] [name(    0): spm&]Power/swap op_cond = 0x1
+10-30 07:30:15.361 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed
+10-30 07:30:02.363 W/        (    0): [name:spm&]Power/swap op_cond = 0x1
+10-30 07:30:15.376 D/AALLightSensor( 1229): oldLux=81 [SA:74 LA:74] newLux=81 (oriLux: 75)
+10-30 07:30:02.363 W/        (    0): [name:spm&][SPM] IdleDram wake up by  R12_SCP_IPC_MD2SPM_B, timer_out = 30, r13 = 0x86040400, debug_flag = 0x11000 0x0, r12 = 0x800, r12_ext = 0x0, raw_sta = 0x0, idle_sta = 0xf3,  req_sta =  0x2000000, event_reg = 0x90100000, isr = 0x0, raw_ext_sta = 0x40069055, wake_misc = 0x0, pcm_flag = 0x204182 0x0, req = 0x18
+10-30 07:30:15.399 D/AppFlingMode(  839): [CheckAppFlingHint] 25 com.termux -1
+10-30 07:30:15.401 E/libPowerHal(  839): [getCPUFreq] error cid:2, nClusterNum:2
+10-30 07:30:15.402 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:15.402 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 1
+10-30 07:30:15.403 I/libPowerHal(  839): [setClusterFreq] mtkpower@1.0-se: sysfs_freq set cpu freq: 1500000 -1 1710000 -1 
+10-30 07:30:15.404 D/ScreenCapControl(16706): onFingerDown: 2226, 108, 0
+10-30 07:30:02.394 I/        (    0): [T213169] update cpufreq limit idx min 2---max 0,freq min 1500000 ---max 1800000
+10-30 07:30:15.405 D/EdgeBackGestureHandler(23585): isWithinTouchRegion: false withinRange:false
+10-30 07:30:15.405 D/EdgeBackGestureHandler(23585): isWithinTouchRegion: false withinRange:false
+10-30 07:30:15.406 D/SysUI_EdgeBackGestureHandler(23585): Gesture [FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE  edgeLeft:٧٢,edgeRight:٧٢]
+10-30 07:30:15.420 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:15.420 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 2
+10-30 07:30:15.420 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:15.420 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 2
+10-30 07:30:15.427 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:15.427 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 2
+10-30 07:30:15.436 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:15.436 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:15.437 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:15.437 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:15.446 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:15.446 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:15.446 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:15.446 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:15.452 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:15.452 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 3
+10-30 07:30:15.453 D/TranGesture(15070): delayProcessMotionEvent: There was a selected text, may delay dispatch motion event
+10-30 07:30:15.453 D/TranGesture(15070): delay process motion event, mPendingInputEventCount = 4
+10-30 07:30:15.460 D/SurfaceFlinger(  878): [SF client] NEW(0xb400007ae151f630) for (15070:inputmethod.latin.perfectkeyboard)
+10-30 07:30:15.464 D/VRI[PopupWindow:f8256f2](15070): hardware acceleration = true, forceHwAccelerated = false
+10-30 07:30:15.469 D/CoreBackPreview( 1616): Window{52ea48b u0 PopupWindow:f8256f2}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@8ef3181, mPriority=0}
+10-30 07:30:15.469 D/InputTransport(15070): Create ARC handle: 0xe2a6acb0
+10-30 07:30:15.472 D/AAL     ( 1229): 10-30 07:30:15.323 BL= 356,ESS= 256, 10-30 07:30:15.357 BL= 355,ESS= 256, 10-30 07:30:15.389 BL= 354,ESS= 256, 10-30 07:30:15.422 BL= 353,ESS= 256, 10-30 07:30:15.472 BL= 352,ESS= 256, 
+10-30 07:30:02.465 W/        (    0): [T200572] <I>CTS-Plat Point[0] UP: x=1002, y=2226
+10-30 07:30:15.473 I/BufferQueueProducer(  878): [InputMethod#4700377](this:0xb400007bd1779508,id:-1,api:0,p:-1,c:878) queueBuffer: fps=1.07 dur=2793.75 max=1993.51 min=50.36
+10-30 07:30:15.476 I/BufferQueueDebug(  878): [PopupWindow:f8256f2#4700399](this:0xb400007bd17ac928,id:-1,api:0,p:-1,c:-1) BufferQueue core=(878:/system/bin/surfaceflinger)
+10-30 07:30:15.477 I/libPowerHal(  839): [PD] MTKPOWER_HINT_APP_TOUCH update cmd:3408b00 param:0
+10-30 07:30:15.480 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:15.487 D/BufferQueueConsumer(15070): [](id:3ade000092a2,api:0,p:-1,c:15070) connect: controlledByApp=false
+10-30 07:30:15.492 I/hwcomposer(  824): [HWCDisplay] [Display_0 (type:1)] fps:26.576042,dur:1015.95,max:350.62,min:14.61  
+10-30 07:30:15.494 D/BLASTBufferQueue(15070): [VRI[PopupWindow:f8256f2]#37538](f:0,a:1) acquireNextBufferLocked size=270x204 mFrameNumber=1 applyTransaction=true mTimestamp=3019418553830585(auto) mPendingTransactions.size=0 graphicBufferId=64725157376318 transform=0
+10-30 07:30:15.494 W/Parcel  (15070): Expecting binder but got null!
+10-30 07:30:15.502 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:15.503 I/WindowManager( 1616):   isAnimating=false  okToAnimate=true  win=Window{52ea48b u0 PopupWindow:f8256f2}
+10-30 07:30:15.503 W/bash    (32095): type=1400 audit(0.0:2359727): avc: granted { execute } for name="adb" dev="dm-60" ino=2971122 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c48,c257,c512,c768 tclass=file
+10-30 07:30:15.503 W/bash    (32095): type=1400 audit(0.0:2359728): avc: granted { execute } for name="adb" dev="dm-60" ino=2971122 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c48,c257,c512,c768 tclass=file
+10-30 07:30:15.503 W/bash    (32095): type=1400 audit(0.0:2359729): avc: granted { execute_no_trans } for path="/data/data/com.termux/files/usr/bin/adb" dev="dm-60" ino=2971122 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c48,c257,c512,c768 tclass=file
+10-30 07:30:15.503 W/adb     (32095): type=1400 audit(0.0:2359730): avc: granted { execute } for path="/data/data/com.termux/files/usr/bin/adb" dev="dm-60" ino=2971122 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c48,c257,c512,c768 tclass=file
+10-30 07:30:15.507 W/adb     (32095): type=1400 audit(0.0:2359731): avc: denied { search } for name="tests" dev="dm-60" ino=119 scontext=u:r:untrusted_app_27:s0:c48,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0
+10-30 07:30:15.506 D/BufferStateLayer(  878): PopupWindow:f8256f2#4700399 setBuffer frameId=1, bufferId=64725157376318 fenceId=565, w= 270, h=204
+10-30 07:30:15.507 V/VRI[TermuxActivity](10115): [ANR Warning]Input routeing takes more than 6000ms since ١٩٧٠-٠١-٠١ ٠٣:٠٠:٠٠.٠٠٠, this = com.mediatek.view.impl.ViewDebugManagerImpl@ffc2466
+10-30 07:30:15.507 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$EarlyPostImeInputStage@4a285c1 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٥.٤٩٨
+10-30 07:30:15.507 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$SyntheticInputStage@7637554 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٥.٤٩٩
+10-30 07:30:15.507 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$ViewPostImeInputStage@51d0ca7 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٥.٤٩٨
+10-30 07:30:15.507 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$NativePostImeInputStage@239f166 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٥.٤٩٨
+10-30 07:30:15.508 V/VRI[TermuxActivity](10115): [ANR Warning]Input routeing takes more than 6000ms since ١٩٧٠-٠١-٠١ ٠٣:٠٠:٠٠.٠٠٠, this = com.mediatek.view.impl.ViewDebugManagerImpl@ffc2466
+10-30 07:30:15.508 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$EarlyPostImeInputStage@4a285c1 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٥.٥٠٨
+10-30 07:30:15.508 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$SyntheticInputStage@7637554 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٥.٥٠٨
+10-30 07:30:15.508 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$ViewPostImeInputStage@51d0ca7 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٥.٥٠٨
+10-30 07:30:15.508 V/VRI[TermuxActivity](10115): Input event delivered to android.view.ViewRootImpl$NativePostImeInputStage@239f166 at ٢٠٢٦-١٠-٣٠ ٠٧:٣٠:١٥.٥٠٨
+10-30 07:30:02.498 E/[T632095] audit(    0): rate limit exceeded
+10-30 07:30:15.512 I/mtkpower_client( 1616): perf_cus_lock_hint hint:103, dur:1000
+10-30 07:30:15.513 D/AppFlingMode(  839): [CheckAppFlingHint] 103 com.termux -1
+10-30 07:30:15.513 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:0
+10-30 07:30:15.515 D/CoreBackPreview( 1616): Window{52ea48b u0 PopupWindow:f8256f2}: Setting back callback null
+10-30 07:30:15.516 D/View    (15070): [Warning] assignParent to null: this = android.widget.PopupWindow$PopupDecorView{b18a262 V.E...... R......D 0,0-270,204}
+10-30 07:30:15.517 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:15.521 W/InputManager-JNI( 1616): Input channel object '52ea48b PopupWindow:f8256f2 (client)' was disposed without first being removed with the input manager!
+10-30 07:30:15.521 I/WindowManager( 1616):   isAnimating=true  okToAnimate=true  win=Window{52ea48b u0 PopupWindow:f8256f2}
+10-30 07:30:15.526 I/WindowManager( 1616): DisplayContent w: Window{6fa3066 u0 com.transsion.smartpanel} Apply preferredModeId = 2
+10-30 07:30:15.530 D/InputTransport(15070): Destroy ARC handle: 0xe2a6acb0
+10-30 07:30:15.530 D/BLASTBufferQueue(15070): [VRI[PopupWindow:f8256f2]#37538](f:0,a:2) destructor()
+10-30 07:30:15.531 D/BufferQueueConsumer(15070): [VRI[PopupWindow:f8256f2]#37538(BLAST Consumer)37538](id:3ade000092a2,api:0,p:-1,c:15070) disconnect
+10-30 07:30:15.539 I/mtkpower_client( 1616): perf_cus_lock_hint hint:101, dur:70
+10-30 07:30:15.539 I/adbd    (23403): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-v' 'time' '-t' '1500''
+10-30 07:30:15.539 D/AppFlingMode(  839): [CheckAppFlingHint] 101 com.termux -1
+10-30 07:30:02.525 I/        (    0): [T600211] [get_ptim_current]ptim current:7620
+10-30 07:30:15.540 I/mtkpower_client( 1616): perf_cus_lock_hint, ret_hdl:8925028
+10-30 07:30:15.540 I/libPowerHal(  839): [setClusterFreq] MTKPOWER_HINT_LAUNCHER_ANIMA: sysfs_freq set cpu freq: 1800000 -1 2000000 -1 
+10-30 07:30:15.557 W/AudioALSACaptureDataProviderNormal(  816): readThread, latency_in_s,0.000001,0.039711,0.000066, totalTime 0.039778 > logTimeout 0.022000 TIMEOUT!!
+10-30 07:30:15.560 E/android.hardware.sensors@2.0-service.multihal-mediatek( 1194): Error 2, memsic_log open SYS_FS_USB_ONLINE failed

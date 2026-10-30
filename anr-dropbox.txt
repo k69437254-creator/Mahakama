@@ -1,0 +1,42 @@
+Drop box contents: 999 entries
+Max entries: 1000
+Low priority rate limit period: 2000 ms
+Low priority tags: {data_app_wtf, keymaster, system_server_wtf, system_app_strictmode, system_app_wtf, system_server_strictmode, data_app_strictmode, netstats}
+Searching for: data_app_anr
+
+========================================
+٢٠٢٦-١٠-٢٨ ٠١:٥٤:٥٧ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٨ ١٢:٢٢:٥٧ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٢:٢٣:٢٨ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٢:٢٤:٠٤ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٢:٢٤:٤٠ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٣:٥٦:٥٨ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٣:٥٨:٠١ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٣:٥٨:٣٧ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٤:١٤:٢٩ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٧:٥١:٣٨ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٧:٥٢:٥٢ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٩:٥٢:٢٩ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٩:٥٢:٥٥ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٢٩ ١٩:٥٣:٥٠ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٣٠ ٠٦:٤١:١٨ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٣٠ ٠٦:٤٢:٠٦ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٣٠ ٠٦:٤٩:٥٠ data_app_anr (contents lost)
+========================================
+٢٠٢٦-١٠-٣٠ ٠٧:٢٢:٢٠ data_app_anr (contents lost)
