@@ -42,6 +42,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.onDispose
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,8 +77,8 @@ fun SpiritOrchestraScreen(
     selectedTrack: String,
     hasChosenTrack: Boolean,
     onPreviewTrack: (String) -> Unit,
-    onSpeakName: (String, () -> Unit) -> Unit,
-    onSpeakQuestion: (String) -> Unit,
+    onPlayIntro: () -> Unit,
+    onStopIntro: () -> Unit,
     onContinue: (String) -> Unit
 ) {
     val motion = rememberInfiniteTransition(label = "spectral-orchestra-motion")
@@ -84,24 +86,22 @@ fun SpiritOrchestraScreen(
     val breath by motion.animateFloat(0.94f, 1.055f, infiniteRepeatable(tween(3900, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "spectral-breath")
     val reveal = remember { Animatable(0f) }
     val selectionGlow = remember { Animatable(0.25f) }
-    val scope = rememberCoroutineScope()
     var nameVisible by remember { mutableStateOf(false) }
     var questionVisible by remember { mutableStateOf(false) }
     var leaving by remember { mutableStateOf(false) }
     val sceneAlpha by animateFloatAsState(if (leaving) 0f else 1f, tween(520, easing = FastOutSlowInEasing), label = "orchestra-exit-fade")
 
+    DisposableEffect(Unit) {
+        onDispose { onStopIntro() }
+    }
     LaunchedEffect(userName) {
         delay(450L)
         reveal.animateTo(1f, tween(2300, easing = FastOutSlowInEasing))
         delay(500L)
         nameVisible = true
-        onSpeakName("$userName…") {
-            scope.launch {
-                delay(260L)
-                questionVisible = true
-                onSpeakQuestion("$userName، أيُّ لحنٍ ترغب أن نعزفه أثناء محاكمتك؟")
-            }
-        }
+        onPlayIntro()
+        delay(14_000L)
+        questionVisible = true
     }
     LaunchedEffect(selectedTrack) {
         selectionGlow.snapTo(0.25f)
@@ -159,17 +159,18 @@ fun SpiritOrchestraScreen(
             Spacer(Modifier.height(2.dp))
             Text("قبل أن تبدأ المحاكمة", color = Color(0xFF9181A9), style = MaterialTheme.typography.bodySmall)
             Spacer(Modifier.height(170.dp))
-            AnimatedVisibility(visible = nameVisible, enter = fadeIn(tween(850)) + slideInVertically(tween(850, easing = FastOutSlowInEasing)) { it / 7 }) {
-                Text("$userName…", color = Color(0xFFF1E9FF), style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center, letterSpacing = 1.2.sp)
+            AnimatedVisibility(visible = nameVisible, enter = fadeIn(tween(5200, easing = FastOutSlowInEasing)) + slideInVertically(tween(5200, easing = FastOutSlowInEasing)) { it / 7 }) {
+                Text("مرحبًا أيُّها العابر الضائع، $userName… أيُّ لحنٍ ترغب أن يتم عزفه أثناء مُحاكمتك؟", color = Color(0xFFF1E9FF), style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center, letterSpacing = 1.2.sp)
             }
-            AnimatedVisibility(visible = questionVisible, enter = fadeIn(tween(900)) + slideInVertically(tween(900, easing = FastOutSlowInEasing)) { it / 9 }) {
+            AnimatedVisibility(visible = questionVisible, enter = fadeIn(tween(2400, easing = FastOutSlowInEasing)) + slideInVertically(tween(2400, easing = FastOutSlowInEasing)) { it / 9 }) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Spacer(Modifier.height(8.dp))
-                    Text("أيُّ لحنٍ ترغب أن نعزفه أثناء محاكمتك؟", color = Color(0xFFE2D7F3), style = MaterialTheme.typography.titleLarge, textAlign = TextAlign.Center, lineHeight = 34.sp)
+                    Text("اختر اللحن الذي سيصاحب رحلتك؛ فلكل نغمة ظلٌّ مختلف.", color = Color(0xFFE2D7F3), style = MaterialTheme.typography.titleLarge, textAlign = TextAlign.Center, lineHeight = 34.sp)
                     Spacer(Modifier.height(7.dp))
                     Text("اختر ما تستطيع الإصغاء إليه؛ لا ما يبدو جميلًا فحسب.", color = Color(0xFFAA9ABF), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
                 }
             }
+            if (questionVisible) {
             Spacer(Modifier.height(19.dp))
             Text("الألحان الثلاثة", color = Color(0xFFD7C6FF), style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(9.dp))
@@ -215,6 +216,7 @@ fun SpiritOrchestraScreen(
             Spacer(Modifier.height(10.dp))
             Text("سيظل اختيارك محفوظًا، ويمكنك تغييره من الإعدادات.", color = Color(0xFF887A9A), style = MaterialTheme.typography.labelSmall, textAlign = TextAlign.Center)
             Spacer(Modifier.height(15.dp))
+            }
         }
     }
 }

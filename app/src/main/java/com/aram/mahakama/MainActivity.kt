@@ -272,8 +272,8 @@ private fun MahakamaApp(
                                 audio.selectTrack(trackId)
                                 scope.launch { repository.setSelectedMusicTrack(trackId) }
                             },
-                            onSpeakName = { line, onFinished -> audio.speakOrchestra(line, onFinished) },
-                            onSpeakQuestion = { line -> audio.speakOrchestra(line) },
+                            onPlayIntro = { audio.playOrchestraIntro() },
+                            onStopIntro = { audio.stopOrchestraIntro() },
                             onContinue = { trackId ->
                                 audio.stopSpirit()
                                 scope.launch {

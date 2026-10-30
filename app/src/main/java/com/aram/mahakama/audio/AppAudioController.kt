@@ -24,6 +24,7 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
     private val appContext = context.applicationContext
     private val mainHandler = Handler(Looper.getMainLooper())
     private var player: MediaPlayer? = null
+    private var orchestraIntroPlayer: MediaPlayer? = null
     private var playerTrackId: String? = null
     private var loadingPlayer: MediaPlayer? = null
     private var playerLoading = false
@@ -76,6 +77,57 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
             }
             fadeMusicTo(ambientTargetVolume(speaking), if (speaking) 520L else 950L)
         }
+    }
+
+    @Synchronized
+    fun playOrchestraIntro() {
+        stopOrchestraIntro()
+        speaking = true
+        fadeMusicTo(ambientTargetVolume(true), 700L)
+        val intro = try { MediaPlayer.create(appContext, R.raw.orchestra_intro) } catch (_: Exception) { null }
+        if (intro == null) {
+            speaking = false
+            fadeMusicTo(ambientTargetVolume(false), 700L)
+            return
+        }
+        orchestraIntroPlayer = intro
+        intro.setOnCompletionListener {
+            synchronized(this@AppAudioController) {
+                if (orchestraIntroPlayer === it) {
+                    try { it.release() } catch (_: Exception) { }
+                    orchestraIntroPlayer = null
+                    speaking = false
+                    fadeMusicTo(ambientTargetVolume(false), 900L)
+                }
+            }
+        }
+        intro.setOnErrorListener { media, _, _ ->
+            synchronized(this@AppAudioController) {
+                if (orchestraIntroPlayer === media) {
+                    try { media.release() } catch (_: Exception) { }
+                    orchestraIntroPlayer = null
+                    speaking = false
+                    fadeMusicTo(ambientTargetVolume(false), 700L)
+                }
+            }
+            true
+        }
+        try { intro.start() } catch (_: Exception) {
+            try { intro.release() } catch (_: Exception) { }
+            orchestraIntroPlayer = null
+            speaking = false
+            fadeMusicTo(ambientTargetVolume(false), 700L)
+        }
+    }
+
+    @Synchronized
+    fun stopOrchestraIntro() {
+        val intro = orchestraIntroPlayer
+        orchestraIntroPlayer = null
+        try { intro?.stop() } catch (_: Exception) { }
+        try { intro?.release() } catch (_: Exception) { }
+        speaking = false
+        fadeMusicTo(ambientTargetVolume(false), 500L)
     }
 
     @Synchronized
@@ -156,6 +208,7 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
 
     @Synchronized
     fun stopSpirit() {
+        stopOrchestraIntro()
         queuedText = null
         queuedLowVoice = false
         finishedCallback = null
@@ -168,6 +221,9 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
     @Synchronized
     fun release() {
         released = true
+        try { orchestraIntroPlayer?.stop() } catch (_: Exception) { }
+        try { orchestraIntroPlayer?.release() } catch (_: Exception) { }
+        orchestraIntroPlayer = null
         playerGeneration++
         playerLoading = false
 
