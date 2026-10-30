@@ -79,8 +79,8 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
     }
 
     @Synchronized
-    fun speakSpirit(text: String, onFinished: () -> Unit = {}) {
-        speakWithProfile(text, lowVoice = false, onFinished = onFinished)
+    fun speakSpirit(text: String, lowVoice: Boolean = false, onFinished: () -> Unit = {}) {
+        speakWithProfile(text, lowVoice = lowVoice, onFinished = onFinished)
     }
 
     /** Lower and slower orchestra speech; timbre depends on the device TTS engine. */

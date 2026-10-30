@@ -968,7 +968,12 @@ fun QuestionnaireScreen(
 @Composable
 fun FacesScreen(userState: UserState) {
     val faces = QuestionnaireEngine.faces.map { it to QuestionnaireEngine.faceScore(it, userState.answers) }.sortedByDescending { it.second }
+    val answeredCount = QuestionnaireEngine.answeredOptions(userState.answers).size
+    val facesWithEvidence = faces.count { it.second > 0 }
+    val strongestFace = faces.firstOrNull { it.second > 0 }?.first
+    val strongestScore = faces.firstOrNull()?.second ?: 0
     var expandedFaceId by rememberSaveable { mutableStateOf(faces.firstOrNull()?.first?.id.orEmpty()) }
+
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 18.dp, vertical = 12.dp)) {
         Card(colors = CardDefaults.cardColors(containerColor = PanelRaised), shape = RoundedCornerShape(22.dp)) {
             Column(Modifier.fillMaxWidth().padding(17.dp)) {
@@ -984,6 +989,34 @@ fun FacesScreen(userState: UserState) {
                 Text("لا تنظر إلى هذه الوجوه كأنها هويتك النهائية. إنها احتمالات تتقوى وتضعف مع ما تقدمه من أدلة.", color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
             }
         }
+
+        Spacer(Modifier.height(12.dp))
+        Card(colors = CardDefaults.cardColors(containerColor = Panel), shape = RoundedCornerShape(19.dp)) {
+            Column(Modifier.fillMaxWidth().padding(15.dp)) {
+                Text("ملامح المسار الحالي", color = Violet, style = MaterialTheme.typography.titleSmall)
+                Spacer(Modifier.height(10.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Column(Modifier.weight(1f)) {
+                        Text("$answeredCount", color = Color(0xFFF0E8FF), style = MaterialTheme.typography.headlineSmall)
+                        Text("إجابة في المسار", color = MutedText, style = MaterialTheme.typography.bodySmall)
+                    }
+                    Column(Modifier.weight(1f)) {
+                        Text("$facesWithEvidence / ${faces.size}", color = Color(0xFFF0E8FF), style = MaterialTheme.typography.headlineSmall)
+                        Text("وجوه تلقت إشارات", color = MutedText, style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+                Spacer(Modifier.height(9.dp))
+                Text(
+                    if (strongestFace != null) "الأكثر حضورًا الآن: ${strongestFace.title}. قد يتغير ترتيب الوجوه كلما أضفت إجابات جديدة."
+                    else "لم تتكوّن إشارات كافية بعد. ابدأ بالإجابة، ودع ملامح الشجرة تظهر تدريجيًا.",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Spacer(Modifier.height(7.dp))
+                Text("الأرقام تقيس تقاطع الإجابات مع سمات الوجوه، ولا تمثل احتمالات أو تشخيصًا.", color = MutedText, style = MaterialTheme.typography.labelSmall)
+            }
+        }
+
         Spacer(Modifier.height(17.dp))
         faces.forEachIndexed { index, (face, score) ->
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
@@ -996,6 +1029,7 @@ fun FacesScreen(userState: UserState) {
                 FaceDetailCard(
                     face = face,
                     score = score,
+                    maxScore = strongestScore,
                     index = index,
                     userState = userState,
                     expanded = expandedFaceId == face.id,
@@ -1013,6 +1047,7 @@ fun FacesScreen(userState: UserState) {
 private fun FaceDetailCard(
     face: FaceInsight,
     score: Int,
+    maxScore: Int,
     index: Int,
     userState: UserState,
     expanded: Boolean,
@@ -1067,6 +1102,21 @@ private fun FaceDetailCard(
                 Text("$score", color = Violet, style = MaterialTheme.typography.titleMedium)
                 Icon(if (expanded) Icons.Default.ChevronLeft else Icons.Default.Lightbulb, contentDescription = null, tint = Violet, modifier = Modifier.padding(start = 3.dp))
             }
+            Spacer(Modifier.height(10.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("تطابق السمات", color = MutedText, style = MaterialTheme.typography.labelSmall)
+                Spacer(Modifier.weight(1f))
+                Text("$score", color = Violet, style = MaterialTheme.typography.labelLarge)
+            }
+            Box(Modifier.fillMaxWidth().height(6.dp).clip(CircleShape).background(Line)) {
+                val relativePresence = if (maxScore > 0) (score.toFloat() / maxScore).coerceIn(0f, 1f) else 0f
+                Box(
+                    Modifier.fillMaxWidth(relativePresence).fillMaxHeight()
+                        .clip(CircleShape)
+                        .background(Violet)
+                )
+            }
+            Text("مقارنةً بأعلى وجه ظهورًا في المسار الحالي؛ وليست نسبةً تصف شخصيتك.", color = MutedText, style = MaterialTheme.typography.labelSmall)
             if (expanded) {
                 Spacer(Modifier.height(12.dp))
                 Text(face.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -1195,64 +1245,173 @@ fun OtherYouScreen(userState: UserState) {
 @Composable
 fun InnerCourtScreen(userState: UserState) {
     var selectedCase by rememberSaveable { mutableIntStateOf(0) }
+    var selectedPosition by rememberSaveable { mutableStateOf("") }
+    var selectedEvidence by rememberSaveable { mutableStateOf("") }
+    var confidence by rememberSaveable { mutableStateOf(50f) }
+    var verdictSubmitted by rememberSaveable { mutableStateOf(false) }
+
     val personalizedLens = QuestionnaireEngine.innerCourtLens(userState.answers)
     val cases = listOf(
         Triple("صديقك أخطأ، والاعتراف قد يدمّر ما تبقى من سمعته.", "هل تحميه من الحقيقة أم تحميه من نتائجها؟", "العدل لا يتجاهل السياق، لكنه لا يمحو أثر الفعل."),
         Triple("تملك فرصةً نادرة، لكن الوصول إليها يتطلب أن تتراجع عن وعدٍ قطعته.", "أيّهما أثقل في ميزانك: الوعد أم ما قد يغير مستقبلك؟", "قد تكون هناك تفاصيل مفقودة؛ افحص البدائل قبل أن تختار بين طرفين فقط."),
         Triple("شخصٌ جرحك اعتذر بصدق، لكن الثقة لم تعد كما كانت.", "هل يكفي الاعتذار لتعود العلاقة، أم تحتاج الثقة إلى زمنٍ وسلوك؟", "المسامحة والثقة قراران مختلفان، ولا يجب أن يتطابق توقيتهما.")
     )
+    val evidenceOptions = listOf(
+        "الأثر الفعلي للقرار",
+        "النية والدافع وراءه",
+        "الظروف والضغوط المحيطة",
+        "تكرار السلوك أو كونه استثناءً"
+    )
     val selected = cases[selectedCase]
+    val confidenceText = when {
+        confidence < 35f -> "موقف متردد؛ ما زالت الصورة تحتاج إلى أدلة."
+        confidence < 70f -> "موقف قابل للمراجعة؛ بعض الأدلة ترجّح ولا تحسم."
+        else -> "موقف واثق؛ احذر أن تتحول الثقة إلى تجاهل لما يعارضها."
+    }
+    val reflection = when (selectedPosition) {
+        "مسؤولية الفعل أولًا" -> "أنت تمنح أثر الفعل وزنًا أكبر. اختبر الآن ما إذا كنت قد منحت الظروف والنية فرصةً عادلة للظهور."
+        "الظروف تخفف الحكم" -> "أنت تنظر إلى السياق قبل إصدار الحكم. اختبر الآن إن كان فهم الدافع قد تحوّل دون قصد إلى تبريرٍ للأثر."
+        "الأدلة لا تكفي بعد" -> "أنت تؤجل الحسم حتى تتضح الصورة. اسأل نفسك: ما الدليل المحدد الذي تحتاج إليه، وهل يمكن الوصول إليه فعلًا؟"
+        else -> ""
+    }
+
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 18.dp, vertical = 12.dp)) {
-        Text("أربعة أصوات على الطاولة، لكن الحكم الأخير يبقى لك. الغرض ليس الوصول إلى إجابةٍ مثالية، بل رؤية ما تحمله كل حجة من قوةٍ ونقص.", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            "لن تكتفي هذه القاعة بسماع أربعة أصوات؛ ستختار موقفك، وتحدد الدليل الذي ترجّحه، ثم ترى ما الذي قد يجعل حكمك قابلًا للمراجعة.",
+            color = MutedText,
+            style = MaterialTheme.typography.bodyMedium
+        )
         Spacer(Modifier.height(13.dp))
         Card(colors = CardDefaults.cardColors(containerColor = PanelRaised), shape = RoundedCornerShape(18.dp)) {
             Column(Modifier.fillMaxWidth().padding(16.dp)) {
                 Text(personalizedLens.first, color = Violet, style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(6.dp))
                 Text(personalizedLens.second, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                Spacer(Modifier.height(7.dp))
+                Text("هذه عدسة مستمدة من إجاباتك، وليست حكمًا مسبقًا على موقفك.", color = MutedText, style = MaterialTheme.typography.bodySmall)
             }
         }
-        Spacer(Modifier.height(15.dp))
-        Text("القضية", color = Violet, style = MaterialTheme.typography.labelLarge)
-        Spacer(Modifier.height(7.dp))
-        Card(colors = CardDefaults.cardColors(containerColor = PanelRaised), shape = RoundedCornerShape(22.dp)) {
-            Column(Modifier.fillMaxWidth().padding(18.dp)) {
-                Text(selected.first, style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(12.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    cases.forEachIndexed { index, _ ->
-                        Box(Modifier.weight(1f).height(5.dp).clip(CircleShape).background(if (selectedCase == index) Violet else Line).clickable { selectedCase = index })
+
+        Spacer(Modifier.height(17.dp))
+        Text("اختر القضية", color = Violet, style = MaterialTheme.typography.labelLarge)
+        Spacer(Modifier.height(8.dp))
+        cases.forEachIndexed { index, case ->
+            Card(
+                colors = CardDefaults.cardColors(containerColor = if (selectedCase == index) PanelRaised else Panel),
+                shape = RoundedCornerShape(17.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    .border(if (selectedCase == index) 1.dp else 0.5.dp, if (selectedCase == index) Violet.copy(alpha = 0.7f) else Line, RoundedCornerShape(17.dp))
+                    .clickable {
+                        selectedCase = index
+                        selectedPosition = ""
+                        selectedEvidence = ""
+                        verdictSubmitted = false
+                        confidence = 50f
                     }
-                }
-                Spacer(Modifier.height(8.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    cases.indices.forEach { index ->
-                        Text("قضية ${index + 1}", modifier = Modifier.weight(1f).clickable { selectedCase = index }, color = if (selectedCase == index) Violet else MutedText, style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
-                    }
+            ) {
+                Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text("٠${index + 1}", color = Violet, style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.width(12.dp))
+                    Text(case.first, modifier = Modifier.weight(1f), color = Color(0xFFF0EAF8), style = MaterialTheme.typography.bodyMedium)
+                    if (selectedCase == index) Icon(Icons.Default.CheckCircleOutline, contentDescription = null, tint = Violet)
                 }
             }
         }
-        Spacer(Modifier.height(16.dp))
+
+        Spacer(Modifier.height(12.dp))
+        Text("المرافعة", color = Violet, style = MaterialTheme.typography.labelLarge)
+        Spacer(Modifier.height(8.dp))
         val roles = listOf(
-            Triple("المُدّعي", Icons.Default.Gavel, "ما الضرر الذي قد يحدث إذا تجاهلنا مسؤولية الشخص؟"),
-            Triple("المُدافع", Icons.Default.Gavel, "ما الظروف أو الدوافع التي تجعل القرار مفهومًا دون أن تبرره بالكامل؟"),
-            Triple("الشاهد", Icons.Default.Visibility, "ما المعلومة التي لا نعرفها، وما الذي نحتاج إلى التحقق منه قبل الحكم؟"),
-            Triple("القاضي", Icons.Default.Psychology, "${selected.second}\n\n${selected.third}")
+            Triple("المُدّعي", "ما الضرر الذي قد يحدث إذا تجاهلنا مسؤولية الشخص؟", "يركّز على أثر الفعل ومسؤولية صاحبه."),
+            Triple("المُدافع", "ما الظروف أو الدوافع التي تجعل القرار مفهومًا دون أن تبرره بالكامل؟", "يفصل بين فهم الدافع وإلغاء المسؤولية."),
+            Triple("الشاهد", "ما المعلومة التي لا نعرفها، وما الذي نحتاج إلى التحقق منه قبل الحكم؟", "يذكّر بأن نقص المعلومات ليس دليلًا على البراءة أو الإدانة."),
+            Triple("القاضي", selected.second + "\n\n" + selected.third, "يوازن بين الحجة والسياق وحدود ما نعرفه.")
         )
-        roles.forEach { (role, icon, content) ->
-            Card(colors = CardDefaults.cardColors(containerColor = Panel), shape = RoundedCornerShape(18.dp), modifier = Modifier.padding(bottom = 9.dp)) {
-                Row(Modifier.fillMaxWidth().padding(15.dp), verticalAlignment = Alignment.Top) {
-                    Icon(icon, contentDescription = null, tint = Violet, modifier = Modifier.size(23.dp))
-                    Spacer(Modifier.width(11.dp))
-                    Column(Modifier.weight(1f)) {
-                        Text(role, style = MaterialTheme.typography.titleSmall)
-                        Spacer(Modifier.height(4.dp))
-                        Text(content, color = MutedText, style = MaterialTheme.typography.bodyMedium)
-                    }
+        roles.forEach { (role, content, note) ->
+            Card(colors = CardDefaults.cardColors(containerColor = Panel), shape = RoundedCornerShape(17.dp), modifier = Modifier.padding(bottom = 8.dp)) {
+                Column(Modifier.fillMaxWidth().padding(14.dp)) {
+                    Text(role, color = Violet, style = MaterialTheme.typography.titleSmall)
+                    Spacer(Modifier.height(5.dp))
+                    Text(content, color = Color(0xFFF0EAF8), style = MaterialTheme.typography.bodyMedium)
+                    Spacer(Modifier.height(4.dp))
+                    Text(note, color = MutedText, style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
-        Spacer(Modifier.height(20.dp))
+
+        Spacer(Modifier.height(14.dp))
+        Text("أيّ موقفٍ تتبناه الآن؟", color = Violet, style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(8.dp))
+        listOf("مسؤولية الفعل أولًا", "الظروف تخفف الحكم", "الأدلة لا تكفي بعد").forEach { position ->
+            OutlinedButton(
+                onClick = { selectedPosition = position; verdictSubmitted = false },
+                modifier = Modifier.fillMaxWidth().padding(bottom = 7.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = if (selectedPosition == position) Color(0xFFF0EAF8) else MutedText),
+                border = androidx.compose.foundation.BorderStroke(1.dp, if (selectedPosition == position) Violet else Line)
+            ) {
+                Text(if (selectedPosition == position) "✓  $position" else position)
+            }
+        }
+
+        Spacer(Modifier.height(10.dp))
+        Text("ما الدليل الذي ينبغي أن يؤثر في الحكم أكثر؟", color = Violet, style = MaterialTheme.typography.titleSmall)
+        Spacer(Modifier.height(7.dp))
+        evidenceOptions.forEach { evidence ->
+            Row(
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(13.dp))
+                    .background(if (selectedEvidence == evidence) PanelRaised else Panel)
+                    .clickable { selectedEvidence = evidence; verdictSubmitted = false }
+                    .padding(horizontal = 13.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    if (selectedEvidence == evidence) Icons.Default.CheckCircleOutline else Icons.Default.Visibility,
+                    contentDescription = null,
+                    tint = if (selectedEvidence == evidence) Violet else MutedText
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(evidence, color = Color(0xFFE8E0F2), style = MaterialTheme.typography.bodyMedium)
+            }
+            Spacer(Modifier.height(6.dp))
+        }
+
+        Spacer(Modifier.height(12.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("درجة ثقتك بهذا الموقف", color = Color(0xFFD9CCF0), style = MaterialTheme.typography.titleSmall)
+            Spacer(Modifier.weight(1f))
+            Text("${confidence.toInt()}٪", color = Violet, style = MaterialTheme.typography.titleSmall)
+        }
+        Slider(value = confidence, onValueChange = { confidence = it; verdictSubmitted = false }, valueRange = 0f..100f)
+        Text(confidenceText, color = MutedText, style = MaterialTheme.typography.bodySmall)
+
+        Spacer(Modifier.height(13.dp))
+        Button(
+            onClick = { verdictSubmitted = true },
+            enabled = selectedPosition.isNotBlank() && selectedEvidence.isNotBlank(),
+            modifier = Modifier.fillMaxWidth().height(50.dp)
+        ) { Text("اعرض محضر موقفي") }
+
+        if (verdictSubmitted) {
+            Spacer(Modifier.height(14.dp))
+            Card(colors = CardDefaults.cardColors(containerColor = PanelRaised), shape = RoundedCornerShape(20.dp)) {
+                Column(Modifier.fillMaxWidth().padding(17.dp)) {
+                    Text("المرافعة التي اخترتها", color = Violet, style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(9.dp))
+                    Text("موقفك: $selectedPosition", style = MaterialTheme.typography.bodyLarge)
+                    Text("الدليل الأهم: $selectedEvidence", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                    Text("الثقة: ${confidence.toInt()}٪", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                    Spacer(Modifier.height(11.dp))
+                    Text(reflection, color = Color(0xFFE5D9F5), style = MaterialTheme.typography.bodyMedium)
+                    Spacer(Modifier.height(10.dp))
+                    Text("سؤال المراجعة: ما المعلومة التي لو ظهرت غدًا ستجعلك تغيّر موقفك؟", color = Violet, style = MaterialTheme.typography.titleSmall)
+                    Spacer(Modifier.height(6.dp))
+                    Text("هذا محضر تأملي لهذه الجلسة، ولا يُحفظ بوصفه صفةً ثابتة في ملفك.", color = MutedText, style = MaterialTheme.typography.bodySmall)
+                    Spacer(Modifier.height(8.dp))
+                    TextButton(onClick = { verdictSubmitted = false }) { Text("أعد فتح المرافعة") }
+                }
+            }
+        }
+        Spacer(Modifier.height(24.dp))
     }
 }
 
@@ -1600,10 +1759,14 @@ fun SpiritOverlay(
     message: String,
     stage: Int,
     speechFinished: Boolean,
+    layerLabel: String = "المراقب",
+    evidenceLine: String = "",
+    symbolicLine: String = "",
     onAsk: () -> Unit,
     onReply: (String) -> Unit,
     onClose: () -> Unit
 ) {
+    var freeReply by rememberSaveable { mutableStateOf("") }
     val motion = rememberInfiniteTransition(label = "spirit-character-motion")
     val breathing by motion.animateFloat(
         initialValue = 0.965f,
@@ -1799,6 +1962,22 @@ fun SpiritOverlay(
 
                 Spacer(Modifier.height(8.dp))
                 Text("طيف الروح", color = Violet, style = MaterialTheme.typography.bodySmall, letterSpacing = 2.2.sp)
+                Spacer(Modifier.height(5.dp))
+                Text("طبقة الحضور: $layerLabel", color = Color(0xFFB9A1FF), style = MaterialTheme.typography.labelSmall)
+                if (evidenceLine.isNotBlank()) {
+                    Spacer(Modifier.height(11.dp))
+                    Card(colors = CardDefaults.cardColors(containerColor = Panel.copy(alpha = 0.82f)), shape = RoundedCornerShape(16.dp)) {
+                        Column(Modifier.fillMaxWidth().padding(13.dp)) {
+                            Text("الخيط الذي استندت إليه الذاكرة", color = Violet, style = MaterialTheme.typography.labelLarge)
+                            Spacer(Modifier.height(5.dp))
+                            Text(evidenceLine, color = Color(0xFFC8BCD8), style = MaterialTheme.typography.bodySmall, lineHeight = 20.sp)
+                        }
+                    }
+                }
+                if (symbolicLine.isNotBlank()) {
+                    Spacer(Modifier.height(9.dp))
+                    Text(symbolicLine, color = Color(0xFF9F8BB8), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
+                }
                 Spacer(Modifier.height(13.dp))
 
                 AnimatedContent(
@@ -1854,18 +2033,80 @@ fun SpiritOverlay(
                     Text("يمكنك لمس الطيف أيضًا لفتح حوار قصير.", color = Color(0xFF81748F), style = MaterialTheme.typography.labelSmall)
                 } else if (stage == 1) {
                     Spacer(Modifier.height(21.dp))
-                    Text("كيف استقبلت هذه الملاحظة؟", color = Color(0xFFD5C8E5), style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        "كيف استقبلت هذه الملاحظة؟",
+                        color = Color(0xFFD5C8E5),
+                        style = MaterialTheme.typography.titleSmall
+                    )
                     Spacer(Modifier.height(10.dp))
-                    listOf("قريبة مما أشعر به", "الصورة ليست دقيقة", "لا أملك إجابةً الآن").forEach { reply ->
+                    listOf(
+                        "قريبة مما أشعر به",
+                        "الصورة ليست دقيقة",
+                        "لا أملك إجابةً الآن",
+                        "أفضل الصمت الآن"
+                    ).forEach { reply ->
                         Button(
                             onClick = { onReply(reply) },
                             modifier = Modifier.fillMaxWidth().padding(bottom = 7.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = PanelRaised, contentColor = Color(0xFFF0E8FF))
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = PanelRaised,
+                                contentColor = Color(0xFFF0E8FF)
+                            )
                         ) { Text(reply) }
                     }
+
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        "أو اكتب ما تريد قوله للطيف...",
+                        color = Color(0xFFD5C8E5),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = freeReply,
+                        onValueChange = { freeReply = it.take(1000) },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("اكتب بحرية، فليس كل ما في الداخل اختيارًا جاهزًا...") },
+                        minLines = 2,
+                        maxLines = 4,
+                        shape = RoundedCornerShape(15.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Violet,
+                            focusedLabelColor = Violet,
+                            cursorColor = Violet
+                        )
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Button(
+                        onClick = {
+                            val messageText = freeReply.trim()
+                            if (messageText.isNotEmpty()) {
+                                onReply("حوار:$messageText")
+                                freeReply = ""
+                            }
+                        },
+                        enabled = freeReply.isNotBlank(),
+                        modifier = Modifier.fillMaxWidth().height(48.dp)
+                    ) {
+                        Text("أرسل ما بداخلك")
+                    }
+                } else if (stage == 2) {
+                    Spacer(Modifier.height(18.dp))
+                    Text("اترك أثرًا في العالم الرمزي", color = Color(0xFFD5C8E5), style = MaterialTheme.typography.titleSmall)
+                    Spacer(Modifier.height(8.dp))
+                    listOf("أفتح الباب", "أترك الباب مغلقًا", "ألمس المرآة", "أواصل الطريق").forEach { choice ->
+                        Button(
+                            onClick = { onReply("رمز:$choice") },
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = PanelRaised, contentColor = Color(0xFFF0E8FF))
+                        ) { Text(choice) }
+                    }
+                    TextButton(onClick = onClose) { Text("أعود إلى الجلسة", color = Color(0xFFBBA7D8)) }
                 } else {
                     Spacer(Modifier.height(21.dp))
-                    Button(onClick = onClose, modifier = Modifier.fillMaxWidth().height(50.dp)) { Text("أعود إلى الجلسة") }
+                    Button(onClick = onClose, modifier = Modifier.fillMaxWidth().height(50.dp)) {
+                        Text("أعود إلى الجلسة")
+                    }
                 }
                 Spacer(Modifier.height(10.dp))
                 TextButton(onClick = onClose) { Text("دعني أعود إلى نفسي", color = Color(0xFFBBA7D8)) }

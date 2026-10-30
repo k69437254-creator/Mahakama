@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import org.json.JSONArray
 import org.json.JSONObject
 
 private val Context.mahakamaDataStore by preferencesDataStore(name = "mahakama_preferences")
@@ -37,7 +38,8 @@ data class UserState(
     val answerTimestamps: Map<String, Long> = emptyMap(),
     val freeWriting: String = "",
     val freeWritingFaceId: String = "",
-    val unmaskingFeedback: String = ""
+    val unmaskingFeedback: String = "",
+    val spiritMemoryJson: String = "[]"
 )
 
 class PreferencesRepository private constructor(private val store: DataStore<Preferences>) {
@@ -133,6 +135,21 @@ class PreferencesRepository private constructor(private val store: DataStore<Pre
         store.edit { it[Keys.UNMASKING_FEEDBACK] = feedback }
     }
 
+    /** Append one submitted event without replacing older memories. */
+    suspend fun appendSpiritMemoryEvent(eventJson: String) {
+        store.edit { prefs ->
+            val current = try { JSONArray(prefs[Keys.SPIRIT_MEMORY_JSON].orEmpty()) } catch (_: Exception) { JSONArray() }
+            val event = try { JSONObject(eventJson) } catch (_: Exception) { return@edit }
+            current.put(event)
+            val compact = JSONArray()
+            val start = (current.length() - 500).coerceAtLeast(0)
+            for (index in start until current.length()) {
+                current.optJSONObject(index)?.let { compact.put(it) }
+            }
+            prefs[Keys.SPIRIT_MEMORY_JSON] = compact.toString()
+        }
+    }
+
     private fun toUserState(prefs: Preferences): UserState = UserState(
         userName = prefs[Keys.USER_NAME].orEmpty(),
         ambientMuted = prefs[Keys.AMBIENT_MUTED] ?: false,
@@ -146,7 +163,8 @@ class PreferencesRepository private constructor(private val store: DataStore<Pre
         answerTimestamps = parseLongMap(prefs[Keys.ANSWER_TIMESTAMPS_JSON].orEmpty()),
         freeWriting = prefs[Keys.FREE_WRITING].orEmpty(),
         freeWritingFaceId = prefs[Keys.FREE_WRITING_FACE_ID].orEmpty(),
-        unmaskingFeedback = prefs[Keys.UNMASKING_FEEDBACK].orEmpty()
+        unmaskingFeedback = prefs[Keys.UNMASKING_FEEDBACK].orEmpty(),
+        spiritMemoryJson = prefs[Keys.SPIRIT_MEMORY_JSON].orEmpty()
     )
 
     private fun parseAnswers(raw: String): Map<String, String> = try {
@@ -193,5 +211,6 @@ class PreferencesRepository private constructor(private val store: DataStore<Pre
         val FREE_WRITING = stringPreferencesKey("free_writing")
         val FREE_WRITING_FACE_ID = stringPreferencesKey("free_writing_face_id")
         val UNMASKING_FEEDBACK = stringPreferencesKey("unmasking_feedback")
+        val SPIRIT_MEMORY_JSON = stringPreferencesKey("spirit_memory_json")
     }
 }

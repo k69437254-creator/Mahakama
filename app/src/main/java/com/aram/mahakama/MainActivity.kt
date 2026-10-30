@@ -45,6 +45,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.aram.mahakama.audio.AppAudioController
 import com.aram.mahakama.data.PreferencesRepository
 import com.aram.mahakama.domain.QuestionnaireEngine
+import com.aram.mahakama.domain.SpiritMemoryEngine
 import com.aram.mahakama.domain.TrialClock
 import com.aram.mahakama.ui.CinematicOpeningScreen
 import com.aram.mahakama.ui.CinematicAtmosphere
@@ -105,7 +106,8 @@ class MainActivity : ComponentActivity() {
 private data class SpiritDialogue(
     val firstLine: String,
     val followUp: String,
-    val closeLine: String = "أحيانًا لا نحتاج إلى حكمٍ جديد، بل إلى شجاعةٍ أكبر في الإصغاء."
+    val closeLine: String = "أحيانًا لا نحتاج إلى حكمٍ جديد، بل إلى شجاعةٍ أكبر في الإصغاء.",
+    val memoryKey: String = "general"
 )
 
 @Composable
@@ -126,6 +128,10 @@ private fun MahakamaApp(
     var speechFinished by remember { mutableStateOf(false) }
     var dialogue by remember { mutableStateOf<SpiritDialogue?>(null) }
     var lastSpiritAtCount by remember { mutableIntStateOf(0) }
+    var spiritLayer by remember { mutableStateOf("المراقب") }
+    var spiritEvidence by remember { mutableStateOf("") }
+    var spiritSymbolicLine by remember { mutableStateOf("") }
+    var spiritSilent by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         clock.onForeground()
@@ -138,6 +144,25 @@ private fun MahakamaApp(
     }
     LaunchedEffect(userState.totalActiveMillis, userState.trialStarted) {
         clock.restore(userState.totalActiveMillis, userState.trialStarted)
+    }
+    LaunchedEffect(isForeground, userState.trialStarted, userState.spiritMemoryJson) {
+        if (isForeground && userState.trialStarted && spiritLine == null) {
+            val returnInsight = SpiritMemoryEngine.returnAfterAbsence(userState.spiritMemoryJson)
+            if (returnInsight != null) {
+                spiritLayer = returnInsight.layer
+                spiritEvidence = "${returnInsight.evidence}\n${returnInsight.confidence}"
+                spiritSymbolicLine = returnInsight.symbolicLine
+                dialogue = SpiritDialogue(returnInsight.line, returnInsight.followUp, memoryKey = returnInsight.key)
+                spiritSilent = false
+                spiritStage = 0
+                spiritLine = returnInsight.line
+                scope.launch {
+                    repository.appendSpiritMemoryEvent(
+                        SpiritMemoryEngine.appearanceEvent(userState.spiritMemoryJson, returnInsight.key, returnInsight.followUp)
+                    )
+                }
+            }
+        }
     }
     DisposableEffect(lifecycleOwner, clock) {
         val observer = LifecycleEventObserver { _, event ->
@@ -166,17 +191,18 @@ private fun MahakamaApp(
         val silenceBeforeTrackChoice = !userState.hasChosenMusicTrack
         audio.updateAmbientState(isForeground, userState.ambientMuted || silenceBeforeTrackChoice, userState.selectedMusicTrack, userState.musicVolume)
     }
-    LaunchedEffect(spiritLine) {
+    LaunchedEffect(spiritLine, spiritSilent) {
         val line = spiritLine
-        if (line == null) {
+        if (line == null || spiritSilent) {
             audio.stopSpirit()
+            if (spiritSilent) speechFinished = true
         } else {
             speechFinished = false
             audio.speakSpirit(line) { speechFinished = true }
             // Longer evidence-based reflections need more speaking time than short dialogue lines.
             val safetyTimeout = (line.length * 220L + 14_000L).coerceIn(28_000L, 75_000L)
             delay(safetyTimeout)
-            if (spiritLine == line) {
+            if (spiritLine == line && spiritStage != 1) {
                 spiritLine = null
                 spiritStage = 0
                 dialogue = null
@@ -287,20 +313,40 @@ private fun MahakamaApp(
                                 onAnswer = { question, optionId ->
                                     val activeBefore = QuestionnaireEngine.activeAnswers(userState.answers)
                                     val nextAnswers = activeBefore + (question.id to optionId)
-                                    scope.launch { repository.replaceAnswers(nextAnswers, question.id, optionId) }
                                     val next = QuestionnaireEngine.option(question.id, optionId)
+                                    val answerEvent = next?.let { SpiritMemoryEngine.answerEvent(question, it) }
+                                    val nextMemory = if (answerEvent != null) {
+                                        SpiritMemoryEngine.appendEvent(userState.spiritMemoryJson, answerEvent)
+                                    } else userState.spiritMemoryJson
                                     val count = QuestionnaireEngine.answeredOptions(nextAnswers).size
                                     val sinceLastSpirit = count - lastSpiritAtCount
-                                    if (next != null && QuestionnaireEngine.nextQuestion(nextAnswers) != null &&
-                                        QuestionnaireEngine.shouldRevealSpirit(nextAnswers, sinceLastSpirit, count)) {
-                                        lastSpiritAtCount = count
-                                        val reflection = QuestionnaireEngine.reflectionFor(nextAnswers)
-                                        dialogue = SpiritDialogue(
-                                            firstLine = reflection,
-                                            followUp = "قبل أن أتابع… هل تبدو هذه الملاحظة قريبة من تجربتك، أم أن هناك سياقًا لم أره؟"
+                                    val insight = SpiritMemoryEngine.createInsight(nextMemory, nextAnswers)
+                                    val shouldAppear = next != null && QuestionnaireEngine.nextQuestion(nextAnswers) != null && (
+                                        QuestionnaireEngine.shouldRevealSpirit(nextAnswers, sinceLastSpirit, count) ||
+                                            SpiritMemoryEngine.shouldReveal(nextMemory)
                                         )
+                                    scope.launch {
+                                        repository.replaceAnswers(nextAnswers, question.id, optionId)
+                                        if (answerEvent != null) repository.appendSpiritMemoryEvent(answerEvent)
+                                        if (shouldAppear) {
+                                            repository.appendSpiritMemoryEvent(
+                                                SpiritMemoryEngine.appearanceEvent(nextMemory, insight.key, insight.followUp)
+                                            )
+                                        }
+                                    }
+                                    if (shouldAppear) {
+                                        lastSpiritAtCount = count
+                                        spiritLayer = insight.layer
+                                        spiritEvidence = "${insight.evidence}\n${insight.confidence}"
+                                        spiritSymbolicLine = insight.symbolicLine
+                                        dialogue = SpiritDialogue(
+                                            firstLine = insight.line,
+                                            followUp = insight.followUp,
+                                            memoryKey = insight.key
+                                        )
+                                        spiritSilent = false
                                         spiritStage = 0
-                                        spiritLine = reflection
+                                        spiritLine = insight.line
                                     }
                                 },
                                 onGoFaces = { route = "faces" },
@@ -339,23 +385,104 @@ private fun MahakamaApp(
                     message = spiritLine.orEmpty(),
                     stage = spiritStage,
                     speechFinished = speechFinished,
+                    layerLabel = spiritLayer,
+                    evidenceLine = spiritEvidence,
+                    symbolicLine = spiritSymbolicLine,
                     onAsk = {
                         val followUp = dialogue?.followUp ?: "ما الذي أثاره هذا السؤال فيك؟"
+                        spiritSilent = false
                         spiritStage = 1
                         spiritLine = followUp
                     },
                     onReply = { reply ->
-                        val answerLine = when (reply) {
-                            "قريبة مما أشعر به" -> "لن أحوّل قبولك إلى حقيقةٍ نهائية؛ سأحتفظ بها كخيطٍ يستحق أن نعود إليه حين تتغير الأدلة."
-                            "الصورة ليست دقيقة" -> "إذن سأترك هذه الصورة مفتوحة للمراجعة. ما لا يشبهك مهم بقدر ما يشبهك؛ لا أريد أن أختصر روايتك."
-                            else -> "لا بأس. بعض الأسئلة تحتاج إلى زمنٍ لا إلى إجابةٍ فورية. يمكنك أن تتركها معك حتى تتضح ملامحها."
+                        val memoryKey = dialogue?.memoryKey ?: "general"
+
+                        if (reply.startsWith("حوار:")) {
+                            val userText = reply.removePrefix("حوار:").trim()
+                            if (userText.isNotEmpty()) {
+                                val userEvent = SpiritMemoryEngine.dialogueEvent(
+                                    userText,
+                                    memoryKey,
+                                    "user"
+                                )
+
+                                scope.launch {
+                                    val memoryWithUser = SpiritMemoryEngine.appendEvent(
+                                        userState.spiritMemoryJson,
+                                        userEvent
+                                    )
+                                    repository.appendSpiritMemoryEvent(userEvent)
+
+                                    val answer = SpiritMemoryEngine.dialogueResponse(
+                                        memoryWithUser,
+                                        userText
+                                    )
+
+                                    val spiritEvent = SpiritMemoryEngine.dialogueEvent(
+                                        answer,
+                                        memoryKey,
+                                        "spirit"
+                                    )
+                                    repository.appendSpiritMemoryEvent(spiritEvent)
+
+                                    spiritSilent = false
+                                    speechFinished = false
+                                    spiritStage = 1
+                                    spiritLine = answer
+                                }
+                            }
+                        } else {
+                            val event = if (reply.startsWith("رمز:")) {
+                                SpiritMemoryEngine.symbolChoiceEvent(
+                                    reply.removePrefix("رمز:").trim(),
+                                    memoryKey
+                                )
+                            } else {
+                                SpiritMemoryEngine.feedbackEvent(reply, memoryKey)
+                            }
+
+                            scope.launch {
+                                repository.appendSpiritMemoryEvent(event)
+                            }
+
+                            when {
+                                reply == "أفضل الصمت الآن" -> {
+                                    spiritSilent = true
+                                    speechFinished = true
+                                    spiritStage = 3
+                                    spiritLine = "لن أضيف سؤالًا آخر. لك أن تبقى هنا، أو تنهي لحظة الصمت متى شئت."
+                                }
+
+                                reply.startsWith("رمز:") -> {
+                                    val choice = reply.removePrefix("رمز:").trim()
+                                    spiritSilent = false
+                                    spiritStage = 3
+                                    spiritLine = SpiritMemoryEngine.symbolChoiceLine(choice)
+                                }
+
+                                else -> {
+                                    val answerLine = when (reply) {
+                                        "قريبة مما أشعر به" ->
+                                            "لن أحوّل قبولك إلى حقيقةٍ نهائية؛ سأحتفظ بها كخيطٍ يستحق أن نعود إليه حين تتغير الأدلة."
+
+                                        "الصورة ليست دقيقة" ->
+                                            "إذن سأترك هذه الصورة مفتوحة للمراجعة. سأحفظ اعتراضك حتى لا أكرر القراءة نفسها دون أدلةٍ جديدة."
+
+                                        else ->
+                                            "لا بأس. بعض الأسئلة تحتاج إلى زمنٍ لا إلى إجابةٍ فورية. يمكنك أن تتركها معك حتى تتضح ملامحها."
+                                    }
+
+                                    spiritSilent = false
+                                    spiritStage = 2
+                                    spiritLine = answerLine
+                                }
+                            }
                         }
-                        spiritStage = 2
-                        spiritLine = answerLine
                     },
                     onClose = {
                         spiritLine = null
                         spiritStage = 0
+                        spiritSilent = false
                         dialogue = null
                         audio.stopSpirit()
                     }
