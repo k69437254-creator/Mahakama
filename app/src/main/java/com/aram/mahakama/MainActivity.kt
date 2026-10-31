@@ -69,6 +69,12 @@ import com.aram.mahakama.ui.WelcomeScreen
 import com.aram.mahakama.ui.MahakamaTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.aram.mahakama.nextupdate.data.NextUpdateEventCodec
+import com.aram.mahakama.nextupdate.domain.SpiritReflectionEngine
+import com.aram.mahakama.nextupdate.domain.TrialEvolutionEngine
+import com.aram.mahakama.nextupdate.ui.EnhancedInnerCourtScreen
+import com.aram.mahakama.nextupdate.ui.FaceTreeScreen
+import com.aram.mahakama.nextupdate.ui.TrialEvolutionScreen
 
 class MainActivity : ComponentActivity() {
     private lateinit var repository: PreferencesRepository
@@ -147,7 +153,11 @@ private fun MahakamaApp(
     }
     LaunchedEffect(isForeground, userState.trialStarted, userState.spiritMemoryJson) {
         if (isForeground && userState.trialStarted && spiritLine == null) {
-            val returnInsight = SpiritMemoryEngine.returnAfterAbsence(userState.spiritMemoryJson)
+            val activeMemory = NextUpdateEventCodec.activeBranchMemory(
+            raw = userState.spiritMemoryJson,
+            answers = userState.answers
+        )
+        val returnInsight = SpiritMemoryEngine.returnAfterAbsence(activeMemory)
             if (returnInsight != null) {
                 spiritLayer = returnInsight.layer
                 spiritEvidence = "${returnInsight.evidence}\n${returnInsight.confidence}"
@@ -320,14 +330,31 @@ private fun MahakamaApp(
                                     } else userState.spiritMemoryJson
                                     val count = QuestionnaireEngine.answeredOptions(nextAnswers).size
                                     val sinceLastSpirit = count - lastSpiritAtCount
-                                    val insight = SpiritMemoryEngine.createInsight(nextMemory, nextAnswers)
-                                    val shouldAppear = next != null && QuestionnaireEngine.nextQuestion(nextAnswers) != null && (
+                                    val activeMemory = NextUpdateEventCodec.activeBranchMemory(
+        raw = nextMemory,
+        answers = nextAnswers
+    )
+    val insight = SpiritMemoryEngine.createInsight(activeMemory, nextAnswers)
+    val transparentReflection = SpiritReflectionEngine.create(nextAnswers)
+                                    val previousSnapshot = NextUpdateEventCodec.latestProfileSnapshot(activeMemory)
+    val currentSnapshot = TrialEvolutionEngine.snapshot(nextAnswers)
+    val snapshotEvent = if (
+        TrialEvolutionEngine.shouldRecordSnapshot(previousSnapshot, currentSnapshot)
+    ) {
+        val change = TrialEvolutionEngine.compare(previousSnapshot, currentSnapshot)
+        NextUpdateEventCodec.encodeProfileSnapshot(
+            currentSnapshot,
+            TrialEvolutionEngine.evolutionSummary(change)
+        )
+    } else null
+    val shouldAppear = next != null && QuestionnaireEngine.nextQuestion(nextAnswers) != null && (
                                         QuestionnaireEngine.shouldRevealSpirit(nextAnswers, sinceLastSpirit, count) ||
-                                            SpiritMemoryEngine.shouldReveal(nextMemory)
+                                            SpiritMemoryEngine.shouldReveal(activeMemory)
                                         )
                                     scope.launch {
                                         repository.replaceAnswers(nextAnswers, question.id, optionId)
                                         if (answerEvent != null) repository.appendSpiritMemoryEvent(answerEvent)
+        snapshotEvent?.let { repository.appendSpiritMemoryEvent(it) }
                                         if (shouldAppear) {
                                             repository.appendSpiritMemoryEvent(
                                                 SpiritMemoryEngine.appearanceEvent(nextMemory, insight.key, insight.followUp)
@@ -337,7 +364,13 @@ private fun MahakamaApp(
                                     if (shouldAppear) {
                                         lastSpiritAtCount = count
                                         spiritLayer = insight.layer
-                                        spiritEvidence = "${insight.evidence}\n${insight.confidence}"
+                                        spiritEvidence = buildString {
+            append(insight.evidence)
+            append("\n")
+            append(transparentReflection.evidenceSummary)
+            append("\n")
+            append(transparentReflection.limitation)
+        }
                                         spiritSymbolicLine = insight.symbolicLine
                                         dialogue = SpiritDialogue(
                                             firstLine = insight.line,
@@ -352,12 +385,18 @@ private fun MahakamaApp(
                                 onGoFaces = { route = "faces" },
                                 onGoUnmasking = { route = "unmasking" }
                             )
-                            "faces" -> FacesScreen(userState)
+                            "faces" -> FaceTreeScreen(
+        userState = userState,
+        onOpenEvolution = { route = "evolution" }
+    )
+    "evolution" -> TrialEvolutionScreen(userState)
                             "unmasking" -> UnmaskingScreen(userState) { feedback ->
                                 scope.launch { repository.saveUnmaskingFeedback(feedback) }
                             }
                             "other_you" -> OtherYouScreen(userState)
-                            "inner_court" -> InnerCourtScreen(userState)
+                            "inner_court" -> EnhancedInnerCourtScreen(userState) { eventJson ->
+        scope.launch { repository.appendSpiritMemoryEvent(eventJson) }
+    }
                             "echo" -> EchoScreen(userState)
                             "silent_room" -> SilentRoomScreen(userState.freeWriting, userState.freeWritingFaceId) { text, faceId ->
                                 scope.launch { repository.saveFreeWriting(text, faceId) }
@@ -496,6 +535,7 @@ private fun MahakamaApp(
 private fun routeTitle(route: String): String = when (route) {
     "questions" -> "جلسة الأسئلة"
     "faces" -> "شجرة الوجوه"
+    "evolution" -> "سجل تطور المحاكمة"
     "unmasking" -> "كشف القناع"
     "other_you" -> "ذاتك الأخرى"
     "inner_court" -> "المحكمة الداخلية"
@@ -510,6 +550,7 @@ private fun routeTitle(route: String): String = when (route) {
 private fun routeSubtitle(route: String): String? = when (route) {
     "questions" -> "كل إجابة تفتح احتمالًا جديدًا"
     "faces" -> "احتمالات مدعومة بالأدلة ومفتوحة للمراجعة"
+    "evolution" -> "محطات الرحلة وما تغيّر في صورتها"
     "clock" -> "الزمن الذي جمعته جلساتك"
     "silent_room" -> "مساحةٌ لك، لا لحكمٍ عليك"
     else -> null

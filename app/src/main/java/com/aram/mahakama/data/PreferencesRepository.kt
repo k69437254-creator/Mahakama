@@ -43,6 +43,9 @@ data class UserState(
 )
 
 class PreferencesRepository private constructor(private val store: DataStore<Preferences>) {
+    private companion object {
+        const val MAX_PERSISTED_SPIRIT_EVENTS = 3000
+    }
     constructor(context: Context) : this(context.applicationContext.mahakamaDataStore)
 
     /** Isolated store name for instrumentation tests; production uses the single app-level store. */
@@ -142,7 +145,7 @@ class PreferencesRepository private constructor(private val store: DataStore<Pre
             val event = try { JSONObject(eventJson) } catch (_: Exception) { return@edit }
             current.put(event)
             val compact = JSONArray()
-            val start = (current.length() - 500).coerceAtLeast(0)
+            val start = (current.length() - MAX_PERSISTED_SPIRIT_EVENTS).coerceAtLeast(0)
             for (index in start until current.length()) {
                 current.optJSONObject(index)?.let { compact.put(it) }
             }

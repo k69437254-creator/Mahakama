@@ -1,0 +1,16 @@
+955c7fc9754a2f1d02ac629e6fb9493a0338e95e3c34e5672946c5712e74ca42  ./README_AR.md
+e62658644075751747fe51c8817fd330c6311ed5599341ea62a9cba84da02333  ./app/src/androidTest/java/com/aram/mahakama/nextupdate/NextUpdateEventCodecInstrumentedTest.kt
+2c7df4dcbbed0e8f1a88efad68383c7c873310245a3cb1b90a24158b9d408b51  ./app/src/main/java/com/aram/mahakama/nextupdate/data/NextUpdateEventCodec.kt
+e67b14e953248b1dc271834329d059c381d50c28563c2b3a77578f6e735e0372  ./app/src/main/java/com/aram/mahakama/nextupdate/domain/ActiveTrialAnalysis.kt
+c080968503eee4d9f31d27a75fde37c9c7ba5d420527f1e2ebcdaf7e5cfa2d9e  ./app/src/main/java/com/aram/mahakama/nextupdate/domain/FaceGraphEngine.kt
+694d48baae6782d246299ca9eb8d6caf3706dfb840dffb2da0832b6d16864f2f  ./app/src/main/java/com/aram/mahakama/nextupdate/domain/InnerCourtEngine.kt
+d360dfc6d3314328de6e17e77ba6000b0204915645585a32f2828cba05885fa7  ./app/src/main/java/com/aram/mahakama/nextupdate/domain/QuestionBankAudit.kt
+34eca3115987a806bce68a9e0e8c9136f6cfcf5aa739764ce6ac61736829a383  ./app/src/main/java/com/aram/mahakama/nextupdate/domain/SpiritReflectionEngine.kt
+6fb418ee2d32bf23820972db0fe0fabc62e4b6a5b9e3eba98a4e388202a0dcd0  ./app/src/main/java/com/aram/mahakama/nextupdate/domain/TrialEvolutionEngine.kt
+e066de64043095065c6e6be4dd7d57fb91c8455e707fa4e22fcceee24c76a11a  ./app/src/main/java/com/aram/mahakama/nextupdate/model/NextUpdateModels.kt
+d5c88eb1222a6d07da4a9d2510daeb7cf9c3817ffd6970f4bc1859decd03e62a  ./app/src/main/java/com/aram/mahakama/nextupdate/ui/NextUpdateScreens.kt
+856b135c1df0d6935c9a80fd153a7ba82d144b38da310e423bd3591b9266d7d4  ./app/src/test/java/com/aram/mahakama/nextupdate/NextUpdateEnginesTest.kt
+0807366c93e98c6d5bec617f159cff632e0042d0e788fdb4a2f56a58b428e7e8  ./docs/INTEGRATION_GUIDE_AR.md
+6cfb5588ab95cd1428a7a050de819dcbdf383fe1cf7fd11a89befb7506f9d6b2  ./docs/PRODUCT_SPEC_AR.md
+35452a10587a96754bd619cdc20fafe3279b537bac321f27f6464650a579d857  ./docs/QA_ACCEPTANCE_AR.md
+09aa635eac71310368c8655adaa6614d69e3b1f8536c781e537cac23d0a7f9b5  ./docs/VALIDATION_STATUS_AR.md

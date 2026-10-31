@@ -428,6 +428,7 @@ fun HomeScreen(userState: UserState, elapsedMillis: Long, onNavigate: (String) -
         FeatureItem("ذاتك الأخرى", "طرق لم تعشها بعد", Icons.Default.AutoAwesome, "other_you"),
         FeatureItem("المحكمة الداخلية", "استمع إلى الحجج قبل الحكم", Icons.Default.Gavel, "inner_court"),
         FeatureItem("صدى الماضي", "قارن بين إجاباتك عبر الزمن", Icons.Default.History, "echo"),
+        FeatureItem("سجل تطور المحاكمة", "محطات إجاباتك وما تغيّر في الأدلة", Icons.Default.History, "evolution"),
         FeatureItem("الغرفة الصامتة", "مساحة تكتب فيها بلا مقاطعة", Icons.Default.EditNote, "silent_room"),
         FeatureItem("إعدادات المحاكمة", "الاسم والصوت والتفضيلات", Icons.Default.Settings, "settings")
     )
