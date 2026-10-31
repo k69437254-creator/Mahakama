@@ -1944,6 +1944,7 @@ fun SpiritOverlay(
                         strokeWidth = (1.2f + (i % 3) * 0.55f).dp.toPx(),
                         cap = StrokeCap.Round
                     )
+                }
         // Cinematic edge vignette and lower shadow.
         drawRect(
             brush = Brush.radialGradient(
@@ -1970,7 +1971,6 @@ fun SpiritOverlay(
             size = size
         )
 
-                }
             }
 
             Column(

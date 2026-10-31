@@ -111,7 +111,12 @@ object SpiritMemoryEngine {
         JSONObject()
             .put("kind", "feedback")
             .put("at", now)
-            .put("reply", reply)
+            .put("reply", when (reply) {
+            "لا تمثلني بدقة" -> "الصورة ليست دقيقة"
+            "قريبة من تجربتي" -> "قريبة مما أشعر به"
+            else -> reply
+        })
+        .put("originalReply", reply)
             .put("insightKey", insightKey)
             .toString()
 
@@ -182,9 +187,14 @@ object SpiritMemoryEngine {
         val rememberedWorldChoice = all.lastOrNull { it.optString("kind") == "symbol" }
             ?.optString("choice").orEmpty()
         val lastFeedback = all.lastOrNull { it.optString("kind") == "feedback" }
-        val feedbackNote = when (lastFeedback?.optString("reply")) {
-            "الصورة ليست دقيقة" -> "\nواعتراضك السابق على قراءة «${lastFeedback.optString("insightKey") }» محفوظ؛ لا أتعامل معها كحقيقةٍ نهائية."
-            "قريبة مما أشعر به" -> "\nسبق أن قلت إن قراءةً ما قريبة من تجربتك، وسأبقي قبولك احتمالًا قابلًا للمراجعة."
+        val feedbackReply = lastFeedback?.optString("originalReply")
+            ?.takeIf { it.isNotBlank() }
+            ?: lastFeedback?.optString("reply").orEmpty()
+        val feedbackNote = when (feedbackReply) {
+            "الصورة ليست دقيقة", "لا تمثلني بدقة" ->
+                "\nواعتراضك السابق على قراءة «${lastFeedback?.optString("insightKey").orEmpty()}» محفوظ؛ لا أتعامل معها كحقيقةٍ نهائية."
+            "قريبة مما أشعر به", "قريبة من تجربتي" ->
+                "\nسبق أن قلت إن قراءةً ما قريبة من تجربتك، وسأبقي قبولك احتمالًا قابلًا للمراجعة."
             else -> ""
         }
         val evidence = evidenceFor(latest, previous) +
