@@ -1,5 +1,7 @@
 package com.aram.mahakama.ui
 
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.net.Uri
 import android.widget.VideoView
 import com.aram.mahakama.R
@@ -7,6 +9,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,8 +35,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -46,10 +53,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun SpiritOrchestraScreen(
@@ -64,7 +78,22 @@ fun SpiritOrchestraScreen(
     var nameVisible by remember { mutableStateOf(false) }
     var musicSelectionVisible by remember { mutableStateOf(false) }
     var leaving by remember { mutableStateOf(false) }
+    var selectedForEntry by remember { mutableStateOf<String?>(null) }
+    var horrorPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
+    var cuePlayer by remember { mutableStateOf<MediaPlayer?>(null) }
     var sceneVideoView by remember { mutableStateOf<VideoView?>(null) }
+    val context = LocalContext.current
+
+    val spectralTransition = rememberInfiniteTransition(label = "invisible-voice")
+    val spectralPhase by spectralTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = (2f * PI).toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2600, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "spectral-phase"
+    )
 
     val sceneAlpha by androidx.compose.animation.core.animateFloatAsState(
         if (leaving) 0f else 1f,
@@ -76,6 +105,18 @@ fun SpiritOrchestraScreen(
         onDispose {
             sceneVideoView?.stopPlayback()
             sceneVideoView = null
+            horrorPlayer?.let { player ->
+                runCatching { player.setOnCompletionListener(null) }
+                runCatching { player.stop() }
+                runCatching { player.release() }
+            }
+            horrorPlayer = null
+            cuePlayer?.let { player ->
+                runCatching { player.setOnCompletionListener(null) }
+                runCatching { player.stop() }
+                runCatching { player.release() }
+            }
+            cuePlayer = null
             onStopIntro()
         }
     }
@@ -87,12 +128,129 @@ fun SpiritOrchestraScreen(
         nameVisible = false
         delay(2_000L)
         musicSelectionVisible = true
+
+        // يبدأ الصوت المرعب بعد 25 ثانية من بداية المشهد، ويستمر حتى الاختيار.
+        delay(11_000L)
+        if (selectedForEntry == null && !leaving) {
+            val ambience = runCatching {
+                MediaPlayer.create(context.applicationContext, R.raw.horror_ambience)
+            }.getOrNull()
+
+            if (ambience != null && selectedForEntry == null && !leaving) {
+                ambience.isLooping = true
+                ambience.setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                )
+                ambience.setVolume(0f, 0f)
+                ambience.setOnErrorListener { failed, _, _ ->
+                    if (horrorPlayer === failed) horrorPlayer = null
+                    runCatching { failed.release() }
+                    true
+                }
+                horrorPlayer = ambience
+
+                try {
+                    ambience.start()
+                    for (step in 1..18) {
+                        if (selectedForEntry != null || leaving) break
+                        val volume = 0.26f * step / 18f
+                        ambience.setVolume(volume, volume)
+                        delay(100L)
+                    }
+                } catch (_: Exception) {
+                    if (horrorPlayer === ambience) horrorPlayer = null
+                    runCatching { ambience.release() }
+                }
+            }
+        }
+    }
+
+    // التسجيل المختار يحدد مدة الشاشة السوداء، ثم يبدأ اللحن الأصلي المحفوظ.
+    LaunchedEffect(selectedForEntry) {
+        val chosenTrack = selectedForEntry ?: return@LaunchedEffect
+        musicSelectionVisible = false
+        nameVisible = false
+
+        val ambience = horrorPlayer
+        if (ambience != null) {
+            for (step in 10 downTo 0) {
+                val volume = 0.26f * step / 10f
+                runCatching { ambience.setVolume(volume, volume) }
+                delay(55L)
+            }
+            runCatching { ambience.stop() }
+            runCatching { ambience.release() }
+            if (horrorPlayer === ambience) horrorPlayer = null
+        }
+
+        onStopIntro()
+        val cueResource = when (chosenTrack) {
+            "death" -> R.raw.cue_death
+            "sin" -> R.raw.cue_sin
+            else -> R.raw.cue_fate
+        }
+        val cue = runCatching {
+            MediaPlayer.create(context.applicationContext, cueResource)
+        }.getOrNull()
+
+        if (cue == null) {
+            // لا نبدأ اللحن الأصلي إذا تعذّر إنشاء المقطع التمهيدي.
+            selectedForEntry = null
+            musicSelectionVisible = true
+        } else {
+            try {
+                cue.setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build()
+                )
+                cue.setVolume(0f, 0f)
+                cuePlayer = cue
+
+                cue.setOnCompletionListener { completed ->
+                    if (cuePlayer === completed) cuePlayer = null
+                    runCatching { completed.release() }
+                    // الانتقال إلى اللحن الأصلي مسموح بعد اكتمال المقطع فقط.
+                    leaving = true
+                }
+
+                cue.setOnErrorListener { failed, _, _ ->
+                    if (cuePlayer === failed) cuePlayer = null
+                    runCatching { failed.release() }
+                    // الفشل يعيد المستخدم إلى الاختيارات ولا يبدأ اللحن الأصلي.
+                    selectedForEntry = null
+                    musicSelectionVisible = true
+                    true
+                }
+
+                cue.start()
+
+                for (step in 1..10) {
+                    if (cuePlayer !== cue) break
+                    val volume = 0.96f * step / 10f
+                    cue.setVolume(volume, volume)
+                    delay(45L)
+                }
+            } catch (_: Exception) {
+                if (cuePlayer === cue) cuePlayer = null
+                runCatching { cue.stop() }
+                runCatching { cue.release() }
+                selectedForEntry = null
+                musicSelectionVisible = true
+            }
+        }
     }
 
     LaunchedEffect(leaving) {
-        if (leaving) {
-            delay(540L)
-            onContinue(selectedTrack)
+        val chosenTrack = selectedForEntry
+        if (leaving && chosenTrack != null) {
+            delay(560L)
+            onPreviewTrack(chosenTrack)
+            onContinue(chosenTrack)
         }
     }
 
@@ -250,8 +408,8 @@ fun SpiritOrchestraScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth()
                                 .padding(bottom = 6.dp)
-                                .clickable(enabled = !leaving) {
-                                    onPreviewTrack(id)
+                                .clickable(enabled = selectedForEntry == null && !leaving) {
+                                    selectedForEntry = id
                                 },
                             shape = RoundedCornerShape(13.dp),
                             colors = CardDefaults.cardColors(
@@ -323,29 +481,99 @@ fun SpiritOrchestraScreen(
                         }
                     }
 
-                    Button(
-                        onClick = { if (!leaving) leaving = true },
-                        enabled = hasChosenTrack && !leaving,
-                        modifier = Modifier.fillMaxWidth().height(46.dp),
-                        shape = RoundedCornerShape(14.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFD1C0F5),
-                            contentColor = Color(0xFF20162C),
-                            disabledContainerColor = Color(0xFF30273A),
-                            disabledContentColor = Color(0xFF8B7A9F)
+                }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = selectedForEntry != null,
+            modifier = Modifier.fillMaxSize(),
+            enter = fadeIn(tween(850)),
+            exit = fadeOut(tween(650))
+        ) {
+            Box(
+                Modifier.fillMaxSize().background(Color(0xFF010103)),
+                contentAlignment = Alignment.Center
+            ) {
+                Canvas(Modifier.fillMaxSize()) {
+                    val center = Offset(size.width * 0.5f, size.height * 0.46f)
+                    val extent = size.minDimension
+                    val cycle = 2f * PI.toFloat()
+
+                    for (ring in 0 until 6) {
+                        val progress = ((spectralPhase / cycle + ring * 0.17f) % 1f)
+                        val radius = extent * (0.07f + progress * 0.39f)
+                        val alpha = (0.15f * (1f - progress)).coerceIn(0f, 0.15f)
+                        drawCircle(
+                            color = Color(0xFF9E83C9).copy(alpha = alpha),
+                            radius = radius,
+                            center = center,
+                            style = Stroke(width = (0.7f + (1f - progress) * 1.1f).dp.toPx())
                         )
-                    ) {
-                        Text("اعتماد اللحن والدخول")
-                        Spacer(Modifier.width(7.dp))
-                        Icon(Icons.Default.ChevronLeft, contentDescription = null)
                     }
 
-                    Spacer(Modifier.height(4.dp))
+                    for (bar in 0 until 84) {
+                        val angle = bar * cycle / 84f
+                        val wave = abs(sin(angle * 3.2f + spectralPhase * 1.35f))
+                        val innerRadius = extent * 0.115f
+                        val outerRadius = innerRadius + extent * (0.025f + 0.075f * wave)
+                        val start = Offset(
+                            center.x + cos(angle) * innerRadius,
+                            center.y + sin(angle) * innerRadius
+                        )
+                        val end = Offset(
+                            center.x + cos(angle) * outerRadius,
+                            center.y + sin(angle) * outerRadius
+                        )
+                        drawLine(
+                            color = Color(0xFFC9B5F0).copy(alpha = 0.12f + 0.30f * wave),
+                            start = start,
+                            end = end,
+                            strokeWidth = (0.8f + wave * 0.7f).dp.toPx(),
+                            cap = androidx.compose.ui.graphics.StrokeCap.Round
+                        )
+                    }
+
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(Color(0x263C2A58), Color(0x14251A38), Color.Transparent),
+                            center = center,
+                            radius = extent * 0.31f
+                        ),
+                        radius = extent * 0.31f,
+                        center = center
+                    )
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 28.dp)
+                ) {
                     Text(
-                        "سيظل اختيارك محفوظًا، ويمكنك تغييره من الإعدادات.",
-                        color = Color(0xFFAA9BB9),
+                        "لا تبحث عن مصدر الصوت…",
+                        color = Color(0xFFE5DDF2),
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 1.1.sp
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        "أنا أسمع ما لم تقله.",
+                        color = Color(0xFF9F8DBB),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 0.7.sp
+                    )
+                    Spacer(Modifier.height(24.dp))
+                    Text(
+                        when (selectedForEntry) {
+                            "death" -> "لحن الموت"
+                            "sin" -> "لحن الخطيئة"
+                            else -> "لحن القدر"
+                        },
+                        color = Color(0xFF70617F),
                         style = MaterialTheme.typography.labelSmall,
-                        textAlign = TextAlign.Center
+                        letterSpacing = 2.sp
                     )
                 }
             }
