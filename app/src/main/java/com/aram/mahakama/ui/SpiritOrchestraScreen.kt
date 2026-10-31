@@ -1,12 +1,9 @@
 package com.aram.mahakama.ui
 
 import com.aram.mahakama.R
-
-import androidx.compose.ui.viewinterop.AndroidView
-
-import android.widget.VideoView
-
 import android.net.Uri
+import android.widget.VideoView
+import androidx.compose.ui.viewinterop.AndroidView
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -97,9 +94,9 @@ fun SpiritOrchestraScreen(
     var questionVisible by remember { mutableStateOf(false) }
     var leaving by remember { mutableStateOf(false) }
     var orchestraFinished by remember { mutableStateOf(false) }
+    var sceneVideoView by remember { mutableStateOf<VideoView?>(null) }
     val sceneAlpha by animateFloatAsState(if (leaving) 0f else 1f, tween(520, easing = FastOutSlowInEasing), label = "orchestra-exit-fade")
 
-    var sceneVideoView by remember { mutableStateOf<VideoView?>(null) }
     DisposableEffect(Unit) {
         onDispose {
             sceneVideoView?.stopPlayback()
@@ -127,55 +124,84 @@ fun SpiritOrchestraScreen(
             delay(540L)
             onContinue(chosenTrack)
         }
-    AndroidView(
-        factory = { context ->
-            VideoView(context).apply {
-                sceneVideoView = this
+    }
 
-                val sceneResources = intArrayOf(
-                    R.raw.court_wake,
-                    R.raw.ghost_appearance,
-                    R.raw.violinist,
-                    R.raw.pianist,
-                    R.raw.cellist,
-                    R.raw.conductor,
-                    R.raw.full_orchestra,
-                    R.raw.return_silence
-                )
-
-                var sceneIndex = 0
-
-                setOnPreparedListener { player ->
-                    player.isLooping = false
-                    player.setVolume(0f, 0f)
-                    start()
-                }
-
-                setOnCompletionListener {
-                    sceneIndex++
-                    if (sceneIndex < sceneResources.size) {
-                        setVideoURI(
-                            Uri.parse(
-                                "android.resource://${context.packageName}/${sceneResources[sceneIndex]}"
-                            )
-                        )
-                    } else {
+    Box(
+        Modifier.fillMaxSize().graphicsLayer { alpha = sceneAlpha }
+            .background(Brush.verticalGradient(listOf(Color(0xFF050409), Color(0xFF100A18), Color(0xFF0B0811))))
+    ) {
+        AndroidView(
+            factory = { context ->
+                VideoView(context).apply {
+                    sceneVideoView = this
+                    val scenes = intArrayOf(
+                        R.raw.court_wake,
+                        R.raw.ghost_appearance,
+                        R.raw.violinist,
+                        R.raw.pianist,
+                        R.raw.cellist,
+                        R.raw.conductor,
+                        R.raw.full_orchestra,
+                        R.raw.return_silence
+                    )
+                    var index = 0
+                    setOnPreparedListener { player ->
+                        player.isLooping = false
+                        player.setVolume(0f, 0f)
+                        start()
+                    }
+                    setOnCompletionListener {
+                        index++
+                        if (index < scenes.size) {
+                            setVideoURI(Uri.parse(
+                                "android.resource://${context.packageName}/${scenes[index]}"
+                            ))
+                        } else {
                             orchestraFinished = true
                             nameVisible = true
                             questionVisible = true
                             stopPlayback()
                         }
+                    }
+                    setVideoURI(Uri.parse(
+                        "android.resource://${context.packageName}/${scenes[0]}"
+                    ))
                 }
+            },
+            modifier = Modifier.fillMaxSize()
+        )
 
-                setVideoURI(
-                    Uri.parse(
-                        "android.resource://${context.packageName}/${sceneResources[0]}"
-                    )
-                )
+        Canvas(Modifier.fillMaxSize()) {
+            val w = size.width
+            val h = size.height
+            val phase = drift * 2f * PI.toFloat()
+            val extent = size.maxDimension
+            drawRect(brush = Brush.radialGradient(listOf(Color(0x663D285C), Color(0x25201531), Color.Transparent), center = Offset(w * 0.5f, h * 0.39f), radius = extent * 0.8f))
+            for (i in 0 until 9) {
+                val x = w * (0.07f + i * 0.108f) + sin(phase * 0.42f + i) * w * 0.025f
+                val y = h * (0.24f + (i % 4) * 0.16f + cos(phase * 0.55f + i * 0.4f) * 0.035f)
+                drawCircle(brush = Brush.radialGradient(listOf(Color(0xFFB39BEB).copy(alpha = 0.055f * reveal.value), Color.Transparent), center = Offset(x, y), radius = extent * (0.12f + (i % 3) * 0.035f)), radius = extent * (0.12f + (i % 3) * 0.035f), center = Offset(x, y))
             }
-        },
-        modifier = Modifier.fillMaxSize()
-    )3 * 0.35f), Offset(x, y))
+            // Featureless, drifting smoke entities; deliberately no eyes, mouths, masks, or human faces.
+            val convergence = (0.5f + 0.5f * sin(phase * 0.31f)) * 0.035f
+            drawSmokePresence(Offset(w * (0.255f + convergence), h * (0.345f + sin(phase * 0.55f) * 0.012f)), w * 0.28f, h * 0.34f, phase + 1.4f, reveal.value * 0.78f)
+            drawSmokePresence(Offset(w * (0.745f - convergence), h * (0.35f + cos(phase * 0.48f) * 0.014f)), w * 0.27f, h * 0.33f, phase + 4.1f, reveal.value * 0.75f)
+            drawSmokePresence(Offset(w * 0.5f, h * 0.325f), w * 0.39f * breath, h * 0.46f * breath, phase + 2.5f, reveal.value * (0.86f + selectionGlow.value * 0.14f))
+            // A curling ribbon of mist is the conductor's cue, not a literal arm or face.
+            val cx = w * 0.5f
+            val cy = h * 0.35f
+            val cue = Path().apply {
+                moveTo(cx + w * 0.075f, cy + h * 0.02f)
+                cubicTo(cx + w * 0.16f, cy - h * 0.035f, cx + w * 0.12f, cy - h * 0.12f, cx + w * 0.065f, cy - h * 0.145f)
+                cubicTo(cx + w * 0.025f, cy - h * 0.17f, cx + w * 0.055f, cy - h * 0.205f, cx + w * 0.09f, cy - h * 0.23f)
+            }
+            drawPath(cue, brush = Brush.verticalGradient(listOf(Color.Transparent, Color(0xB9C8B5FF).copy(alpha = reveal.value * selectionGlow.value * 0.58f), Color.Transparent), startY = cy - h * 0.24f, endY = cy + h * 0.03f), style = Stroke(width = 2.2f, cap = StrokeCap.Round))
+            for (i in 0 until 34) {
+                val seed = i * 0.6180339f
+                val x = ((seed + drift * (if (i % 2 == 0) 0.085f else -0.065f) + 1f) % 1f) * w
+                val y = ((i * 0.271f + drift * (0.055f + (i % 3) * 0.027f)) % 1f) * h
+                val alpha = (0.018f + 0.045f * abs(sin(phase + i * 0.76f))) * reveal.value
+                drawCircle(Color(0xFFE2D6FF).copy(alpha = alpha.coerceIn(0f, 0.065f)), (0.8f + i % 3 * 0.35f), Offset(x, y))
             }
             drawRect(brush = Brush.radialGradient(listOf(Color.Transparent, Color(0x66000000)), center = Offset(w * 0.5f, h * 0.42f), radius = extent * 0.87f))
         }
