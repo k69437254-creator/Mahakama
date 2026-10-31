@@ -1767,6 +1767,35 @@ fun SpiritOverlay(
     onClose: () -> Unit
 ) {
     var freeReply by rememberSaveable { mutableStateOf("") }
+    var revealedWordCount by remember(message) { mutableStateOf(0) }
+    androidx.compose.runtime.LaunchedEffect(message) {
+        val words = message.trim().split(Regex("\\s+")).filter { it.isNotBlank() }
+        revealedWordCount = 0
+        for (index in words.indices) {
+            revealedWordCount = index + 1
+            kotlinx.coroutines.delay(230L)
+        }
+    }
+    val revealedMessage = message.trim()
+        .split(Regex("\\s+"))
+        .filter { it.isNotBlank() }
+        .take(revealedWordCount)
+        .joinToString(" ")
+
+    val spiritPlayer = remember { mutableStateOf<android.media.MediaPlayer?>(null) }
+    val spiritSurface = remember { mutableStateOf<android.view.Surface?>(null) }
+    androidx.compose.runtime.DisposableEffect(Unit) {
+        onDispose {
+            spiritPlayer.value?.let { player ->
+                try { player.stop() } catch (_: Exception) {}
+                player.release()
+            }
+            spiritPlayer.value = null
+            spiritSurface.value?.release()
+            spiritSurface.value = null
+        }
+    }
+
     val motion = rememberInfiniteTransition(label = "spirit-character-motion")
     val breathing by motion.animateFloat(
         initialValue = 0.965f,
@@ -1804,6 +1833,68 @@ fun SpiritOverlay(
         enter = fadeIn(tween(680)) + slideInVertically(animationSpec = tween(680, easing = FastOutSlowInEasing), initialOffsetY = { it / 18 })
     ) {
         Box(Modifier.fillMaxSize().background(Color(0xF408060D)), contentAlignment = Alignment.Center) {
+                androidx.compose.ui.viewinterop.AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { ctx ->
+                    android.view.TextureView(ctx).apply {
+                        surfaceTextureListener = object : android.view.TextureView.SurfaceTextureListener {
+                            override fun onSurfaceTextureAvailable(
+                                texture: android.graphics.SurfaceTexture,
+                                width: Int,
+                                height: Int
+                            ) {
+                                val surface = android.view.Surface(texture)
+                                spiritSurface.value = surface
+                                try {
+                                    val player = android.media.MediaPlayer()
+                                    spiritPlayer.value = player
+                                    player.setDataSource(
+                                        ctx,
+                                        Uri.parse("android.resource://${ctx.packageName}/${com.aram.mahakama.R.raw.spirit_specter}")
+                                    )
+                                    player.setSurface(surface)
+                                    player.isLooping = true
+                                    player.setVolume(0f, 0f)
+                                    player.setOnPreparedListener { it.start() }
+                                    player.setOnErrorListener { failed, _, _ ->
+                                        try { failed.release() } catch (_: Exception) {}
+                                        if (spiritPlayer.value === failed) spiritPlayer.value = null
+                                        true
+                                    }
+                                    player.prepareAsync()
+                                } catch (_: Exception) {
+                                    spiritPlayer.value?.release()
+                                    spiritPlayer.value = null
+                                }
+                            }
+
+                            override fun onSurfaceTextureSizeChanged(
+                                texture: android.graphics.SurfaceTexture,
+                                width: Int,
+                                height: Int
+                            ) = Unit
+
+                            override fun onSurfaceTextureUpdated(
+                                texture: android.graphics.SurfaceTexture
+                            ) = Unit
+
+                            override fun onSurfaceTextureDestroyed(
+                                texture: android.graphics.SurfaceTexture
+                            ): Boolean {
+                                spiritPlayer.value?.let {
+                                    try { it.stop() } catch (_: Exception) {}
+                                    it.release()
+                                }
+                                spiritPlayer.value = null
+                                spiritSurface.value?.release()
+                                spiritSurface.value = null
+                                return true
+                            }
+                        }
+                    }
+                }
+            )
+
             // Layered, slow-moving fog and particles fill the whole encounter scene.
             Canvas(Modifier.fillMaxSize()) {
                 val w = size.width
@@ -1853,114 +1944,43 @@ fun SpiritOverlay(
                         strokeWidth = (1.2f + (i % 3) * 0.55f).dp.toPx(),
                         cap = StrokeCap.Round
                     )
+        // Cinematic edge vignette and lower shadow.
+        drawRect(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color.Transparent,
+                    Color(0x1808060D),
+                    Color(0xC808060D)
+                ),
+                center = Offset(w * 0.5f, h * 0.42f),
+                radius = extent * 0.78f
+            ),
+            size = size
+        )
+        drawRect(
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    Color.Transparent,
+                    Color(0x2208060D),
+                    Color(0xD908060D)
+                ),
+                startY = h * 0.48f,
+                endY = h
+            ),
+            size = size
+        )
+
                 }
             }
 
             Column(
-                Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 25.dp),
+                Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 22.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(Modifier.height(11.dp))
 
-                // The apparition breathes, drifts, tilts, and changes its eye-light instead of remaining a static icon.
-                Box(
-                    Modifier
-                        .size(240.dp)
-                        .graphicsLayer {
-                            translationY = floatY
-                            scaleX = breathing
-                            scaleY = breathing
-                            rotationZ = tilt
-                        }
-                        .clip(CircleShape)
-                        .background(Brush.radialGradient(listOf(Color(0x493C285D), Color(0x25201731), Color.Transparent)))
-                        .clickable(enabled = stage == 0) { onAsk() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Canvas(Modifier.fillMaxSize()) {
-                        val w = size.width
-                        val h = size.height
-                        val center = Offset(w * 0.5f, h * 0.47f)
-                        val extent = size.minDimension
-
-                        // An abstract, veiled presence: light and silhouette rather than cartoon eyes or a moving mouth.
-                        drawCircle(
-                            brush = Brush.radialGradient(
-                                listOf(Color(0x559C7BDF), Color(0x273F2D5E), Color.Transparent),
-                                center = Offset(w * 0.5f, h * 0.43f),
-                                radius = extent * 0.54f
-                            ),
-                            radius = extent * 0.54f,
-                            center = Offset(w * 0.5f, h * 0.43f)
-                        )
-                        drawCircle(
-                            color = Color(0x405A437D),
-                            radius = extent * 0.405f,
-                            center = center,
-                            style = Stroke(width = 1.dp.toPx())
-                        )
-                        drawCircle(
-                            color = Color(0x2DAD92EF),
-                            radius = extent * 0.345f,
-                            center = center,
-                            style = Stroke(width = 1.dp.toPx())
-                        )
-                        rotate(degrees = mistPhase * 360f, pivot = center) {
-                            drawArc(
-                                brush = Brush.sweepGradient(listOf(Color.Transparent, Color(0xC2C2ADFF), Color.Transparent)),
-                                startAngle = 198f,
-                                sweepAngle = 112f,
-                                useCenter = false,
-                                topLeft = Offset(center.x - extent * 0.42f, center.y - extent * 0.42f),
-                                size = Size(extent * 0.84f, extent * 0.84f),
-                                style = Stroke(width = 1.5.dp.toPx(), cap = StrokeCap.Round)
-                            )
-                        }
-                        // A soft cloak-like silhouette dissolves into the mist at the shoulders.
-                        val silhouette = PathBuilder(w, h).make()
-                        drawPath(
-                            silhouette,
-                            brush = Brush.verticalGradient(
-                                listOf(Color(0xCA45335E), Color(0xA21B1427), Color(0x0009070D)),
-                                startY = h * 0.18f,
-                                endY = h * 0.9f
-                            )
-                        )
-                        drawArc(
-                            color = Color(0x889F82D5),
-                            startAngle = 194f,
-                            sweepAngle = 152f,
-                            useCenter = false,
-                            topLeft = Offset(w * 0.28f, h * 0.07f),
-                            size = Size(w * 0.44f, h * 0.43f),
-                            style = Stroke(width = 1.25.dp.toPx())
-                        )
-                        // A narrow vertical glimmer suggests a hidden presence without facial animation.
-                        drawLine(
-                            brush = Brush.verticalGradient(
-                                listOf(Color.Transparent, Color(0xB9D8CBFF), Color(0x559C7BDF), Color.Transparent),
-                                startY = h * 0.24f,
-                                endY = h * 0.52f
-                            ),
-                            start = Offset(w * 0.5f, h * 0.25f),
-                            end = Offset(w * 0.5f, h * 0.5f),
-                            strokeWidth = 1.2.dp.toPx(),
-                            cap = StrokeCap.Round
-                        )
-                        drawCircle(
-                            brush = Brush.radialGradient(
-                                listOf(Color(0xD8E5DBFF), Color(0x559F82D5), Color.Transparent),
-                                center = Offset(w * 0.5f, h * 0.34f),
-                                radius = extent * 0.085f
-                            ),
-                            radius = extent * 0.085f,
-                            center = Offset(w * 0.5f, h * 0.34f)
-                        )
-                    }
-                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color(0xFFB9A1FF).copy(alpha = 0.8f), modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp).size(21.dp))
-                }
-
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height( if (stage == 0) 145.dp else 95.dp ))
+                    Spacer(Modifier.height(8.dp))
                 Text("طيف الروح", color = Violet, style = MaterialTheme.typography.bodySmall, letterSpacing = 2.2.sp)
                 Spacer(Modifier.height(5.dp))
                 Text("طبقة الحضور: $layerLabel", color = Color(0xFFB9A1FF), style = MaterialTheme.typography.labelSmall)
@@ -1978,52 +1998,76 @@ fun SpiritOverlay(
                     Spacer(Modifier.height(9.dp))
                     Text(symbolicLine, color = Color(0xFF9F8BB8), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
                 }
-                Spacer(Modifier.height(13.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(19.dp))
+                        .background(Color(0xB5100B18))
+                        .border(1.dp, Color(0x557F65A7), RoundedCornerShape(19.dp))
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                ) {
+                    Column(
+                        Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        AnimatedContent(
+                            targetState = revealedMessage,
+                            transitionSpec = {
+                                (fadeIn(tween(260, easing = FastOutSlowInEasing)) +
+                                    slideInVertically(tween(260)) { it / 10 }) togetherWith
+                                    fadeOut(tween(100))
+                            },
+                            label = "spirit-cinematic-subtitle"
+                        ) { visibleMessage ->
+                            Text(
+                                visibleMessage,
+                                color = Color(0xFFF5EDFF),
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 27.sp
+                            )
+                        }
 
-                AnimatedContent(
-                    targetState = message,
-                    transitionSpec = {
-                        (fadeIn(tween(430)) + slideInVertically(tween(430, easing = FastOutSlowInEasing)) { it / 15 }) togetherWith fadeOut(tween(210))
-                    },
-                    label = "spirit-dialogue-transition"
-                ) { visibleMessage ->
-                    Text(
-                        visibleMessage,
-                        color = Color(0xFFF0E8FF),
-                        style = MaterialTheme.typography.titleLarge,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 32.sp
-                    )
-                }
+                        Spacer(Modifier.height(9.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Box(
+                                Modifier.size(6.dp).clip(CircleShape)
+                                    .background(if (speechFinished) Color(0xFF8B7AA5) else Violet)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                if (speechFinished) "سكت الطيف، وبقي السؤال" else "الطيف يتحدث إليك الآن",
+                                color = Color(0xFFB9A9CA),
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
 
-                Spacer(Modifier.height(12.dp))
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                    Box(Modifier.size(6.dp).clip(CircleShape).background(if (speechFinished) Color(0xFF8B7AA5) else Violet))
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        if (speechFinished) "سكت الطيف، وبقي السؤال" else "الطيف يتحدث إليك الآن",
-                        color = Color(0xFFB9A9CA),
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
-                Canvas(Modifier.fillMaxWidth(0.46f).height(28.dp).padding(top = 3.dp)) {
-                    val count = 25
-                    val barWidth = size.width / (count * 2f)
-                    for (i in 0 until count) {
-                        val wave = abs(sin(i * 0.54f + System.nanoTime() / 1_000_000_000f))
-                        val speakingScale = if (speechFinished) 0.22f else 0.35f + wave * 0.65f
-                        val barHeight = (3f + 18f * wave * speakingScale).dp.toPx()
-                        val x = i * (barWidth * 2f) + barWidth / 2f
-                        drawLine(
-                            color = Color(0xFFB9A1FF).copy(alpha = if (speechFinished) 0.28f else 0.36f + wave * 0.5f),
-                            start = Offset(x, size.height / 2f - barHeight / 2f),
-                            end = Offset(x, size.height / 2f + barHeight / 2f),
-                            strokeWidth = barWidth.coerceAtLeast(1f),
-                            cap = StrokeCap.Round
-                        )
+                        Canvas(
+                            Modifier.fillMaxWidth(0.46f).height(24.dp).padding(top = 3.dp)
+                        ) {
+                            val count = 25
+                            val barWidth = size.width / (count * 2f)
+                            for (i in 0 until count) {
+                                val wave = abs(sin(i * 0.54f + System.nanoTime() / 1_000_000_000f))
+                                val speakingScale = if (speechFinished) 0.22f else 0.35f + wave * 0.65f
+                                val barHeight = (3f + 18f * wave * speakingScale).dp.toPx()
+                                val x = i * (barWidth * 2f) + barWidth / 2f
+                                drawLine(
+                                    color = Color(0xFFB9A1FF).copy(
+                                        alpha = if (speechFinished) 0.28f else 0.36f + wave * 0.5f
+                                    ),
+                                    start = Offset(x, size.height / 2f - barHeight / 2f),
+                                    end = Offset(x, size.height / 2f + barHeight / 2f),
+                                    strokeWidth = barWidth.coerceAtLeast(1f),
+                                    cap = StrokeCap.Round
+                                )
+                            }
+                        }
                     }
                 }
-
                 Spacer(Modifier.height(8.dp))
                 Text("هذه قراءة محتملة من إجاباتك، وليست حقيقةً نهائية عنك.", color = Color(0xFF9F93B0), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
                 if (stage == 0) {
@@ -2032,13 +2076,13 @@ fun SpiritOverlay(
                     Spacer(Modifier.height(3.dp))
                     Text("يمكنك لمس الطيف أيضًا لفتح حوار قصير.", color = Color(0xFF81748F), style = MaterialTheme.typography.labelSmall)
                 } else if (stage == 1) {
-                    Spacer(Modifier.height(21.dp))
+                    Spacer(Modifier.height(14.dp))
                     Text(
                         "كيف استقبلت هذه الملاحظة؟",
                         color = Color(0xFFD5C8E5),
                         style = MaterialTheme.typography.titleSmall
                     )
-                    Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(7.dp))
                     listOf(
                         "قريبة مما أشعر به",
                         "الصورة ليست دقيقة",
@@ -2047,12 +2091,19 @@ fun SpiritOverlay(
                     ).forEach { reply ->
                         Button(
                             onClick = { onReply(reply) },
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 7.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = PanelRaised,
+                            modifier = Modifier.fillMaxWidth().height(40.dp).padding(bottom = 3.dp),
+                            shape = RoundedCornerShape(13.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xCC21182F),
                                 contentColor = Color(0xFFF0E8FF)
                             )
-                        ) { Text(reply) }
+                        ) {
+                            Text(
+                                reply,
+                                style = MaterialTheme.typography.bodySmall,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
 
                     Spacer(Modifier.height(12.dp))
@@ -2068,7 +2119,7 @@ fun SpiritOverlay(
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("اكتب بحرية، فليس كل ما في الداخل اختيارًا جاهزًا...") },
                         minLines = 2,
-                        maxLines = 4,
+                        maxLines = 3,
                         shape = RoundedCornerShape(15.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Violet,
@@ -2086,7 +2137,7 @@ fun SpiritOverlay(
                             }
                         },
                         enabled = freeReply.isNotBlank(),
-                        modifier = Modifier.fillMaxWidth().height(48.dp)
+                        modifier = Modifier.fillMaxWidth().height(44.dp)
                     ) {
                         Text("أرسل ما بداخلك")
                     }
@@ -2097,11 +2148,18 @@ fun SpiritOverlay(
                     listOf("أفتح الباب", "أترك الباب مغلقًا", "ألمس المرآة", "أواصل الطريق").forEach { choice ->
                         Button(
                             onClick = { onReply("رمز:$choice") },
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = PanelRaised, contentColor = Color(0xFFF0E8FF))
-                        ) { Text(choice) }
+                            modifier = Modifier.fillMaxWidth().height(40.dp).padding(bottom = 4.dp),
+                            shape = RoundedCornerShape(13.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xCC21182F), contentColor = Color(0xFFF0E8FF))
+                        ) {
+                            Text(
+                                choice,
+                                style = MaterialTheme.typography.bodySmall,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
-                    TextButton(onClick = onClose) { Text("أعود إلى الجلسة", color = Color(0xFFBBA7D8)) }
+
                 } else {
                     Spacer(Modifier.height(21.dp))
                     Button(onClick = onClose, modifier = Modifier.fillMaxWidth().height(50.dp)) {
