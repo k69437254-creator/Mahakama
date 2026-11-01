@@ -43,6 +43,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.aram.mahakama.audio.AppAudioController
+import com.aram.mahakama.audio.AudarConnectionTest
 import com.aram.mahakama.data.PreferencesRepository
 import com.aram.mahakama.domain.QuestionnaireEngine
 import com.aram.mahakama.domain.SpiritMemoryEngine
@@ -88,6 +89,7 @@ class MainActivity : ComponentActivity() {
         repository = PreferencesRepository(applicationContext)
         clock = TrialClock(repository)
         audioController = AppAudioController(applicationContext)
+        AudarConnectionTest.run()
 
         setContent {
             MahakamaTheme {

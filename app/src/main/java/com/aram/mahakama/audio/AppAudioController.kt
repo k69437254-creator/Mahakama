@@ -262,49 +262,50 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
         }
         val engine = tts ?: return
         try {
-            val preferredLocales = listOf(
-                Locale("ar", "SA"),
-                Locale("ar", "AE"),
-                Locale("ar", "EG"),
-                Locale("ar")
-            )
-            val supportedLocale = preferredLocales.firstOrNull { locale ->
-                engine.isLanguageAvailable(locale) >= TextToSpeech.LANG_AVAILABLE
-            }
-            val arabicVoices = engine.voices
-                ?.filter { it.locale.language.equals("ar", ignoreCase = true) }
+            // Strictly prefer installed Arabic voices; never select a network voice.
+            val offlineArabicVoices = engine.voices
+                ?.filter {
+                    it.locale.language.equals("ar", ignoreCase = true) &&
+                    !it.isNetworkConnectionRequired
+                }
                 ?.sortedWith(
                     compareByDescending<android.speech.tts.Voice> { it.quality }
-                        .thenBy { it.isNetworkConnectionRequired }
-                        .thenBy { it.locale.country != "SA" }
+                        .thenBy {
+                            when (it.locale.country.uppercase(Locale.ROOT)) {
+                                "SA" -> 0
+                                "AE" -> 1
+                                "EG" -> 2
+                                else -> 3
+                            }
+                        }
                 )
                 .orEmpty()
-            val chosenLocale = supportedLocale ?: arabicVoices.firstOrNull()?.locale
-            if (chosenLocale == null) {
+
+            val chosenVoice = offlineArabicVoices.firstOrNull()
+            if (chosenVoice == null) {
                 ttsReady = false
-                Log.w(TAG, "No Arabic speech voice is available on this device")
+                Log.w(TAG, "No installed offline Arabic voice is available; network voices are disabled")
                 finishWithoutVoice()
                 return
             }
 
-            val languageStatus = engine.setLanguage(chosenLocale)
-            ttsReady = languageStatus >= TextToSpeech.LANG_AVAILABLE
-            if (!ttsReady) {
-                Log.w(TAG, "Arabic language data is unavailable on this device")
+            val languageStatus = engine.setLanguage(chosenVoice.locale)
+            if (languageStatus < TextToSpeech.LANG_AVAILABLE) {
+                ttsReady = false
+                Log.w(TAG, "The selected offline Arabic voice language is unavailable")
                 finishWithoutVoice()
                 return
             }
 
-            arabicVoices.firstOrNull { voice ->
-                voice.locale.language.equals("ar", ignoreCase = true) &&
-                    (voice.locale.country == chosenLocale.country || chosenLocale.country.isBlank())
-            }?.let { voice ->
-                try {
-                    engine.voice = voice
-                } catch (e: Exception) {
-                    Log.w(TAG, "Could not select the preferred Arabic voice", e)
-                }
+            try {
+                engine.voice = chosenVoice
+            } catch (e: Exception) {
+                ttsReady = false
+                Log.w(TAG, "Could not activate the installed offline Arabic voice", e)
+                finishWithoutVoice()
+                return
             }
+            ttsReady = true
 
             // Balanced pace and pitch. The final voice timbre still depends on the Arabic engine installed on the device.
             engine.setSpeechRate(SPEECH_RATE)
