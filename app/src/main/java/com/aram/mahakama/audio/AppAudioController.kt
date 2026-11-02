@@ -10,15 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.aram.mahakama.R
-import java.util.concurrent.Future
-import java.util.concurrent.Executors
-import java.util.concurrent.ExecutorService
-import java.net.URL
-import java.net.HttpURLConnection
-import java.io.FileOutputStream
 import java.io.File
-import java.io.DataInputStream
-import org.json.JSONObject
 
 /**
  * One continuous ambient soundtrack and the Arabic voice of "طيف الذات".
@@ -44,11 +36,10 @@ class AppAudioController(context: Context) {
     private var speaking = false
     private var finishedCallback: (() -> Unit)? = null
 
-    private val audarExecutor: ExecutorService =
-        Executors.newSingleThreadExecutor()
-
-    @Volatile private var activeConnection: HttpURLConnection? = null
-    private var synthesisTask: Future<*>? = null
+    private val sherpaEngine = SherpaSupertonicEngine(appContext)
+    private var sherpaPreparing = false
+    private var pendingSpeechText: String? = null
+    private var pendingSpeechGeneration = 0L
     private var speechPlayer: MediaPlayer? = null
 
     @Volatile private var speechGeneration = 0L
@@ -172,159 +163,99 @@ class AppAudioController(context: Context) {
             fadeMusicTo(ambientTargetVolume(true), 650L)
         }
 
-        requestAudarSpeech(prepareArabicSpeech(text))
+        requestSherpaSpeech(prepareArabicSpeech(text))
     }
 
-    @Suppress("UNUSED_PARAMETER")
     @Synchronized
-    private fun requestAudarSpeech(text: String) {
-        if (released) return
+    private fun requestSherpaSpeech(text: String) {
+        if (released || text.isBlank()) return
 
         speechGeneration++
         val generation = speechGeneration
 
-        try {
-            activeConnection?.disconnect()
-        } catch (_: Exception) {
-        }
-        activeConnection = null
-
-        synthesisTask?.cancel(true)
-        synthesisTask = null
-
         releaseSpeechPlayer()
+        pendingSpeechText = text
+        pendingSpeechGeneration = generation
 
-        synthesisTask = audarExecutor.submit {
-            var connection: HttpURLConnection? = null
-            var outputFile: File? = null
-
-            try {
-                connection =
-                    (URL(AUDAR_SYNTHESIZE_URL).openConnection() as HttpURLConnection).apply {
-                        requestMethod = "POST"
-                        connectTimeout = AUDAR_CONNECT_TIMEOUT_MS
-                        readTimeout = AUDAR_READ_TIMEOUT_MS
-                        doOutput = true
-                        setRequestProperty(
-                            "Content-Type",
-                            "application/json; charset=utf-8"
-                        )
-                        setRequestProperty("Accept", "audio/wav")
-                    }
-
-                activeConnection = connection
-
-                if (released ||
-                    generation != speechGeneration ||
-                    Thread.currentThread().isInterrupted
-                ) {
-                    connection.disconnect()
-                    return@submit
-                }
-
-                val payload = JSONObject()
-                    .put("text", text)
-                    .put("max_tokens", AUDAR_MAX_TOKENS)
-                    .toString()
-                    .toByteArray(Charsets.UTF_8)
-
-                connection.outputStream.use { output ->
-                    output.write(payload)
-                    output.flush()
-                }
-
-                val status = connection.responseCode
-
-                if (status != HttpURLConnection.HTTP_OK) {
-                    val detail = try {
-                        connection.errorStream
-                            ?.bufferedReader(Charsets.UTF_8)
-                            ?.use { it.readText() }
-                    } catch (_: Exception) {
-                        null
-                    }
-
-                    throw IllegalStateException(
-                        "Audar HTTP $status: ${detail.orEmpty()}"
-                    )
-                }
-
-                outputFile = File(
-                    appContext.cacheDir,
-                    "audar_speech_$generation.wav"
-                )
-
-                connection.inputStream.use { input ->
-                    FileOutputStream(outputFile).use { output ->
-                        input.copyTo(output)
-                    }
-                }
-
-                val validWave = outputFile.length() > 44 &&
-                    DataInputStream(outputFile.inputStream()).use { input ->
-                        val header = ByteArray(12)
-                        input.readFully(header)
-
-                        String(
-                            header,
-                            0,
-                            4,
-                            Charsets.US_ASCII
-                        ) == "RIFF" &&
-                        String(
-                            header,
-                            8,
-                            4,
-                            Charsets.US_ASCII
-                        ) == "WAVE"
-                    }
-
-                if (!validWave) {
-                    throw IllegalStateException(
-                        "Audar response is not a valid WAV file"
-                    )
-                }
-
-                val readyFile = outputFile
-
-                mainHandler.post {
-                    synchronized(this@AppAudioController) {
-                        if (released || generation != speechGeneration) {
-                            readyFile.delete()
-                        } else {
-                            playAudarFile(readyFile, generation)
-                        }
-                    }
-                }
-
-            } catch (e: Exception) {
-                outputFile?.delete()
-
-                if (!Thread.currentThread().isInterrupted) {
-                    Log.e(TAG, "Audar speech request failed", e)
-
-                    mainHandler.post {
-                        synchronized(this@AppAudioController) {
-                            if (!released &&
-                                generation == speechGeneration
-                            ) {
-                                finishSpeakingIfCurrent(generation)
-                            }
-                        }
-                    }
-                }
-
-            } finally {
-                if (activeConnection === connection) {
-                    activeConnection = null
-                }
-                connection?.disconnect()
-            }
+        if (sherpaEngine.isReady) {
+            val pending = pendingSpeechText
+            pendingSpeechText = null
+            if (pending != null) synthesizeSherpa(pending, generation)
+            return
         }
+
+        if (sherpaPreparing) return
+
+        sherpaPreparing = true
+        sherpaEngine.prepare(
+            onProgress = { progress ->
+                Log.d(TAG, "Supertonic model download: $progress%")
+            },
+            onReady = {
+                synchronized(this@AppAudioController) {
+                    sherpaPreparing = false
+
+                    val pending = pendingSpeechText
+                    val pendingGeneration = pendingSpeechGeneration
+                    pendingSpeechText = null
+
+                    if (
+                        !released &&
+                        pending != null &&
+                        pendingGeneration == speechGeneration
+                    ) {
+                        synthesizeSherpa(pending, pendingGeneration)
+                    }
+                }
+            },
+            onError = { error ->
+                synchronized(this@AppAudioController) {
+                    sherpaPreparing = false
+
+                    val failedGeneration = pendingSpeechGeneration
+                    pendingSpeechText = null
+
+                    if (!released && failedGeneration == speechGeneration) {
+                        Log.e(TAG, "Supertonic preparation failed", error)
+                        finishSpeakingIfCurrent(failedGeneration)
+                    }
+                }
+            }
+        )
     }
 
     @Synchronized
-    private fun playAudarFile(file: File, generation: Long) {
+    private fun synthesizeSherpa(text: String, generation: Long) {
+        if (released || generation != speechGeneration) return
+
+        val output = File(appContext.cacheDir, "sherpa_speech_$generation.wav")
+
+        sherpaEngine.synthesize(
+            text = text,
+            outputFile = output,
+            onComplete = { file ->
+                synchronized(this@AppAudioController) {
+                    if (released || generation != speechGeneration) {
+                        file.delete()
+                    } else {
+                        playSpeechFile(file, generation)
+                    }
+                }
+            },
+            onError = { error ->
+                synchronized(this@AppAudioController) {
+                    if (!released && generation == speechGeneration) {
+                        Log.e(TAG, "Supertonic speech generation failed", error)
+                        output.delete()
+                        finishSpeakingIfCurrent(generation)
+                    }
+                }
+            }
+        )
+    }
+
+    @Synchronized
+    private fun playSpeechFile(file: File, generation: Long) {
         if (released || generation != speechGeneration) {
             file.delete()
             return
@@ -334,8 +265,8 @@ class AppAudioController(context: Context) {
 
         val audio = try {
             MediaPlayer()
-        } catch (e: Exception) {
-            Log.e(TAG, "Could not create Audar MediaPlayer", e)
+        } catch (error: Exception) {
+            Log.e(TAG, "Could not create speech MediaPlayer", error)
             file.delete()
             finishSpeakingIfCurrent(generation)
             return
@@ -346,35 +277,28 @@ class AppAudioController(context: Context) {
         try {
             audio.setAudioAttributes(
                 AudioAttributes.Builder()
-                    .setUsage(
-                        AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY
-                    )
-                    .setContentType(
-                        AudioAttributes.CONTENT_TYPE_SPEECH
-                    )
+                    .setUsage(AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                     .build()
             )
-
             audio.setDataSource(file.absolutePath)
 
             audio.setOnPreparedListener { prepared ->
                 synchronized(this@AppAudioController) {
-                    if (released ||
+                    if (
+                        released ||
                         generation != speechGeneration ||
                         speechPlayer !== prepared
                     ) {
-                        try {
-                            prepared.release()
-                        } catch (_: Exception) {
-                        }
+                        try { prepared.release() } catch (_: Exception) {}
                         file.delete()
                         return@synchronized
                     }
 
                     try {
                         prepared.start()
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Audar playback could not start", e)
+                    } catch (error: Exception) {
+                        Log.e(TAG, "Speech playback could not start", error)
                         releaseSpeechPlayer()
                         file.delete()
                         finishSpeakingIfCurrent(generation)
@@ -384,7 +308,8 @@ class AppAudioController(context: Context) {
 
             audio.setOnCompletionListener { completed ->
                 synchronized(this@AppAudioController) {
-                    if (speechPlayer === completed &&
+                    if (
+                        speechPlayer === completed &&
                         generation == speechGeneration
                     ) {
                         releaseSpeechPlayer()
@@ -396,13 +321,11 @@ class AppAudioController(context: Context) {
 
             audio.setOnErrorListener { failed, what, extra ->
                 synchronized(this@AppAudioController) {
-                    if (speechPlayer === failed &&
+                    if (
+                        speechPlayer === failed &&
                         generation == speechGeneration
                     ) {
-                        Log.e(
-                            TAG,
-                            "Audar playback error: $what/$extra"
-                        )
+                        Log.e(TAG, "Speech playback error: $what/$extra")
                         releaseSpeechPlayer()
                         file.delete()
                         finishSpeakingIfCurrent(generation)
@@ -412,9 +335,8 @@ class AppAudioController(context: Context) {
             }
 
             audio.prepareAsync()
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Audar WAV setup failed", e)
+        } catch (error: Exception) {
+            Log.e(TAG, "Speech WAV setup failed", error)
             releaseSpeechPlayer()
             file.delete()
             finishSpeakingIfCurrent(generation)
@@ -499,23 +421,12 @@ class AppAudioController(context: Context) {
     @Synchronized
     fun stopSpirit() {
         stopOrchestraIntro()
-
         speechGeneration++
-
-        synthesisTask?.cancel(true)
-        synthesisTask = null
-
-        try {
-            activeConnection?.disconnect()
-        } catch (_: Exception) {
-        }
-        activeConnection = null
-
+        pendingSpeechText = null
         releaseSpeechPlayer()
 
         speaking = false
         finishedCallback = null
-
         fadeMusicTo(ambientTargetVolume(false), 800L)
     }
 
@@ -547,21 +458,10 @@ class AppAudioController(context: Context) {
         finishedCallback = null
         speaking = false
 
-        try {
-            activeConnection?.disconnect()
-        } catch (_: Exception) {
-        }
-        activeConnection = null
-
-        synthesisTask?.cancel(true)
-        synthesisTask = null
-
-        try {
-            audarExecutor.shutdownNow()
-        } catch (_: Exception) {
-        }
-
+        pendingSpeechText = null
         releaseSpeechPlayer()
+        sherpaEngine.close()
+
 
         trackSwitchRunnable?.let {
             mainHandler.removeCallbacks(it)
@@ -776,11 +676,6 @@ class AppAudioController(context: Context) {
 
     companion object {
         private const val TAG = "MahakamaAudio"
-        private const val AUDAR_SYNTHESIZE_URL =
-            "http://127.0.0.1:18765/synthesize"
-        private const val AUDAR_CONNECT_TIMEOUT_MS = 15000
-        private const val AUDAR_READ_TIMEOUT_MS = 120000
-        private const val AUDAR_MAX_TOKENS = 512
 
         /** Reviewed tashkeel for recurring lines; new lines still depend on device TTS. */
         private val VOCALIZED_LINES = mapOf(
