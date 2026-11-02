@@ -440,7 +440,7 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
             )
         )
 
-        val engine = OfflineTts(appContext.assets, config)
+        val engine = OfflineTts(null, config)
 
         try {
             val sampleRate = engine.sampleRate()
