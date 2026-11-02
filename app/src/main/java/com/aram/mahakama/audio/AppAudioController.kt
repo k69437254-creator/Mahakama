@@ -342,6 +342,7 @@ class AppAudioController(context: Context) {
             text = text,
             outputFile = output,
             onComplete = { file ->
+                Log.i(TAG, "CALLBACK_COMPLETE_RECEIVED: generation=$generation, exists=${file.exists()}, bytes=${file.length()}")
                 synchronized(this@AppAudioController) {
                     if (released || generation != speechGeneration) {
                         file.delete()

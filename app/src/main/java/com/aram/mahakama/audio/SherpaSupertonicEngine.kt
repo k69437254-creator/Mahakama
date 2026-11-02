@@ -203,10 +203,12 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
                     )
                 }
 
+                Log.i(TAG, "WAV_SAVE_BEGIN: path=${outputFile.absolutePath}, samples=${audio.samples.size}")
                 if (!audio.save(outputFile.absolutePath)) {
                     throw IOException("فشل حفظ الملف الصوتي")
                 }
 
+                Log.i(TAG, "WAV_SAVE_RESULT: exists=${outputFile.exists()}, bytes=${outputFile.length()}")
                 val expectedWavBytes = 44L + audio.samples.size.toLong() * 2L
                 if (!outputFile.isFile || outputFile.length() != expectedWavBytes) {
                     throw IOException(
@@ -216,7 +218,9 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
 
                     if (!closed.get()) {
                         post {
-                            if (!closed.get()) onComplete(outputFile)
+                            Log.i(TAG, "CALLBACK_MAIN_ENTER: exists=${outputFile.exists()}, bytes=${outputFile.length()}")
+                if (!closed.get()) onComplete(outputFile)
+                else Log.w(TAG, "CALLBACK_SKIPPED: engine closed before completion")
                         }
                     }
                 } catch (error: Throwable) {
@@ -503,7 +507,12 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
         File(modelDirectory, name).absolutePath
 
     private fun post(action: () -> Unit) {
-        mainHandler.post(action)
+        Log.i(TAG, "CALLBACK_POST_BEGIN")
+        val accepted = mainHandler.post {
+            Log.i(TAG, "CALLBACK_POST_EXECUTED")
+            action()
+        }
+        Log.i(TAG, "CALLBACK_POST_RESULT: accepted=$accepted")
     }
 
     override fun close() {
