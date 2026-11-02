@@ -46,6 +46,21 @@ class AppAudioController(context: Context) {
     private var volumeAnimator: ValueAnimator? = null
     private var currentMusicVolume = 0f
 
+    private fun isPlayingSafely(audio: MediaPlayer): Boolean {
+        return try {
+            audio.isPlaying
+        } catch (error: IllegalStateException) {
+            Log.e(TAG, "Ambient MediaPlayer entered an invalid state; discarding it", error)
+            if (player === audio) {
+                player = null
+                playerTrackId = null
+                currentMusicVolume = 0f
+            }
+            try { audio.release() } catch (_: Exception) { }
+            false
+        }
+    }
+
     @Synchronized
     fun updateAmbientState(
         isForeground: Boolean,
@@ -68,7 +83,13 @@ class AppAudioController(context: Context) {
         if (!AmbientAudioPolicy.shouldPlay(appIsForeground, muted)) {
             // Let the fade finish before pausing; pausing immediately would make the fade inaudible.
             fadeMusicTo(ambientTargetVolume(speaking), 220L)
-            if (currentMusicVolume <= 0.001f && audio.isPlaying) audio.pause()
+            if (currentMusicVolume <= 0.001f && isPlayingSafely(audio)) {
+                try {
+                    audio.pause()
+                } catch (error: IllegalStateException) {
+                    Log.w(TAG, "Ambient pause failed", error)
+                }
+            }
         } else {
             try {
                 if (!audio.isPlaying) audio.start()
@@ -147,7 +168,35 @@ class AppAudioController(context: Context) {
         lowVoice: Boolean,
         onFinished: () -> Unit
     ) {
-        if (text.isBlank() || released) return
+        if (text.isBlank() || released) {
+            Log.w(TAG, "Spirit speech skipped: blank text or released controller")
+            onFinished()
+            return
+        }
+
+        val speechText = try {
+            prepareArabicSpeech(text)
+        } catch (error: Exception) {
+            Log.e(TAG, "Arabic speech preparation failed", error)
+            if (Looper.myLooper() == Looper.getMainLooper()) {
+                onFinished()
+            } else {
+                mainHandler.post { onFinished() }
+            }
+            return
+        }
+
+        if (speechText.isBlank()) {
+            Log.w(TAG, "Spirit speech skipped: Arabic preparation produced blank text")
+            if (Looper.myLooper() == Looper.getMainLooper()) {
+                onFinished()
+            } else {
+                mainHandler.post { onFinished() }
+            }
+            return
+        }
+
+        Log.i(TAG, "Spirit speech requested: chars=${text.length}, foreground=$appIsForeground, muted=$muted, engineReady=${sherpaEngine.isReady}, preparing=$sherpaPreparing")
 
         speaking = true
         finishedCallback = onFinished
@@ -163,7 +212,7 @@ class AppAudioController(context: Context) {
             fadeMusicTo(ambientTargetVolume(true), 650L)
         }
 
-        requestSherpaSpeech(prepareArabicSpeech(text))
+        requestSherpaSpeech(speechText)
     }
 
     /**
@@ -228,6 +277,8 @@ class AppAudioController(context: Context) {
         speechGeneration++
         val generation = speechGeneration
 
+        Log.i(TAG, "Sherpa speech queued: generation=$generation, chars=${text.length}, engineReady=${sherpaEngine.isReady}, preparing=$sherpaPreparing")
+
         releaseSpeechPlayer()
         pendingSpeechText = text
         pendingSpeechGeneration = generation
@@ -284,6 +335,7 @@ class AppAudioController(context: Context) {
         if (released || generation != speechGeneration) return
 
         val output = File(appContext.cacheDir, "sherpa_speech_$generation.wav")
+        Log.i(TAG, "Sherpa synthesis started: generation=$generation")
 
         sherpaEngine.synthesize(
             text = text,
@@ -293,6 +345,7 @@ class AppAudioController(context: Context) {
                     if (released || generation != speechGeneration) {
                         file.delete()
                     } else {
+                        Log.i(TAG, "Sherpa WAV generated: generation=$generation, bytes=${file.length()}, path=${file.absolutePath}")
                         playSpeechFile(file, generation)
                     }
                 }
@@ -328,6 +381,7 @@ class AppAudioController(context: Context) {
         }
 
         speechPlayer = audio
+        Log.i(TAG, "Speech MediaPlayer created: generation=$generation, wavBytes=${file.length()}")
 
         try {
             audio.setAudioAttributes(
@@ -351,7 +405,9 @@ class AppAudioController(context: Context) {
                     }
 
                     try {
+                        Log.i(TAG, "Speech WAV prepared: duration=${prepared.duration}ms, sampleRate=${prepared.getAudioSessionId()}, generation=$generation")
                         prepared.start()
+                        Log.i(TAG, "Speech playback started: generation=$generation")
                     } catch (error: Exception) {
                         Log.e(TAG, "Speech playback could not start", error)
                         releaseSpeechPlayer()
@@ -637,11 +693,20 @@ class AppAudioController(context: Context) {
             created.setOnErrorListener { failed, what, extra ->
                 synchronized(this) {
                     if (generation == playerGeneration) {
-                        loadingPlayer = null
+                        if (loadingPlayer === failed) {
+                            loadingPlayer = null
+                        }
+                        if (player === failed) {
+                            player = null
+                            playerTrackId = null
+                            currentMusicVolume = 0f
+                            volumeAnimator?.cancel()
+                            volumeAnimator = null
+                        }
                         playerLoading = false
                     }
                     try { failed.release() } catch (_: Exception) { }
-                    Log.e(TAG, "Ambient audio preparation failed: $what/$extra")
+                    Log.e(TAG, "Ambient audio failed: $what/$extra; current reference cleared when applicable")
                 }
                 true
             }

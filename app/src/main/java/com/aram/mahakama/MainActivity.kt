@@ -1,6 +1,7 @@
 package com.aram.mahakama
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -106,6 +107,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        Log.e("MAHAKAMA_LIFECYCLE", "MAIN ACTIVITY onDestroy CALLED")
         clock.checkpointAndClose()
         audioController.release()
         super.onDestroy()
@@ -227,15 +229,24 @@ private fun MahakamaApp(
     }
     LaunchedEffect(spiritLine, spiritSilent) {
         val line = spiritLine
+        android.util.Log.i(
+            "MahakamaSpirit",
+            "Speech effect triggered: hasLine=${line != null}, silent=$spiritSilent, stage=$spiritStage, chars=${line?.length ?: 0}"
+        )
         if (line == null || spiritSilent) {
             audio.stopSpirit()
             if (spiritSilent) speechFinished = true
         } else {
             speechFinished = false
-            audio.speakSpirit(line) { speechFinished = true }
-            // Longer evidence-based reflections need more speaking time than short dialogue lines.
-            val safetyTimeout = (line.length * 220L + 14_000L).coerceIn(28_000L, 75_000L)
-            delay(safetyTimeout)
+            android.util.Log.i("MahakamaSpirit", "Calling speakSpirit: chars=${line.length}")
+            audio.speakSpirit(line) {
+                android.util.Log.i("MahakamaSpirit", "Spirit speech completion callback")
+                speechFinished = true
+            }
+            // Keep the spirit request alive until playback reports completion.
+            while (!speechFinished && spiritLine == line) {
+                delay(250L)
+            }
             if (spiritLine == line && spiritStage != 1) {
                 spiritLine = null
                 spiritStage = 0
