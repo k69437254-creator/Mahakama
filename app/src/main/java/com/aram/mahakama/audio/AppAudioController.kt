@@ -8,19 +8,24 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
-import android.speech.tts.TextToSpeech
-import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import com.aram.mahakama.R
-import java.util.Locale
-import java.util.UUID
+import java.util.concurrent.Future
+import java.util.concurrent.Executors
+import java.util.concurrent.ExecutorService
+import java.net.URL
+import java.net.HttpURLConnection
+import java.io.FileOutputStream
+import java.io.File
+import java.io.DataInputStream
+import org.json.JSONObject
 
 /**
  * One continuous ambient soundtrack and the Arabic voice of "طيف الذات".
  * During speech the same soundtrack remains audible at a lower, gently faded level;
  * no extra section-specific track or sound effect is introduced.
  */
-class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
+class AppAudioController(context: Context) {
     private val appContext = context.applicationContext
     private val mainHandler = Handler(Looper.getMainLooper())
     private var player: MediaPlayer? = null
@@ -29,20 +34,24 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
     private var loadingPlayer: MediaPlayer? = null
     private var playerLoading = false
     private var playerGeneration = 0L
-    private var released = false
+    @Volatile private var released = false
     private var selectedTrackId: String = "death"
     private var trackSwitchPending = false
     private var trackSwitchRunnable: Runnable? = null
     private var masterVolume = 0.82f
-    private var tts: TextToSpeech? = TextToSpeech(appContext, this)
-    private var ttsReady = false
     private var appIsForeground = false
     private var muted = false
     private var speaking = false
-    private var queuedText: String? = null
-    private var queuedLowVoice = false
     private var finishedCallback: (() -> Unit)? = null
-    private var activeUtteranceId: String? = null
+
+    private val audarExecutor: ExecutorService =
+        Executors.newSingleThreadExecutor()
+
+    @Volatile private var activeConnection: HttpURLConnection? = null
+    private var synthesisTask: Future<*>? = null
+    private var speechPlayer: MediaPlayer? = null
+
+    @Volatile private var speechGeneration = 0L
     private var volumeAnimator: ValueAnimator? = null
     private var currentMusicVolume = 0f
 
@@ -142,24 +151,305 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
     }
 
     @Synchronized
-    private fun speakWithProfile(text: String, lowVoice: Boolean, onFinished: () -> Unit) {
-        if (text.isBlank()) return
+    private fun speakWithProfile(
+        text: String,
+        lowVoice: Boolean,
+        onFinished: () -> Unit
+    ) {
+        if (text.isBlank() || released) return
+
         speaking = true
         finishedCallback = onFinished
-        queuedLowVoice = lowVoice
+
         if (appIsForeground && !muted) {
             ensurePlayer()
             player?.let { audio ->
-                try { if (!audio.isPlaying) audio.start() } catch (_: IllegalStateException) { }
+                try {
+                    if (!audio.isPlaying) audio.start()
+                } catch (_: IllegalStateException) {
+                }
             }
-            // Keep the same soft atmospheric track audible under the voice, at a ducked level.
             fadeMusicTo(ambientTargetVolume(true), 650L)
         }
-        if (!ttsReady) {
-            queuedText = text
+
+        requestAudarSpeech(prepareArabicSpeech(text))
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    @Synchronized
+    private fun requestAudarSpeech(text: String) {
+        if (released) return
+
+        speechGeneration++
+        val generation = speechGeneration
+
+        try {
+            activeConnection?.disconnect()
+        } catch (_: Exception) {
+        }
+        activeConnection = null
+
+        synthesisTask?.cancel(true)
+        synthesisTask = null
+
+        releaseSpeechPlayer()
+
+        synthesisTask = audarExecutor.submit {
+            var connection: HttpURLConnection? = null
+            var outputFile: File? = null
+
+            try {
+                connection =
+                    (URL(AUDAR_SYNTHESIZE_URL).openConnection() as HttpURLConnection).apply {
+                        requestMethod = "POST"
+                        connectTimeout = AUDAR_CONNECT_TIMEOUT_MS
+                        readTimeout = AUDAR_READ_TIMEOUT_MS
+                        doOutput = true
+                        setRequestProperty(
+                            "Content-Type",
+                            "application/json; charset=utf-8"
+                        )
+                        setRequestProperty("Accept", "audio/wav")
+                    }
+
+                activeConnection = connection
+
+                if (released ||
+                    generation != speechGeneration ||
+                    Thread.currentThread().isInterrupted
+                ) {
+                    connection.disconnect()
+                    return@submit
+                }
+
+                val payload = JSONObject()
+                    .put("text", text)
+                    .put("max_tokens", AUDAR_MAX_TOKENS)
+                    .toString()
+                    .toByteArray(Charsets.UTF_8)
+
+                connection.outputStream.use { output ->
+                    output.write(payload)
+                    output.flush()
+                }
+
+                val status = connection.responseCode
+
+                if (status != HttpURLConnection.HTTP_OK) {
+                    val detail = try {
+                        connection.errorStream
+                            ?.bufferedReader(Charsets.UTF_8)
+                            ?.use { it.readText() }
+                    } catch (_: Exception) {
+                        null
+                    }
+
+                    throw IllegalStateException(
+                        "Audar HTTP $status: ${detail.orEmpty()}"
+                    )
+                }
+
+                outputFile = File(
+                    appContext.cacheDir,
+                    "audar_speech_$generation.wav"
+                )
+
+                connection.inputStream.use { input ->
+                    FileOutputStream(outputFile).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+
+                val validWave = outputFile.length() > 44 &&
+                    DataInputStream(outputFile.inputStream()).use { input ->
+                        val header = ByteArray(12)
+                        input.readFully(header)
+
+                        String(
+                            header,
+                            0,
+                            4,
+                            Charsets.US_ASCII
+                        ) == "RIFF" &&
+                        String(
+                            header,
+                            8,
+                            4,
+                            Charsets.US_ASCII
+                        ) == "WAVE"
+                    }
+
+                if (!validWave) {
+                    throw IllegalStateException(
+                        "Audar response is not a valid WAV file"
+                    )
+                }
+
+                val readyFile = outputFile
+
+                mainHandler.post {
+                    synchronized(this@AppAudioController) {
+                        if (released || generation != speechGeneration) {
+                            readyFile.delete()
+                        } else {
+                            playAudarFile(readyFile, generation)
+                        }
+                    }
+                }
+
+            } catch (e: Exception) {
+                outputFile?.delete()
+
+                if (!Thread.currentThread().isInterrupted) {
+                    Log.e(TAG, "Audar speech request failed", e)
+
+                    mainHandler.post {
+                        synchronized(this@AppAudioController) {
+                            if (!released &&
+                                generation == speechGeneration
+                            ) {
+                                finishSpeakingIfCurrent(generation)
+                            }
+                        }
+                    }
+                }
+
+            } finally {
+                if (activeConnection === connection) {
+                    activeConnection = null
+                }
+                connection?.disconnect()
+            }
+        }
+    }
+
+    @Synchronized
+    private fun playAudarFile(file: File, generation: Long) {
+        if (released || generation != speechGeneration) {
+            file.delete()
             return
         }
-        speakNow(prepareArabicSpeech(text), lowVoice)
+
+        releaseSpeechPlayer()
+
+        val audio = try {
+            MediaPlayer()
+        } catch (e: Exception) {
+            Log.e(TAG, "Could not create Audar MediaPlayer", e)
+            file.delete()
+            finishSpeakingIfCurrent(generation)
+            return
+        }
+
+        speechPlayer = audio
+
+        try {
+            audio.setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(
+                        AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY
+                    )
+                    .setContentType(
+                        AudioAttributes.CONTENT_TYPE_SPEECH
+                    )
+                    .build()
+            )
+
+            audio.setDataSource(file.absolutePath)
+
+            audio.setOnPreparedListener { prepared ->
+                synchronized(this@AppAudioController) {
+                    if (released ||
+                        generation != speechGeneration ||
+                        speechPlayer !== prepared
+                    ) {
+                        try {
+                            prepared.release()
+                        } catch (_: Exception) {
+                        }
+                        file.delete()
+                        return@synchronized
+                    }
+
+                    try {
+                        prepared.start()
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Audar playback could not start", e)
+                        releaseSpeechPlayer()
+                        file.delete()
+                        finishSpeakingIfCurrent(generation)
+                    }
+                }
+            }
+
+            audio.setOnCompletionListener { completed ->
+                synchronized(this@AppAudioController) {
+                    if (speechPlayer === completed &&
+                        generation == speechGeneration
+                    ) {
+                        releaseSpeechPlayer()
+                        file.delete()
+                        finishSpeakingIfCurrent(generation)
+                    }
+                }
+            }
+
+            audio.setOnErrorListener { failed, what, extra ->
+                synchronized(this@AppAudioController) {
+                    if (speechPlayer === failed &&
+                        generation == speechGeneration
+                    ) {
+                        Log.e(
+                            TAG,
+                            "Audar playback error: $what/$extra"
+                        )
+                        releaseSpeechPlayer()
+                        file.delete()
+                        finishSpeakingIfCurrent(generation)
+                    }
+                }
+                true
+            }
+
+            audio.prepareAsync()
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Audar WAV setup failed", e)
+            releaseSpeechPlayer()
+            file.delete()
+            finishSpeakingIfCurrent(generation)
+        }
+    }
+
+    @Synchronized
+    private fun releaseSpeechPlayer() {
+        val audio = speechPlayer
+        speechPlayer = null
+
+        try {
+            audio?.setOnPreparedListener(null)
+        } catch (_: Exception) {
+        }
+
+        try {
+            audio?.setOnCompletionListener(null)
+        } catch (_: Exception) {
+        }
+
+        try {
+            audio?.setOnErrorListener(null)
+        } catch (_: Exception) {
+        }
+
+        try {
+            audio?.stop()
+        } catch (_: Exception) {
+        }
+
+        try {
+            audio?.release()
+        } catch (_: Exception) {
+        }
     }
 
     /** Switches the looping soundtrack with a fade and never overlaps two players. */
@@ -209,182 +499,113 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
     @Synchronized
     fun stopSpirit() {
         stopOrchestraIntro()
-        queuedText = null
-        queuedLowVoice = false
-        finishedCallback = null
-        activeUtteranceId = null
-        try { tts?.stop() } catch (_: Exception) { }
+
+        speechGeneration++
+
+        synthesisTask?.cancel(true)
+        synthesisTask = null
+
+        try {
+            activeConnection?.disconnect()
+        } catch (_: Exception) {
+        }
+        activeConnection = null
+
+        releaseSpeechPlayer()
+
         speaking = false
+        finishedCallback = null
+
         fadeMusicTo(ambientTargetVolume(false), 800L)
     }
 
     @Synchronized
     fun release() {
+        if (released) return
+
         released = true
-        try { orchestraIntroPlayer?.stop() } catch (_: Exception) { }
-        try { orchestraIntroPlayer?.release() } catch (_: Exception) { }
+        speechGeneration++
+
+        try {
+            orchestraIntroPlayer?.stop()
+        } catch (_: Exception) {
+        }
+
+        try {
+            orchestraIntroPlayer?.release()
+        } catch (_: Exception) {
+        }
+
         orchestraIntroPlayer = null
+
         playerGeneration++
         playerLoading = false
 
         volumeAnimator?.cancel()
         volumeAnimator = null
-        queuedText = null
+
         finishedCallback = null
-        activeUtteranceId = null
         speaking = false
 
-        trackSwitchRunnable?.let { mainHandler.removeCallbacks(it) }
+        try {
+            activeConnection?.disconnect()
+        } catch (_: Exception) {
+        }
+        activeConnection = null
+
+        synthesisTask?.cancel(true)
+        synthesisTask = null
+
+        try {
+            audarExecutor.shutdownNow()
+        } catch (_: Exception) {
+        }
+
+        releaseSpeechPlayer()
+
+        trackSwitchRunnable?.let {
+            mainHandler.removeCallbacks(it)
+        }
         trackSwitchRunnable = null
         trackSwitchPending = false
-
-        try { tts?.stop(); tts?.shutdown() } catch (_: Exception) { }
-        tts = null
 
         try {
             loadingPlayer?.setOnPreparedListener(null)
             loadingPlayer?.setOnErrorListener(null)
             loadingPlayer?.release()
-        } catch (_: Exception) { }
+        } catch (_: Exception) {
+        }
         loadingPlayer = null
 
-        try { player?.release() } catch (_: Exception) { }
+        try {
+            player?.release()
+        } catch (_: Exception) {
+        }
+
         player = null
         playerTrackId = null
         currentMusicVolume = 0f
     }
 
-    override fun onInit(status: Int) {
-        if (status != TextToSpeech.SUCCESS) {
-            Log.w(TAG, "Text-to-speech engine initialization failed")
-            finishWithoutVoice()
-            return
-        }
-        val engine = tts ?: return
-        try {
-            // Strictly prefer installed Arabic voices; never select a network voice.
-            val offlineArabicVoices = engine.voices
-                ?.filter {
-                    it.locale.language.equals("ar", ignoreCase = true) &&
-                    !it.isNetworkConnectionRequired
-                }
-                ?.sortedWith(
-                    compareByDescending<android.speech.tts.Voice> { it.quality }
-                        .thenBy {
-                            when (it.locale.country.uppercase(Locale.ROOT)) {
-                                "SA" -> 0
-                                "AE" -> 1
-                                "EG" -> 2
-                                else -> 3
-                            }
-                        }
-                )
-                .orEmpty()
-
-            val chosenVoice = offlineArabicVoices.firstOrNull()
-            if (chosenVoice == null) {
-                ttsReady = false
-                Log.w(TAG, "No installed offline Arabic voice is available; network voices are disabled")
-                finishWithoutVoice()
-                return
-            }
-
-            val languageStatus = engine.setLanguage(chosenVoice.locale)
-            if (languageStatus < TextToSpeech.LANG_AVAILABLE) {
-                ttsReady = false
-                Log.w(TAG, "The selected offline Arabic voice language is unavailable")
-                finishWithoutVoice()
-                return
-            }
-
-            try {
-                engine.voice = chosenVoice
-            } catch (e: Exception) {
-                ttsReady = false
-                Log.w(TAG, "Could not activate the installed offline Arabic voice", e)
-                finishWithoutVoice()
-                return
-            }
-            ttsReady = true
-
-            // Balanced pace and pitch. The final voice timbre still depends on the Arabic engine installed on the device.
-            engine.setSpeechRate(SPEECH_RATE)
-            engine.setPitch(SPEECH_PITCH)
-            engine.setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                    .build()
-            )
-            engine.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                override fun onStart(utteranceId: String?) = Unit
-                override fun onDone(utteranceId: String?) = finishSpeakingIfCurrent(utteranceId)
-                @Deprecated("Deprecated in Java")
-                override fun onError(utteranceId: String?) = finishSpeakingIfCurrent(utteranceId)
-                override fun onError(utteranceId: String?, errorCode: Int) = finishSpeakingIfCurrent(utteranceId)
-            })
-            val queued = synchronized(this) {
-                val text = queuedText
-                val lowVoice = queuedLowVoice
-                queuedText = null
-                queuedLowVoice = false
-                if (text == null) null else text to lowVoice
-            }
-            if (queued != null && ttsReady) speakNow(prepareArabicSpeech(queued.first), queued.second)
-        } catch (e: Exception) {
-            Log.w(TAG, "Arabic TTS setup failed; the spirit message remains visible", e)
-            ttsReady = false
-            finishWithoutVoice()
-        }
-    }
-
     @Synchronized
-    private fun speakNow(text: String, lowVoice: Boolean = false) {
-        val engine = tts ?: return
-        if (!ttsReady) return
-        try {
-            engine.setSpeechRate(if (lowVoice) ORCHESTRA_SPEECH_RATE else SPEECH_RATE)
-            engine.setPitch(if (lowVoice) ORCHESTRA_SPEECH_PITCH else SPEECH_PITCH)
-        } catch (e: Exception) {
-            Log.w(TAG, "Could not apply the selected voice profile", e)
-        }
-        val id = "spirit-${UUID.randomUUID()}"
-        activeUtteranceId = id
-        val result = engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, id)
-        if (result == TextToSpeech.ERROR) finishSpeakingIfCurrent(id)
-    }
-
-    @Synchronized
-    private fun finishWithoutVoice() {
+    private fun finishSpeakingIfCurrent(generation: Long) {
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            mainHandler.post { finishWithoutVoice() }
+            mainHandler.post {
+                finishSpeakingIfCurrent(generation)
+            }
             return
         }
-        queuedText = null
-        activeUtteranceId = null
-        speaking = false
-        fadeMusicTo(ambientTargetVolume(false), 700L)
-        val callback = finishedCallback
-        finishedCallback = null
-        callback?.invoke()
-    }
 
-    @Synchronized
-    private fun finishSpeakingIfCurrent(utteranceId: String?) {
-        if (Looper.myLooper() != Looper.getMainLooper()) {
-            mainHandler.post { finishSpeakingIfCurrent(utteranceId) }
-            return
-        }
-        if (utteranceId == null || utteranceId != activeUtteranceId) return
-        activeUtteranceId = null
+        if (released || generation != speechGeneration) return
+
         speaking = false
         fadeMusicTo(ambientTargetVolume(false), 850L)
+
         val callback = finishedCallback
         finishedCallback = null
         callback?.invoke()
     }
 
-    @Synchronized
     private fun ensurePlayer() {
         if (Looper.myLooper() != Looper.getMainLooper()) {
             mainHandler.post { ensurePlayer() }
@@ -555,10 +776,11 @@ class AppAudioController(context: Context) : TextToSpeech.OnInitListener {
 
     companion object {
         private const val TAG = "MahakamaAudio"
-        private const val SPEECH_RATE = 0.91f
-        private const val SPEECH_PITCH = 1.02f
-        private const val ORCHESTRA_SPEECH_RATE = 0.76f
-        private const val ORCHESTRA_SPEECH_PITCH = 0.76f
+        private const val AUDAR_SYNTHESIZE_URL =
+            "http://127.0.0.1:18765/synthesize"
+        private const val AUDAR_CONNECT_TIMEOUT_MS = 15000
+        private const val AUDAR_READ_TIMEOUT_MS = 120000
+        private const val AUDAR_MAX_TOKENS = 512
 
         /** Reviewed tashkeel for recurring lines; new lines still depend on device TTS. */
         private val VOCALIZED_LINES = mapOf(
