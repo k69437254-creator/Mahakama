@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
@@ -390,6 +391,8 @@ class AppAudioController(context: Context) {
                     .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                     .build()
             )
+            // Set the speech player's gain explicitly instead of relying on its default.
+            audio.setVolume(1.0f, 1.0f)
             audio.setDataSource(file.absolutePath)
 
             audio.setOnPreparedListener { prepared ->
@@ -405,9 +408,28 @@ class AppAudioController(context: Context) {
                     }
 
                     try {
-                        Log.i(TAG, "Speech WAV prepared: duration=${prepared.duration}ms, sampleRate=${prepared.getAudioSessionId()}, generation=$generation")
+                        val audioManager = appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                        val musicVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+                        val musicMaxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                        val availableOutputs = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+                            .joinToString { "${it.productName}#${it.id}/type=${it.type}" }
+                        prepared.setVolume(1.0f, 1.0f)
+                        Log.i(
+                            TAG,
+                            "Speech output diagnosis: duration=${prepared.duration}ms, audioSession=${prepared.getAudioSessionId()}, streamMusic=$musicVolume/$musicMaxVolume, playerGain=1.0/1.0, availableOutputs=[$availableOutputs], generation=$generation"
+                        )
+                        if (musicVolume == 0) {
+                            Log.e(TAG, "Android STREAM_MUSIC volume is zero; media output is muted at system level")
+                        }
                         prepared.start()
-                        Log.i(TAG, "Speech playback started: generation=$generation")
+                        val actuallyPlaying = prepared.isPlaying
+                        Log.i(TAG, "Speech playback started: generation=$generation, isPlaying=$actuallyPlaying")
+                        if (!actuallyPlaying) {
+                            Log.w(
+                                TAG,
+                                "MediaPlayer is not yet reporting active playback immediately after start; awaiting playback callbacks"
+                            )
+                        }
                     } catch (error: Exception) {
                         Log.e(TAG, "Speech playback could not start", error)
                         releaseSpeechPlayer()

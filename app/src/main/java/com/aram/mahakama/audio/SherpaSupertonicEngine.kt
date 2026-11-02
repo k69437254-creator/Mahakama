@@ -178,12 +178,40 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
                     )
                 }
 
+                // Supertonic PCM verification: measure the generated signal before saving it.
+                var peak = 0.0
+                var sumSquares = 0.0
+                for (sample in audio.samples) {
+                    val value = sample.toDouble()
+                    if (!value.isFinite()) {
+                        throw IOException("محرك Supertonic أعاد عينة صوتية غير رقمية")
+                    }
+                    val magnitude = kotlin.math.abs(value)
+                    if (magnitude > peak) peak = magnitude
+                    sumSquares += value * value
+                }
+                val rms = kotlin.math.sqrt(sumSquares / audio.samples.size.toDouble())
+                val durationSeconds = audio.samples.size.toDouble() / audio.sampleRate.toDouble()
+                Log.i(
+                    TAG,
+                    "Supertonic PCM verification: samples=${audio.samples.size}, duration=${"%.2f".format(java.util.Locale.US, durationSeconds)}s, peak=${"%.6f".format(java.util.Locale.US, peak)}, rms=${"%.6f".format(java.util.Locale.US, rms)}, sampleRate=${audio.sampleRate}, sid=$SPEAKER_ID, lang=$LANGUAGE"
+                )
+                if (peak < 0.001 || rms < 0.0001) {
+                    Log.w(
+                        TAG,
+                        "Supertonic PCM level is very low: peak=$peak, rms=$rms; preserving WAV for diagnosis"
+                    )
+                }
+
                 if (!audio.save(outputFile.absolutePath)) {
                     throw IOException("فشل حفظ الملف الصوتي")
                 }
 
-                if (!outputFile.exists() || outputFile.length() <= 44L) {
-                    throw IOException("ملف WAV الناتج غير صالح أو فارغ")
+                val expectedWavBytes = 44L + audio.samples.size.toLong() * 2L
+                if (!outputFile.isFile || outputFile.length() != expectedWavBytes) {
+                    throw IOException(
+                        "حجم WAV لا يطابق PCM16 mono المتوقع: actual=${outputFile.length()}, expected=$expectedWavBytes"
+                    )
                 }
 
                     if (!closed.get()) {
