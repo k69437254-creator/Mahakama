@@ -40,7 +40,6 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
         private const val SPEAKER_ID = 9
         private const val LANGUAGE = "ar"
         private const val NUM_STEPS = 8
-        private const val EXPECTED_SAMPLE_RATE = 24000
 
         private val REQUIRED_FILES = setOf(
             "duration_predictor.int8.onnx",
@@ -63,6 +62,9 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
 
     @Volatile
     private var tts: OfflineTts? = null
+
+    @Volatile
+    private var outputSampleRate: Int = 0
 
     @Volatile
     var isReady: Boolean = false
@@ -165,9 +167,14 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
                     throw IOException("المحرك لم ينتج عينات صوتية")
                 }
 
-                if (audio.sampleRate != EXPECTED_SAMPLE_RATE) {
+                val expectedSampleRate = outputSampleRate
+                if (expectedSampleRate <= 0) {
+                    throw IOException("معدل عينة محرك الصوت غير صالح")
+                }
+
+                if (audio.sampleRate != expectedSampleRate) {
                     throw IOException(
-                        "معدل العينة غير المتوقع: ${audio.sampleRate}"
+                        "معدل عينة WAV لا يطابق المحرك: ${audio.sampleRate} بدلًا من $expectedSampleRate"
                     )
                 }
 
@@ -446,9 +453,11 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
             val sampleRate = engine.sampleRate()
             val speakers = engine.numSpeakers()
 
-            if (sampleRate != EXPECTED_SAMPLE_RATE) {
-                throw IOException("معدل العينة غير مدعوم: $sampleRate")
+            if (sampleRate <= 0) {
+                throw IOException("أعاد محرك الصوت معدل عينة غير صالح: $sampleRate")
             }
+
+            outputSampleRate = sampleRate
 
             if (speakers <= SPEAKER_ID) {
                 throw IOException("الصوت رقم $SPEAKER_ID غير متاح؛ عدد الأصوات: $speakers")
