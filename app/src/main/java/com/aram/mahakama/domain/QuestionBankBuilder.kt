@@ -21,6 +21,13 @@ internal object QuestionBankBuilder {
         val tags: Set<String>
     )
 
+    private data class SemanticFeatures(
+        val domainTags: Set<String>,
+        val responseTags: Set<String>,
+        val context: String,
+        val lensHeading: String
+    )
+
     private val contexts = listOf(
         "يتغيّر اتفاق كنت تعتمد عليه",
         "يتأخر ردّ تنتظره من شخص مهم",
@@ -247,6 +254,15 @@ internal object QuestionBankBuilder {
         check(authoredCombinations.size == EXTENDED_QUESTION_COUNT) {
             "Question matrix must produce exactly $EXTENDED_QUESTION_COUNT questions; got ${authoredCombinations.size}"
         }
+
+        val semanticFeatures = authoredCombinations.map { (domain, context, lens) ->
+            SemanticFeatures(
+                domainTags = setOf(domain.activeTag, domain.reflectiveTag, domain.protectiveTag),
+                responseTags = domain.responses.flatMap { it.tags }.toSet(),
+                context = context,
+                lensHeading = lens.heading
+            )
+        }
         return authoredCombinations.mapIndexed { index, (domain, context, lens) ->
             val contextIndex = contexts.indexOf(context)
             require(contextIndex >= 0) { "Unknown question context: $context" }
@@ -256,7 +272,7 @@ internal object QuestionBankBuilder {
             val next1Index = (index + 1).takeIf { it <= authoredCombinations.lastIndex }
             val style2Tags = domain.responses[1].tags + domain.reflectiveTag
             val next2Index = semanticTargetIndex(
-                combinations = authoredCombinations,
+                features = semanticFeatures,
                 currentIndex = index,
                 preferredTags = style2Tags,
                 excludedIndices = setOfNotNull(next1Index),
@@ -264,7 +280,7 @@ internal object QuestionBankBuilder {
             )
             val style3Tags = domain.responses[2].tags + domain.protectiveTag
             val next3Index = semanticTargetIndex(
-                combinations = authoredCombinations,
+                features = semanticFeatures,
                 currentIndex = index,
                 preferredTags = style3Tags,
                 excludedIndices = setOfNotNull(next1Index, next2Index),
@@ -290,38 +306,48 @@ internal object QuestionBankBuilder {
      * sparse thematic matches. All edges move forward, so the question path cannot cycle.
      */
     private fun semanticTargetIndex(
-        combinations: List<Triple<Domain, String, Lens>>,
+        features: List<SemanticFeatures>,
         currentIndex: Int,
         preferredTags: Set<String>,
         excludedIndices: Set<Int>,
         fallbackOffset: Int
     ): Int? {
-        val lastIndex = combinations.lastIndex
+        val lastIndex = features.lastIndex
         if (currentIndex >= lastIndex) return null
-        val sourceContext = combinations[currentIndex].second
-        val sourceLens = combinations[currentIndex].third.heading
-        val allFutureIndices = (currentIndex + 1..lastIndex).toList()
-        val futureIndices = allFutureIndices.filterNot { it in excludedIndices }
-        // Near the final node there may be fewer unique targets than answer options. Reuse a
-        // valid future node instead of making a non-final choice terminate the session early.
-        if (futureIndices.isEmpty()) return allFutureIndices.firstOrNull()
 
-        fun score(index: Int): Int {
-            val (domain, context, lens) = combinations[index]
-            val domainTags = setOf(domain.activeTag, domain.reflectiveTag, domain.protectiveTag)
-            val responseTags = domain.responses.flatMap { it.tags }.toSet()
-            val domainOverlap = preferredTags.intersect(domainTags).size
-            val responseOverlap = preferredTags.intersect(responseTags).size
-            val contextBonus = if (context != sourceContext) 2 else 0
-            val lensBonus = if (lens.heading != sourceLens) 1 else 0
-            return domainOverlap * 100 + responseOverlap * 10 + contextBonus + lensBonus
+        val source = features[currentIndex]
+        val firstFuture = currentIndex + 1
+        val futureIndices = (firstFuture..lastIndex)
+            .filterNot { it in excludedIndices }
+
+        if (futureIndices.isEmpty()) return firstFuture
+
+        var bestIndex = -1
+        var bestScore = 0
+
+        for (index in futureIndices) {
+            val candidate = features[index]
+            val domainOverlap = preferredTags.count { it in candidate.domainTags }
+            val responseOverlap = preferredTags.count { it in candidate.responseTags }
+            val contextBonus = if (candidate.context != source.context) 2 else 0
+            val lensBonus = if (candidate.lensHeading != source.lensHeading) 1 else 0
+
+            val score = domainOverlap * 100 +
+                responseOverlap * 10 +
+                contextBonus +
+                lensBonus
+
+            if (score > bestScore) {
+                bestScore = score
+                bestIndex = index
+            }
         }
 
-        val best = futureIndices.maxWithOrNull(
-            compareBy<Int> { score(it) }.thenBy { -it }
-        )
-        if (best != null && score(best) > 0) return best
-        val fallback = (currentIndex + fallbackOffset).takeIf { it <= lastIndex && it !in excludedIndices }
+        if (bestIndex >= 0) return bestIndex
+
+        val fallback = (currentIndex + fallbackOffset)
+            .takeIf { it <= lastIndex && it !in excludedIndices }
+
         return fallback ?: futureIndices.first()
     }
 

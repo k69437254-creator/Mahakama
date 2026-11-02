@@ -802,8 +802,15 @@ private fun TimerDial(elapsedMillis: Long, modifier: Modifier = Modifier) {
 
 @Composable
 fun SectionHeader(title: String, subtitle: String? = null, onBack: () -> Unit) {
-    Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, contentDescription = "عودة", tint = Violet) }
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextButton(onClick = onBack) {
+            Icon(Icons.Default.ArrowBack, contentDescription = null, tint = Violet)
+            Spacer(Modifier.width(6.dp))
+            Text("رجوع", color = Violet, fontWeight = FontWeight.SemiBold)
+        }
         Spacer(Modifier.width(4.dp))
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.titleLarge)

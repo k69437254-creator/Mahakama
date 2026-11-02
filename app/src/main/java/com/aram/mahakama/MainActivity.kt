@@ -7,7 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.material3.Surface
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -26,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,6 +57,7 @@ import com.aram.mahakama.ui.FacesScreen
 import com.aram.mahakama.ui.HomeScreen
 import com.aram.mahakama.ui.InnerCourtScreen
 import com.aram.mahakama.ui.NameEntryScreen
+import com.aram.mahakama.ui.AiSetupScreen
 import com.aram.mahakama.ui.OtherYouScreen
 import com.aram.mahakama.ui.ProfileScreen
 import com.aram.mahakama.ui.QuestionnaireScreen
@@ -127,8 +130,29 @@ private fun MahakamaApp(
     val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
     var showCinematicIntro by remember { mutableStateOf(true) }
+    var aiSetupComplete by remember { mutableStateOf(false) }
     var isForeground by remember { mutableStateOf(lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) }
     var route by remember { mutableStateOf("home") }
+    val backStack = remember { mutableStateListOf<String>() }
+    var navigationDirection by remember { mutableIntStateOf(1) }
+
+
+    fun navigateTo(destination: String) {
+        if (destination != route) {
+            navigationDirection = 1
+            backStack.add(route)
+            route = destination
+        }
+    }
+
+    fun navigateBack() {
+        navigationDirection = -1
+        route = if (backStack.isNotEmpty()) {
+            backStack.removeAt(backStack.lastIndex)
+        } else {
+            "home"
+        }
+    }
     var spiritLine by remember { mutableStateOf<String?>(null) }
     var spiritStage by remember { mutableIntStateOf(0) }
     var speechFinished by remember { mutableStateOf(false) }
@@ -221,7 +245,7 @@ private fun MahakamaApp(
     }
 
     BackHandler(enabled = route != "home" && userState.trialStarted && spiritLine == null) {
-        route = "home"
+        navigateBack()
     }
 
     @Suppress("DEPRECATION")
@@ -273,6 +297,12 @@ private fun MahakamaApp(
                     userState.userName.isBlank() -> {
                         NameEntryScreen { name -> scope.launch { repository.saveUserName(name) } }
                     }
+                    !userState.orchestraIntroCompleted && !aiSetupComplete -> {
+                        AiSetupScreen(
+                            audio = audio,
+                            onContinue = { aiSetupComplete = true }
+                        )
+                    }
                     !userState.orchestraIntroCompleted -> {
                         SpiritOrchestraScreen(
                             userName = userState.userName,
@@ -295,26 +325,42 @@ private fun MahakamaApp(
                     }
                     !userState.trialStarted -> {
                         WelcomeScreen(userState.userName) {
+                            backStack.clear()
+                            navigationDirection = -1
                             route = "home"
                             clock.beginTrial()
                         }
                     }
                     else -> {
                         if (route != "home") {
-                            SectionHeader(title = routeTitle(route), subtitle = routeSubtitle(route), onBack = { route = "home" })
+                            SectionHeader(title = routeTitle(route), subtitle = routeSubtitle(route), onBack = { navigateBack() })
                         }
                         AnimatedContent(
                             targetState = route,
                             transitionSpec = {
-                                (fadeIn(tween(420)) + slideInVertically(
-                                    animationSpec = tween(470, easing = FastOutSlowInEasing),
-                                    initialOffsetY = { it / 22 }
-                                )) togetherWith fadeOut(tween(230))
+                                val direction = navigationDirection
+                                (
+                                    fadeIn(tween(350, easing = FastOutSlowInEasing)) +
+                                    slideInHorizontally(
+                                        animationSpec = tween(350, easing = FastOutSlowInEasing),
+                                        initialOffsetX = { width ->
+                                            if (direction > 0) width / 4 else -width / 4
+                                        }
+                                    )
+                                ) togetherWith (
+                                    fadeOut(tween(280)) +
+                                    slideOutHorizontally(
+                                        animationSpec = tween(280, easing = FastOutSlowInEasing),
+                                        targetOffsetX = { width ->
+                                            if (direction > 0) -width / 4 else width / 4
+                                        }
+                                    )
+                                )
                             },
                             label = "cinematic-route-transition"
                         ) { visibleRoute ->
                         when (visibleRoute) {
-                            "home" -> HomeScreen(userState, elapsedMillis, onNavigate = { route = it })
+                            "home" -> HomeScreen(userState, elapsedMillis, onNavigate = { navigateTo(it) })
                             "questions" -> QuestionnaireScreen(
                                 userName = userState.userName,
                                 question = QuestionnaireEngine.nextQuestion(userState.answers),
@@ -382,12 +428,12 @@ private fun MahakamaApp(
                                         spiritLine = insight.line
                                     }
                                 },
-                                onGoFaces = { route = "faces" },
-                                onGoUnmasking = { route = "unmasking" }
+                                onGoFaces = { navigateTo("faces") },
+                                onGoUnmasking = { navigateTo("unmasking") }
                             )
                             "faces" -> FaceTreeScreen(
         userState = userState,
-        onOpenEvolution = { route = "evolution" }
+        onOpenEvolution = { navigateTo("evolution") }
     )
     "evolution" -> TrialEvolutionScreen(userState)
                             "unmasking" -> UnmaskingScreen(userState) { feedback ->
@@ -413,7 +459,7 @@ private fun MahakamaApp(
                                 onVolumeChange = { volume -> scope.launch { repository.setMusicVolume(volume) } }
                             )
                             "profile" -> ProfileScreen(userState)
-                            else -> HomeScreen(userState, elapsedMillis, onNavigate = { route = it })
+                            else -> HomeScreen(userState, elapsedMillis, onNavigate = { navigateTo(it) })
                         }
                         }
                     }

@@ -71,7 +71,8 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
     fun prepare(
         onProgress: (Int) -> Unit = {},
         onReady: () -> Unit,
-        onError: (Throwable) -> Unit
+        onError: (Throwable) -> Unit,
+        onStatus: (String) -> Unit = {}
     ) {
         if (closed.get()) {
             post { onError(IllegalStateException("محرك الصوت مغلق")) }
@@ -84,8 +85,10 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
                     if (closed.get()) return@execute
 
                     if (tts == null) {
-                        installModel(onProgress)
+                        post { onStatus("checking") }
+                        installModel(onProgress, onStatus)
                         if (closed.get()) return@execute
+                        post { onStatus("initializing") }
                         initializeEngine()
                     }
 
@@ -93,7 +96,10 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
 
                     isReady = true
                     post {
-                        if (!closed.get()) onReady()
+                        if (!closed.get()) {
+                            onStatus("ready")
+                            onReady()
+                        }
                     }
                 } catch (error: Throwable) {
                     isReady = false
@@ -194,11 +200,19 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
         }
     }
 
-    private fun installModel(onProgress: (Int) -> Unit) {
+    private fun installModel(
+        onProgress: (Int) -> Unit,
+        onStatus: (String) -> Unit
+    ) {
         if (isModelInstalled()) {
-            post { onProgress(100) }
+            post {
+                onStatus("verifying")
+                onProgress(100)
+            }
             return
         }
+
+        post { onStatus("downloading") }
 
         val archive = File(appContext.cacheDir, ARCHIVE_NAME)
         val partialArchive = File(appContext.cacheDir, "$ARCHIVE_NAME.part")
@@ -218,12 +232,14 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
             throw IOException("تعذر تجهيز أرشيف النموذج")
         }
 
+        post { onStatus("extracting") }
         try {
             extractModel(archive)
         } finally {
             archive.delete()
         }
 
+        post { onStatus("verifying") }
         if (!isModelInstalled()) {
             throw IOException("فشل التحقق النهائي من ملفات النموذج")
         }

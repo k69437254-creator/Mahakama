@@ -166,6 +166,61 @@ class AppAudioController(context: Context) {
         requestSherpaSpeech(prepareArabicSpeech(text))
     }
 
+    /**
+     * Prepares the shared Sherpa engine for the initial setup screen.
+     */
+    @Synchronized
+    fun prepareEngine(
+        onStatus: (String) -> Unit,
+        onProgress: (Int) -> Unit,
+        onReady: () -> Unit,
+        onError: (Throwable) -> Unit
+    ) {
+        if (released) {
+            onError(IllegalStateException("متحكم الصوت مغلق"))
+            return
+        }
+
+        if (sherpaEngine.isReady) {
+            onStatus("ready")
+            onProgress(100)
+            onReady()
+            return
+        }
+
+        sherpaPreparing = true
+
+        sherpaEngine.prepare(
+            onProgress = onProgress,
+            onStatus = onStatus,
+            onReady = {
+                synchronized(this@AppAudioController) {
+                    sherpaPreparing = false
+
+                    val pending = pendingSpeechText
+                    val generation = pendingSpeechGeneration
+                    pendingSpeechText = null
+
+                    if (
+                        !released &&
+                        pending != null &&
+                        generation == speechGeneration
+                    ) {
+                        synthesizeSherpa(pending, generation)
+                    }
+
+                    if (!released) onReady()
+                }
+            },
+            onError = { error ->
+                synchronized(this@AppAudioController) {
+                    sherpaPreparing = false
+                    if (!released) onError(error)
+                }
+            }
+        )
+    }
+
     @Synchronized
     private fun requestSherpaSpeech(text: String) {
         if (released || text.isBlank()) return
