@@ -86,7 +86,7 @@ def main() -> None:
     replace_once(root, cpp,
         "          text_mask_shape.data(), text_mask_shape.size()));\n"
         "  auto text_emb_info = text_enc_output.GetTensorTypeAndShapeInfo();\n",
-        "      text_mask_shape.size()));\n"
+        "          text_mask_shape.data(), text_mask_shape.size()));\n"
         "  if (cancel_requested_.load(std::memory_order_acquire)) return {};\n"
         "  auto text_emb_info = text_enc_output.GetTensorTypeAndShapeInfo();\n")
     replace_once(root, cpp,
