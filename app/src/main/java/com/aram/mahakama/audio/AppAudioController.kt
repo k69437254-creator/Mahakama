@@ -600,6 +600,7 @@ class AppAudioController(context: Context) {
     fun stopSpirit() {
         stopOrchestraIntro()
         speechGeneration++
+    sherpaEngine.cancelSynthesis()
         pendingSpeechText = null
         speechQueue.clear()
         speechRequestActive = false
