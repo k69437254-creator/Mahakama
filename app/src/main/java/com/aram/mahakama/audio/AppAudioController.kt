@@ -52,6 +52,7 @@ class AppAudioController(context: Context) {
     private var pendingSpeechText: String? = null
     private var pendingSpeechGeneration = 0L
     private var speechPlayer: MediaPlayer? = null
+    private var streamingSpeechPlayer: StreamingPcmPlayer? = null
 
     @Volatile private var speechGeneration = 0L
     private var volumeAnimator: ValueAnimator? = null
@@ -378,29 +379,84 @@ class AppAudioController(context: Context) {
     private fun synthesizeSherpa(text: String, generation: Long) {
         if (released || generation != speechGeneration) return
 
-        val output = File(appContext.cacheDir, "sherpa_speech_$generation.wav")
-        Log.i(TAG, "Sherpa synthesis started: generation=$generation")
+        releaseSpeechPlayer()
+        val sampleRate = sherpaEngine.sampleRate
+        if (sampleRate <= 0) {
+            Log.e(TAG, "Streaming playback rejected: invalid Sherpa sample rate=$sampleRate")
+            finishSpeakingIfCurrent(generation)
+            return
+        }
+
+        val streamPlayer = try {
+            StreamingPcmPlayer(
+                sampleRate = sampleRate,
+                onPlaybackComplete = {
+                    mainHandler.post {
+                        synchronized(this@AppAudioController) {
+                            if (!released && generation == speechGeneration) {
+                                if (streamingSpeechPlayer === streamPlayer) {
+                                    streamingSpeechPlayer = null
+                                }
+                                Log.i(TAG, "Streaming speech playback drained: generation=$generation")
+                                finishSpeakingIfCurrent(generation)
+                            }
+                        }
+                    }
+                },
+                onPlaybackError = { error ->
+                    mainHandler.post {
+                        synchronized(this@AppAudioController) {
+                            if (!released && generation == speechGeneration) {
+                                Log.e(TAG, "Streaming AudioTrack playback failed", error)
+                                if (streamingSpeechPlayer === streamPlayer) {
+                                    streamingSpeechPlayer = null
+                                }
+                                streamPlayer.stop()
+                                sherpaEngine.cancelSynthesis()
+                                finishSpeakingIfCurrent(generation)
+                            }
+                        }
+                    }
+                }
+            )
+        } catch (error: Throwable) {
+            Log.e(TAG, "Could not initialize streaming AudioTrack", error)
+            finishSpeakingIfCurrent(generation)
+            return
+        }
+
+        streamingSpeechPlayer = streamPlayer
+        Log.i(
+            TAG,
+            "Sherpa streaming playback ready: generation=$generation, sampleRate=$sampleRate"
+        )
 
         sherpaEngine.synthesize(
             text = text,
-            outputFile = output,
-            onComplete = { file ->
-                Log.i(TAG, "CALLBACK_COMPLETE_RECEIVED: generation=$generation, exists=${file.exists()}, bytes=${file.length()}")
-                synchronized(this@AppAudioController) {
-                    if (released || generation != speechGeneration) {
-                        file.delete()
-                    } else {
-                        Log.i(TAG, "Sherpa WAV generated: generation=$generation, bytes=${file.length()}, path=${file.absolutePath}")
-                        playSpeechFile(file, generation)
-                    }
+            onAudioChunk = { samples, chunkSampleRate ->
+                !released &&
+                    generation == speechGeneration &&
+                    chunkSampleRate == sampleRate &&
+                    streamPlayer.enqueue(samples)
+            },
+            onComplete = {
+                if (!released && generation == speechGeneration) {
+                    streamPlayer.finishInput()
+                } else {
+                    streamPlayer.stop()
                 }
             },
             onError = { error ->
                 synchronized(this@AppAudioController) {
                     if (!released && generation == speechGeneration) {
-                        Log.e(TAG, "Supertonic speech generation failed", error)
-                        output.delete()
+                        Log.e(TAG, "Supertonic streaming synthesis failed", error)
+                        if (streamingSpeechPlayer === streamPlayer) {
+                            streamingSpeechPlayer = null
+                        }
+                        streamPlayer.stop()
                         finishSpeakingIfCurrent(generation)
+                    } else {
+                        streamPlayer.stop()
                     }
                 }
             }
@@ -523,6 +579,10 @@ class AppAudioController(context: Context) {
 
     @Synchronized
     private fun releaseSpeechPlayer() {
+        val stream = streamingSpeechPlayer
+        streamingSpeechPlayer = null
+        try { stream?.stop() } catch (_: Exception) { }
+
         val audio = speechPlayer
         speechPlayer = null
 

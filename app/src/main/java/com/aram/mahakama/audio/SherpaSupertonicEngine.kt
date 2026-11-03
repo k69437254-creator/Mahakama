@@ -42,6 +42,8 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
         private const val SPEAKER_ID = 9
         private const val LANGUAGE = "ar"
         private const val NUM_STEPS = 5
+        private const val STREAM_CHUNK_MAX_CHARS = 70
+        private const val STREAM_CHUNK_SILENCE_SECONDS = 0.3f
 
         private val REQUIRED_FILES = setOf(
             "duration_predictor.int8.onnx",
@@ -69,6 +71,9 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
 
     @Volatile
     private var outputSampleRate: Int = 0
+
+    val sampleRate: Int
+        get() = outputSampleRate
 
     @Volatile
     var isReady: Boolean = false
@@ -133,8 +138,8 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
 
     fun synthesize(
         text: String,
-        outputFile: File,
-        onComplete: (File) -> Unit,
+        onAudioChunk: (FloatArray, Int) -> Boolean,
+        onComplete: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
         if (closed.get()) {
@@ -145,13 +150,10 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
         val requestGeneration = synchronized(cancellationLock) {
             synthesisGeneration.get()
         }
-
         val executorQueuedAtMs = SystemClock.elapsedRealtime()
 
         try {
             executor.execute {
-                var outputOwned = false
-
                 try {
                     if (!isCurrentRequest(requestGeneration)) return@execute
 
@@ -162,10 +164,9 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
 
                     val engine = tts
                         ?: throw IllegalStateException("محرك الصوت لم تتم تهيئته")
-
                     require(text.isNotBlank()) { "النص الصوتي فارغ" }
 
-                    // Serialize reset against cancellation, but never lock during synthesis.
+                    // Serialize reset against cancellation; never hold this lock during inference.
                     val mayStart = synchronized(cancellationLock) {
                         if (
                             closed.get() ||
@@ -178,188 +179,118 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
                             true
                         }
                     }
+                    if (!mayStart || !isCurrentRequest(requestGeneration)) return@execute
 
-                    if (!mayStart) return@execute
-
-                    if (!isCurrentRequest(requestGeneration)) return@execute
-
-                    outputFile.parentFile?.let {
-                        if (!it.exists() && !it.mkdirs()) {
-                            throw IOException("تعذر إنشاء مجلد ملف الصوت")
-                        }
-                    }
-
-                    if (outputFile.exists() && !outputFile.delete()) {
-                        throw IOException("تعذر استبدال ملف الصوت السابق")
-                    }
-                    outputOwned = true
-
-                    if (!isCurrentRequest(requestGeneration)) {
-                        outputFile.delete()
-                        return@execute
+                    val sampleRate = outputSampleRate
+                    if (sampleRate <= 0) {
+                        throw IOException("معدل عينة محرك الصوت غير صالح")
                     }
 
                     val config = GenerationConfig(
                         sid = SPEAKER_ID,
                         numSteps = NUM_STEPS,
                         speed = 1.0f,
-                        extra = mapOf("lang" to LANGUAGE)
+                        extra = mapOf(
+                            "lang" to LANGUAGE,
+                            "max_len" to STREAM_CHUNK_MAX_CHARS.toString(),
+                            "silence_duration" to STREAM_CHUNK_SILENCE_SECONDS.toString()
+                        )
                     )
 
+                    var callbackChunkCount = 0
+                    var callbackFailure: Throwable? = null
+                    var firstChunkLatencyMs = -1L
                     val generationStartedAtMs = SystemClock.elapsedRealtime()
-                    Log.i(TAG, "SYNTHESIS_GENERATE_BEGIN: chars=${text.length}, generation=$requestGeneration")
-
-                    val audio = engine.generateWithConfig(
-                        text = text,
-                        config = config
+                    Log.i(
+                        TAG,
+                        "SYNTHESIS_STREAM_BEGIN: chars=${text.length}, maxChunkCodepoints=$STREAM_CHUNK_MAX_CHARS, generation=$requestGeneration"
                     )
 
-                    val generationElapsedMs =
-                        SystemClock.elapsedRealtime() - generationStartedAtMs
-                    val generatedDurationSeconds =
-                        if (audio.sampleRate > 0) {
-                            audio.samples.size.toDouble() / audio.sampleRate.toDouble()
+                    // Sherpa v2.0.1 calls back once for each synthesized text chunk.
+                    // Its Supertonic implementation does not use the callback's Int return
+                    // value to break the native chunk loop. Therefore, after a delivery error
+                    // we stop accepting later chunks and report the error when native returns;
+                    // real cancellation remains the existing cancelSynthesis() path.
+                    val audio = engine.generateWithConfigAndCallback(text, config) { samples ->
+                        if (!isCurrentRequest(requestGeneration)) {
+                            0
+                        } else if (callbackFailure != null) {
+                            0
+                        } else if (samples.isEmpty()) {
+                            1
                         } else {
-                            0.0
+                            try {
+                                var accepted = true
+                                if (callbackChunkCount > 0) {
+                                    val silenceSamples =
+                                        (sampleRate * STREAM_CHUNK_SILENCE_SECONDS).toInt()
+                                    if (silenceSamples > 0) {
+                                        accepted = onAudioChunk(FloatArray(silenceSamples), sampleRate)
+                                    }
+                                }
+                                if (accepted) {
+                                    accepted = onAudioChunk(samples, sampleRate)
+                                }
+
+                                if (accepted) {
+                                    if (callbackChunkCount == 0) {
+                                        firstChunkLatencyMs =
+                                            SystemClock.elapsedRealtime() - generationStartedAtMs
+                                    }
+                                    callbackChunkCount++
+                                    Log.i(
+                                        TAG,
+                                        "SYNTHESIS_STREAM_CHUNK: index=$callbackChunkCount, samples=${samples.size}, durationMs=${samples.size * 1000L / sampleRate}, firstChunkLatencyMs=$firstChunkLatencyMs, generation=$requestGeneration"
+                                    )
+                                    1
+                                } else {
+                                    callbackFailure = IOException(
+                                        "مشغل الصوت لم يستقبل دفعة التوليد"
+                                    )
+                                    Log.e(TAG, "SYNTHESIS_STREAM_DELIVERY_REJECTED: generation=$requestGeneration")
+                                    0
+                                }
+                            } catch (error: Throwable) {
+                                callbackFailure = error
+                                0
+                            }
                         }
-                    val realTimeFactor =
-                        if (generatedDurationSeconds > 0.0) {
-                            generationElapsedMs / 1000.0 / generatedDurationSeconds
-                        } else {
-                            0.0
-                        }
-
-                    Log.i(
-                        TAG,
-                        "SYNTHESIS_GENERATE_COMPLETE: elapsedMs=$generationElapsedMs, audioDurationSec=${"%.2f".format(java.util.Locale.US, generatedDurationSeconds)}, rtf=${"%.2f".format(java.util.Locale.US, realTimeFactor)}, numSteps=$NUM_STEPS, chars=${text.length}, samples=${audio.samples.size}, sampleRate=${audio.sampleRate}, generation=$requestGeneration"
-                    )
-
-                    // A cancelled native call must never proceed to WAV creation.
-                    if (!isCurrentRequest(requestGeneration)) {
-                        outputFile.delete()
-                        return@execute
                     }
 
-                    if (audio.samples.isEmpty()) {
-                        throw IOException("المحرك لم ينتج عينات صوتية")
+                    if (!isCurrentRequest(requestGeneration)) return@execute
+                    callbackFailure?.let {
+                        throw IOException("تعذر تسليم إحدى دفعات الصوت إلى المشغل", it)
                     }
-
-                    val expectedSampleRate = outputSampleRate
-                    if (expectedSampleRate <= 0) {
-                        throw IOException("معدل عينة محرك الصوت غير صالح")
+                    if (audio.samples.isEmpty() || callbackChunkCount == 0) {
+                        throw IOException("لم ينتج Supertonic أي دفعة صوتية قابلة للتشغيل")
                     }
-
-                    if (audio.sampleRate != expectedSampleRate) {
+                    if (audio.sampleRate != sampleRate) {
                         throw IOException(
-                            "معدل عينة WAV لا يطابق المحرك: ${audio.sampleRate} بدلًا من $expectedSampleRate"
+                            "معدل عينة الناتج لا يطابق مشغل البث: ${audio.sampleRate} بدلًا من $sampleRate"
                         )
-                    }
-
-                    var peak = 0.0
-                    var sumSquares = 0.0
-
-                    for ((index, sample) in audio.samples.withIndex()) {
-                        if (index % 65536 == 0 &&
-                            !isCurrentRequest(requestGeneration)
-                        ) {
-                            outputFile.delete()
-                            return@execute
-                        }
-
-                        val value = sample.toDouble()
-                        if (!value.isFinite()) {
-                            throw IOException("محرك Supertonic أعاد عينة صوتية غير رقمية")
-                        }
-
-                        val magnitude = kotlin.math.abs(value)
-                        if (magnitude > peak) peak = magnitude
-                        sumSquares += value * value
-                    }
-
-                    val rms = kotlin.math.sqrt(
-                        sumSquares / audio.samples.size.toDouble()
-                    )
-                    val durationSeconds =
-                        audio.samples.size.toDouble() / audio.sampleRate.toDouble()
-
-                    Log.i(
-                        TAG,
-                        "Supertonic PCM verification: samples=${audio.samples.size}, duration=${"%.2f".format(java.util.Locale.US, durationSeconds)}s, peak=${"%.6f".format(java.util.Locale.US, peak)}, rms=${"%.6f".format(java.util.Locale.US, rms)}, sampleRate=${audio.sampleRate}, sid=$SPEAKER_ID, lang=$LANGUAGE"
-                    )
-
-                    if (peak < 0.001 || rms < 0.0001) {
-                        Log.w(
-                            TAG,
-                            "Supertonic PCM level is very low: peak=$peak, rms=$rms; preserving WAV for diagnosis"
-                        )
-                    }
-
-                    if (!isCurrentRequest(requestGeneration)) {
-                        outputFile.delete()
-                        return@execute
                     }
 
                     Log.i(
                         TAG,
-                        "WAV_SAVE_BEGIN: path=${outputFile.absolutePath}, samples=${audio.samples.size}"
+                        "SYNTHESIS_STREAM_COMPLETE: elapsedMs=${SystemClock.elapsedRealtime() - generationStartedAtMs}, firstChunkLatencyMs=$firstChunkLatencyMs, chars=${text.length}, chunks=$callbackChunkCount, samples=${audio.samples.size}, generation=$requestGeneration"
                     )
-
-                    if (!audio.save(outputFile.absolutePath)) {
-                        throw IOException("فشل حفظ الملف الصوتي")
-                    }
-
-                    if (!isCurrentRequest(requestGeneration)) {
-                        outputFile.delete()
-                        return@execute
-                    }
-
-                    Log.i(
-                        TAG,
-                        "WAV_SAVE_RESULT: exists=${outputFile.exists()}, bytes=${outputFile.length()}"
-                    )
-
-                    val expectedWavBytes =
-                        44L + audio.samples.size.toLong() * 2L
-
-                    if (!outputFile.isFile ||
-                        outputFile.length() != expectedWavBytes
-                    ) {
-                        throw IOException(
-                            "حجم WAV لا يطابق PCM16 mono المتوقع: actual=${outputFile.length()}, expected=$expectedWavBytes"
-                        )
-                    }
 
                     post {
                         if (isCurrentRequest(requestGeneration)) {
-                            Log.i(
-                                TAG,
-                                "CALLBACK_MAIN_ENTER: exists=${outputFile.exists()}, bytes=${outputFile.length()}, generation=$requestGeneration"
-                            )
-                            onComplete(outputFile)
+                            onComplete()
                         } else {
-                            Log.w(
-                                TAG,
-                                "CALLBACK_SKIPPED: request cancelled before completion callback"
-                            )
+                            Log.w(TAG, "STREAM_COMPLETION_SKIPPED: stale generation=$requestGeneration")
                         }
                     }
-
                 } catch (error: Throwable) {
                     if (!isCurrentRequest(requestGeneration)) {
-                        if (outputOwned) outputFile.delete()
-                        Log.i(
-                            TAG,
-                            "SYNTHESIS_CANCELLED: generation=$requestGeneration"
-                        )
+                        Log.i(TAG, "SYNTHESIS_CANCELLED: generation=$requestGeneration")
                         return@execute
                     }
 
-                    Log.e(TAG, "Speech generation failed", error)
-
+                    Log.e(TAG, "Streaming speech generation failed", error)
                     post {
-                        if (isCurrentRequest(requestGeneration)) {
-                            onError(error)
-                        }
+                        if (isCurrentRequest(requestGeneration)) onError(error)
                     }
                 }
             }
@@ -367,12 +298,7 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
             if (isCurrentRequest(requestGeneration)) {
                 post {
                     if (isCurrentRequest(requestGeneration)) {
-                        onError(
-                            IllegalStateException(
-                                "تعذر جدولة توليد الصوت",
-                                error
-                            )
-                        )
+                        onError(IllegalStateException("تعذر جدولة توليد الصوت", error))
                     }
                 }
             }
