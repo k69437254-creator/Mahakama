@@ -41,7 +41,7 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
 
         private const val SPEAKER_ID = 9
         private const val LANGUAGE = "ar"
-        private const val NUM_STEPS = 8
+        private const val NUM_STEPS = 5
 
         private val REQUIRED_FILES = setOf(
             "duration_predictor.int8.onnx",
@@ -214,9 +214,24 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
                         config = config
                     )
 
+                    val generationElapsedMs =
+                        SystemClock.elapsedRealtime() - generationStartedAtMs
+                    val generatedDurationSeconds =
+                        if (audio.sampleRate > 0) {
+                            audio.samples.size.toDouble() / audio.sampleRate.toDouble()
+                        } else {
+                            0.0
+                        }
+                    val realTimeFactor =
+                        if (generatedDurationSeconds > 0.0) {
+                            generationElapsedMs / 1000.0 / generatedDurationSeconds
+                        } else {
+                            0.0
+                        }
+
                     Log.i(
                         TAG,
-                        "SYNTHESIS_GENERATE_COMPLETE: elapsedMs=${SystemClock.elapsedRealtime() - generationStartedAtMs}, chars=${text.length}, samples=${audio.samples.size}, generation=$requestGeneration"
+                        "SYNTHESIS_GENERATE_COMPLETE: elapsedMs=$generationElapsedMs, audioDurationSec=${"%.2f".format(java.util.Locale.US, generatedDurationSeconds)}, rtf=${"%.2f".format(java.util.Locale.US, realTimeFactor)}, numSteps=$NUM_STEPS, chars=${text.length}, samples=${audio.samples.size}, sampleRate=${audio.sampleRate}, generation=$requestGeneration"
                     )
 
                     // A cancelled native call must never proceed to WAV creation.
