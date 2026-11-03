@@ -387,7 +387,8 @@ class AppAudioController(context: Context) {
             return
         }
 
-        val streamPlayer = try {
+        lateinit var streamPlayer: StreamingPcmPlayer
+        streamPlayer = try {
             StreamingPcmPlayer(
                 sampleRate = sampleRate,
                 onPlaybackComplete = {
