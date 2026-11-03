@@ -1,0 +1,145 @@
+name: Build patched Sherpa ONNX AAR
+
+on:
+  push:
+    branches: [ audar-bridge-test ]
+    paths:
+      - '.github/workflows/build-sherpa-cancellable-aar.yml'
+      - 'tools/patch_sherpa_onnx_v2_0_1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mahakama-sherpa-cancellable-aar-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-aar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout Mahakama build scripts
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned Sherpa ONNX source
+        uses: actions/checkout@v4
+        with:
+          repository: k2-fsa/sherpa-onnx
+          ref: v2.0.1
+          path: sherpa-onnx
+          fetch-depth: 1
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install pinned Android NDK and SDK platform
+        shell: bash
+        run: |
+          set -euo pipefail
+          NDK_VERSION=27.2.12479018
+          ( set +o pipefail; yes | sdkmanager --install "ndk;${NDK_VERSION}" "platforms;android-34" "build-tools;34.0.0" >/dev/null )
+          echo "ANDROID_NDK=${ANDROID_HOME}/ndk/${NDK_VERSION}" >> "$GITHUB_ENV"
+          echo "SHERPA_ONNX_ONNXRUNTIME_VERSION=1.28.2" >> "$GITHUB_ENV"
+          test -f "${ANDROID_HOME}/ndk/${NDK_VERSION}/build/cmake/android.toolchain.cmake"
+
+      - name: Apply guarded cancellation patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/patch_sherpa_onnx_v2_0_1.py "$GITHUB_WORKSPACE/sherpa-onnx"
+
+      - name: Build native libraries for all four Android ABIs
+        shell: bash
+        env:
+          BUILD_SHARED_LIBS: 'ON'
+          SHERPA_ONNX_ENABLE_TTS: 'ON'
+          SHERPA_ONNX_ENABLE_SPEAKER_DIARIZATION: 'ON'
+          SHERPA_ONNX_ENABLE_C_API: 'ON'
+          SHERPA_ONNX_ENABLE_BINARY: 'OFF'
+          SHERPA_ONNX_ENABLE_JNI: 'ON'
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE/sherpa-onnx"
+          export ANDROID_NDK SHERPA_ONNX_ONNXRUNTIME_VERSION
+
+          build_one() {
+            local script="$1"
+            local build_dir="$2"
+            local abi="$3"
+            echo "===== BUILD ${abi} ====="
+            "./${script}"
+            mkdir -p "jniLibs/${abi}"
+            cp -v "${build_dir}/install/lib/"*.so "jniLibs/${abi}/"
+            test -s "jniLibs/${abi}/libonnxruntime.so"
+            test -s "jniLibs/${abi}/libsherpa-onnx-jni.so"
+            test -s "jniLibs/${abi}/libsherpa-onnx-c-api.so"
+            test -s "jniLibs/${abi}/libsherpa-onnx-cxx-api.so"
+            rm -rf "${build_dir}"
+          }
+
+          build_one build-android-arm64-v8a.sh build-android-arm64-v8a arm64-v8a
+          build_one build-android-armv7-eabi.sh build-android-armv7-eabi armeabi-v7a
+          build_one build-android-x86.sh build-android-x86 x86
+          build_one build-android-x86-64.sh build-android-x86-64 x86_64
+
+      - name: Copy native libraries into the upstream AAR module
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE/sherpa-onnx"
+          for abi in arm64-v8a armeabi-v7a x86 x86_64; do
+            destination="android/SherpaOnnxAar/sherpa_onnx/src/main/jniLibs/${abi}"
+            mkdir -p "$destination"
+            cp -v "jniLibs/${abi}/"*.so "$destination/"
+          done
+
+      - name: Build AAR and verify Kotlin/JNI cancellation methods
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE/sherpa-onnx/android/SherpaOnnxAar"
+          ./gradlew --no-daemon :sherpa_onnx:assembleRelease
+          AAR="$GITHUB_WORKSPACE/sherpa-onnx/android/SherpaOnnxAar/sherpa_onnx/build/outputs/aar/sherpa_onnx-release.aar"
+          test -s "$AAR"
+          mkdir -p "$GITHUB_WORKSPACE/aar-check"
+          cd "$GITHUB_WORKSPACE/aar-check"
+          unzip -q "$AAR"
+          test -s classes.jar
+          javap -classpath classes.jar com.k2fsa.sherpa.onnx.OfflineTts | grep -E 'resetCancellation\(\)|cancel\(\)'
+          for abi in arm64-v8a armeabi-v7a x86 x86_64; do
+            test -s "jni/${abi}/libonnxruntime.so"
+            test -s "jni/${abi}/libsherpa-onnx-jni.so"
+            readelf -Ws "jni/${abi}/libsherpa-onnx-jni.so" | grep -q 'OfflineTts_resetCancellationImpl'
+            readelf -Ws "jni/${abi}/libsherpa-onnx-jni.so" | grep -q 'OfflineTts_cancelImpl'
+          done
+          cp "$AAR" "$GITHUB_WORKSPACE/sherpa-onnx-2.0.1-mahakama-cancel.aar"
+          cd "$GITHUB_WORKSPACE"
+          sha256sum sherpa-onnx-2.0.1-mahakama-cancel.aar > sherpa-onnx-2.0.1-mahakama-cancel.aar.sha256
+          {
+            echo "Sherpa source: k2-fsa/sherpa-onnx v2.0.1"
+            echo "ONNX Runtime: 1.28.2"
+            echo "Android NDK: 27.2.12479018"
+            echo "ABIs: arm64-v8a, armeabi-v7a, x86, x86_64"
+            echo "Cancellation: atomic cooperative checkpoints between ONNX Session::Run calls"
+            echo "Not implemented: forced interruption of the currently executing Session::Run"
+            echo "Source commit: $(git -C sherpa-onnx rev-parse HEAD)"
+          } > sherpa-onnx-2.0.1-mahakama-cancel-build.txt
+
+      - name: Upload patched AAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sherpa-onnx-2.0.1-mahakama-cancel
+          path: |
+            sherpa-onnx-2.0.1-mahakama-cancel.aar
+            sherpa-onnx-2.0.1-mahakama-cancel.aar.sha256
+            sherpa-onnx-2.0.1-mahakama-cancel-build.txt
+          if-no-files-found: error
+          retention-days: 14
