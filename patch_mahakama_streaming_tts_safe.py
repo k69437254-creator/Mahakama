@@ -740,7 +740,7 @@ def main() -> None:
     print("PREFLIGHT PASSED")
     print(f"- Branch: {BRANCH}")
     print(f"- Reviewed baseline: {REVIEWED_BASE_COMMIT}")
-    print(f"- Current HEAD: {head}; reviewed baseline is an ancestor")
+    print(f"- Current HEAD: {run_git(root, "rev-parse", "HEAD")}; reviewed baseline is an ancestor")
     print("- Source files and AAR match the reviewed GitHub blobs")
     print("- AAR OfflineTts callback and existing cancellation APIs verified with javap")
     print("- Sherpa step count remains 5; text chunk limit is 70 codepoints")
