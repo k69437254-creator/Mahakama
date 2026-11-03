@@ -364,6 +364,273 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
         }
     }
 
+    private fun installModel(
+        onProgress: (Int) -> Unit,
+        onStatus: (String) -> Unit
+    ) {
+        if (isModelInstalled()) {
+            post {
+                onStatus("verifying")
+                onProgress(100)
+            }
+            return
+        }
+
+        post { onStatus("downloading") }
+
+        val archive = File(appContext.cacheDir, ARCHIVE_NAME)
+        val partialArchive = File(appContext.cacheDir, "$ARCHIVE_NAME.part")
+
+        if (partialArchive.exists()) {
+            partialArchive.delete()
+        }
+
+        downloadModel(partialArchive, onProgress)
+
+        if (archive.exists()) {
+            archive.delete()
+        }
+
+        if (!partialArchive.renameTo(archive)) {
+            partialArchive.delete()
+            throw IOException("تعذر تجهيز أرشيف النموذج")
+        }
+
+        post { onStatus("extracting") }
+        try {
+            extractModel(archive)
+        } finally {
+            archive.delete()
+        }
+
+        post { onStatus("verifying") }
+        if (!isModelInstalled()) {
+            throw IOException("فشل التحقق النهائي من ملفات النموذج")
+        }
+    }
+
+    private fun isModelInstalled(): Boolean {
+        val marker = File(modelDirectory, ".ready")
+
+        return marker.isFile &&
+            REQUIRED_FILES.all { name ->
+                val file = File(modelDirectory, name)
+                file.isFile && file.length() > 0L
+            }
+    }
+
+    private fun downloadModel(
+        destination: File,
+        onProgress: (Int) -> Unit
+    ) {
+        var connection: HttpURLConnection? = null
+
+        try {
+            connection = (URL(MODEL_URL).openConnection() as HttpURLConnection).apply {
+                connectTimeout = 20000
+                readTimeout = 60000
+                instanceFollowRedirects = true
+                requestMethod = "GET"
+                setRequestProperty("User-Agent", "Mahakama-Android")
+            }
+
+            connection.connect()
+
+            val status = connection.responseCode
+            if (status !in 200..299) {
+                throw IOException("فشل تنزيل النموذج: HTTP $status")
+            }
+
+            val declaredSize = connection.contentLengthLong
+            if (declaredSize > MAX_ARCHIVE_BYTES) {
+                throw IOException("حجم أرشيف النموذج أكبر من الحد المسموح")
+            }
+
+            var downloaded = 0L
+            var lastReported = -1
+
+            BufferedInputStream(connection.inputStream).use { input ->
+                BufferedOutputStream(FileOutputStream(destination)).use { output ->
+                    val buffer = ByteArray(64 * 1024)
+
+                    while (true) {
+                        if (Thread.currentThread().isInterrupted) {
+                            throw IOException("تم إيقاف تنزيل النموذج")
+                        }
+
+                        val count = input.read(buffer)
+                        if (count < 0) break
+
+                        downloaded += count
+
+                        if (downloaded > MAX_ARCHIVE_BYTES) {
+                            throw IOException("تجاوز تنزيل النموذج الحد المسموح")
+                        }
+
+                        output.write(buffer, 0, count)
+
+                        val progress = if (declaredSize > 0L) {
+                            ((downloaded * 100L) / declaredSize)
+                                .toInt()
+                                .coerceIn(0, 100)
+                        } else {
+                            0
+                        }
+
+                        if (progress != lastReported) {
+                            lastReported = progress
+                            post { onProgress(progress) }
+                        }
+                    }
+                }
+            }
+
+            if (downloaded == 0L) {
+                throw IOException("الأرشيف الذي تم تنزيله فارغ")
+            }
+
+            if (declaredSize > 0L && downloaded != declaredSize) {
+                throw IOException("حجم الملف المنزّل لا يطابق الحجم المتوقع")
+            }
+
+            post { onProgress(100) }
+        } finally {
+            connection?.disconnect()
+        }
+    }
+
+    private fun extractModel(archive: File) {
+        val staging = File(appContext.filesDir, "$MODEL_DIRECTORY.tmp")
+
+        staging.deleteRecursively()
+
+        if (!staging.mkdirs()) {
+            throw IOException("تعذر إنشاء مجلد استخراج النموذج")
+        }
+
+        val extracted = mutableSetOf<String>()
+        var totalBytes = 0L
+
+        try {
+            BufferedInputStream(FileInputStream(archive)).use { fileInput ->
+                BZip2CompressorInputStream(fileInput).use { bzipInput ->
+                    TarArchiveInputStream(bzipInput).use { tarInput ->
+
+                        while (true) {
+                            val entry = tarInput.getNextTarEntry() ?: break
+                            val name = entry.name.substringAfterLast('/')
+
+                            if (entry.isDirectory) continue
+                            if (name !in REQUIRED_FILES) continue
+
+                            if (!entry.isFile) {
+                                throw IOException("نوع ملف غير مسموح داخل الأرشيف")
+                            }
+
+                            if (!extracted.add(name)) {
+                                throw IOException("ملف مكرر داخل الأرشيف: $name")
+                            }
+
+                            if (entry.size <= 0L ||
+                                entry.size > MAX_EXTRACTED_BYTES
+                            ) {
+                                throw IOException("حجم غير صالح للملف: $name")
+                            }
+
+                            val target = File(staging, name)
+                            var fileBytes = 0L
+
+                            BufferedOutputStream(FileOutputStream(target)).use { output ->
+                                val buffer = ByteArray(64 * 1024)
+
+                                while (true) {
+                                    val count = tarInput.read(buffer)
+                                    if (count < 0) break
+
+                                    fileBytes += count
+                                    totalBytes += count
+
+                                    if (totalBytes > MAX_EXTRACTED_BYTES) {
+                                        throw IOException("تجاوز استخراج النموذج الحد المسموح")
+                                    }
+
+                                    output.write(buffer, 0, count)
+                                }
+                            }
+
+                            if (fileBytes != entry.size) {
+                                throw IOException("استخراج غير مكتمل للملف: $name")
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (extracted != REQUIRED_FILES) {
+                val missing = REQUIRED_FILES - extracted
+                throw IOException("ملفات النموذج ناقصة: ${missing.joinToString()}")
+            }
+
+            modelDirectory.deleteRecursively()
+
+            if (!staging.renameTo(modelDirectory)) {
+                throw IOException("تعذر تثبيت ملفات النموذج")
+            }
+
+            File(modelDirectory, ".ready").writeText("supertonic-3-int8")
+        } catch (error: Throwable) {
+            staging.deleteRecursively()
+            throw error
+        }
+    }
+
+    private fun initializeEngine() {
+        val model = OfflineTtsSupertonicModelConfig(
+            durationPredictor = modelPath("duration_predictor.int8.onnx"),
+            textEncoder = modelPath("text_encoder.int8.onnx"),
+            vectorEstimator = modelPath("vector_estimator.int8.onnx"),
+            vocoder = modelPath("vocoder.int8.onnx"),
+            ttsJson = modelPath("tts.json"),
+            unicodeIndexer = modelPath("unicode_indexer.bin"),
+            voiceStyle = modelPath("voice.bin")
+        )
+
+        val config = OfflineTtsConfig(
+            model = OfflineTtsModelConfig(
+                supertonic = model,
+                numThreads = 2,
+                debug = false,
+                provider = "cpu"
+            )
+        )
+
+        val engine = OfflineTts(null, config)
+
+        try {
+            val sampleRate = engine.sampleRate()
+            val speakers = engine.numSpeakers()
+
+            if (sampleRate <= 0) {
+                throw IOException("أعاد محرك الصوت معدل عينة غير صالح: $sampleRate")
+            }
+
+            outputSampleRate = sampleRate
+
+            if (speakers <= SPEAKER_ID) {
+                throw IOException("الصوت رقم $SPEAKER_ID غير متاح؛ عدد الأصوات: $speakers")
+            }
+
+            tts = engine
+            Log.i(TAG, "Supertonic ready: sampleRate=$sampleRate, speakers=$speakers")
+        } catch (error: Throwable) {
+            engine.release()
+            throw error
+        }
+    }
+
+    private fun modelPath(name: String): String =
+        File(modelDirectory, name).absolutePath
+
     private fun isCurrentRequest(generation: Long): Boolean {
         return !closed.get() && synthesisGeneration.get() == generation
     }
