@@ -79,6 +79,7 @@ import com.aram.mahakama.nextupdate.domain.TrialEvolutionEngine
 import com.aram.mahakama.nextupdate.ui.EnhancedInnerCourtScreen
 import com.aram.mahakama.nextupdate.ui.FaceTreeScreen
 import com.aram.mahakama.nextupdate.ui.TrialEvolutionScreen
+import java.util.concurrent.atomic.AtomicLong
 
 class MainActivity : ComponentActivity() {
     private lateinit var repository: PreferencesRepository
@@ -164,6 +165,7 @@ private fun MahakamaApp(
     var spiritEvidence by remember { mutableStateOf("") }
     var spiritSymbolicLine by remember { mutableStateOf("") }
     var spiritSilent by remember { mutableStateOf(false) }
+    val spiritSpeechToken = remember { AtomicLong(0L) }
 
     LaunchedEffect(Unit) {
         clock.onForeground()
@@ -228,29 +230,52 @@ private fun MahakamaApp(
         audio.updateAmbientState(isForeground, userState.ambientMuted || silenceBeforeTrackChoice, userState.selectedMusicTrack, userState.musicVolume)
     }
     LaunchedEffect(spiritLine, spiritSilent) {
+        val requestToken = spiritSpeechToken.incrementAndGet()
         val line = spiritLine
+
         android.util.Log.i(
             "MahakamaSpirit",
-            "Speech effect triggered: hasLine=${line != null}, silent=$spiritSilent, stage=$spiritStage, chars=${line?.length ?: 0}"
+            "Speech effect triggered: token=$requestToken, hasLine=${line != null}, silent=$spiritSilent, stage=$spiritStage, chars=${line?.length ?: 0}"
         )
+
+        // Cancel any previous speech before accepting the current message.
+        audio.stopSpirit()
+
         if (line == null || spiritSilent) {
-            audio.stopSpirit()
             if (spiritSilent) speechFinished = true
         } else {
             speechFinished = false
-            android.util.Log.i("MahakamaSpirit", "Calling speakSpirit: chars=${line.length}")
+
+            android.util.Log.i(
+                "MahakamaSpirit",
+                "Calling speakSpirit: token=$requestToken, chars=${line.length}"
+            )
+
             audio.speakSpirit(line) {
-                android.util.Log.i("MahakamaSpirit", "Spirit speech completion callback")
-                speechFinished = true
+                if (
+                    spiritSpeechToken.get() == requestToken &&
+                    spiritLine == line
+                ) {
+                    android.util.Log.i(
+                        "MahakamaSpirit",
+                        "Current spirit speech completed: token=$requestToken"
+                    )
+                    speechFinished = true
+                } else {
+                    android.util.Log.w(
+                        "MahakamaSpirit",
+                        "Ignored stale speech callback: token=$requestToken"
+                    )
+                }
             }
-            // Keep the spirit request alive until playback reports completion.
-            while (!speechFinished && spiritLine == line) {
+
+            // Wait only for this exact message; a stale callback cannot finish it.
+            while (
+                !speechFinished &&
+                spiritLine == line &&
+                spiritSpeechToken.get() == requestToken
+            ) {
                 delay(250L)
-            }
-            if (spiritLine == line && spiritStage != 1) {
-                spiritLine = null
-                spiritStage = 0
-                dialogue = null
             }
         }
     }

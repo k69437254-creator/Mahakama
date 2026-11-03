@@ -3,6 +3,7 @@ package com.aram.mahakama.audio
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.util.Log
 import com.k2fsa.sherpa.onnx.GenerationConfig
 import com.k2fsa.sherpa.onnx.OfflineTts
@@ -86,6 +87,9 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
                 try {
                     if (closed.get()) return@execute
 
+                    val prepareStartedAtMs = SystemClock.elapsedRealtime()
+                    val engineWasInitialized = tts != null
+
                     if (tts == null) {
                         post { onStatus("checking") }
                         installModel(onProgress, onStatus)
@@ -97,6 +101,10 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
                     if (closed.get()) return@execute
 
                     isReady = true
+                    Log.i(
+                        TAG,
+                        "ENGINE_PREPARE_COMPLETE: elapsedMs=${SystemClock.elapsedRealtime() - prepareStartedAtMs}, reusedExistingEngine=$engineWasInitialized"
+                    )
                     post {
                         if (!closed.get()) {
                             onStatus("ready")
@@ -131,10 +139,17 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
             return
         }
 
+        val executorQueuedAtMs = SystemClock.elapsedRealtime()
+
         try {
             executor.execute {
                 try {
                     if (closed.get()) return@execute
+
+                    Log.i(
+                        TAG,
+                        "SYNTHESIS_EXECUTOR_START: waitMs=${SystemClock.elapsedRealtime() - executorQueuedAtMs}, chars=${text.length}"
+                    )
 
                     val engine = tts
                         ?: throw IllegalStateException("محرك الصوت لم تتم تهيئته")
@@ -158,9 +173,17 @@ class SherpaSupertonicEngine(context: Context) : AutoCloseable {
                     extra = mapOf("lang" to LANGUAGE)
                 )
 
+                val generationStartedAtMs = SystemClock.elapsedRealtime()
+                Log.i(TAG, "SYNTHESIS_GENERATE_BEGIN: chars=${text.length}")
+
                 val audio = engine.generateWithConfig(
                     text = text,
                     config = config
+                )
+
+                Log.i(
+                    TAG,
+                    "SYNTHESIS_GENERATE_COMPLETE: elapsedMs=${SystemClock.elapsedRealtime() - generationStartedAtMs}, chars=${text.length}, samples=${audio.samples.size}"
                 )
 
                 if (audio.samples.isEmpty()) {

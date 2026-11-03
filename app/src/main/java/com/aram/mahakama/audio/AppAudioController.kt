@@ -9,6 +9,7 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.util.Log
 import com.aram.mahakama.R
 import java.io.File
@@ -38,7 +39,8 @@ class AppAudioController(context: Context) {
     private var speaking = false
     private data class QueuedSpeech(
         val text: String,
-        val onFinished: () -> Unit
+        val onFinished: () -> Unit,
+        val queuedAtMs: Long = SystemClock.elapsedRealtime()
     )
 
     private val speechQueue = ArrayDeque<QueuedSpeech>()
@@ -240,7 +242,7 @@ class AppAudioController(context: Context) {
 
         Log.i(
             TAG,
-            "Speech queue starting: generation=$generation, remaining=${speechQueue.size}, chars=${request.text.length}"
+            "Speech queue starting: generation=$generation, remaining=${speechQueue.size}, chars=${request.text.length}, queueWaitMs=${SystemClock.elapsedRealtime() - request.queuedAtMs}"
         )
         requestSherpaSpeech(request.text)
     }
@@ -436,6 +438,7 @@ class AppAudioController(context: Context) {
             // Set the speech player's gain explicitly instead of relying on its default.
             audio.setVolume(1.0f, 1.0f)
             audio.setDataSource(file.absolutePath)
+            val mediaPrepareStartedAt = SystemClock.elapsedRealtime()
 
             audio.setOnPreparedListener { prepared ->
                 synchronized(this@AppAudioController) {
@@ -458,7 +461,7 @@ class AppAudioController(context: Context) {
                         prepared.setVolume(1.0f, 1.0f)
                         Log.i(
                             TAG,
-                            "Speech output diagnosis: duration=${prepared.duration}ms, audioSession=${prepared.getAudioSessionId()}, streamMusic=$musicVolume/$musicMaxVolume, playerGain=1.0/1.0, availableOutputs=[$availableOutputs], generation=$generation"
+                            "Speech output diagnosis: duration=${prepared.duration}ms, mediaPrepareMs=${SystemClock.elapsedRealtime() - mediaPrepareStartedAt}, audioSession=${prepared.getAudioSessionId()}, streamMusic=$musicVolume/$musicMaxVolume, playerGain=1.0/1.0, availableOutputs=[$availableOutputs], generation=$generation"
                         )
                         if (musicVolume == 0) {
                             Log.e(TAG, "Android STREAM_MUSIC volume is zero; media output is muted at system level")
