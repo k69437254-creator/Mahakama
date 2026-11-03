@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Safely add callback-driven Supertonic PCM streaming to Mahakama.
 
-Target snapshot: k69437254-creator/Mahakama, branch
+Reviewed baseline: k69437254-creator/Mahakama, branch
 experiment/supertonic-5steps at commit 92a58ceb61ba172a904c682e4473e32f5b8702ed.
+Later commits are accepted only when this baseline is an ancestor of HEAD and
+all protected source/AAR Git blobs still match the reviewed snapshot.
 
 No files are changed unless every repository, source, AAR, API, and anchor check
 passes. --apply creates backups under .git/mahakama-streaming-backups, applies
@@ -23,7 +25,7 @@ from datetime import datetime
 from pathlib import Path
 
 BRANCH = "experiment/supertonic-5steps"
-EXPECTED_HEAD = "92a58ceb61ba172a904c682e4473e32f5b8702ed"
+REVIEWED_BASE_COMMIT = "92a58ceb61ba172a904c682e4473e32f5b8702ed"
 
 ENGINE_REL = Path("app/src/main/java/com/aram/mahakama/audio/SherpaSupertonicEngine.kt")
 CONTROLLER_REL = Path("app/src/main/java/com/aram/mahakama/audio/AppAudioController.kt")
@@ -585,10 +587,11 @@ def build_candidate(root: Path) -> dict[Path, str]:
         abort("target files have local modifications; preserve/review them before patching:\n" + status)
 
     head = run_git(root, "rev-parse", "HEAD")
-    if head != EXPECTED_HEAD:
+    merge_base = run_git(root, "merge-base", REVIEWED_BASE_COMMIT, "HEAD")
+    if merge_base != REVIEWED_BASE_COMMIT:
         abort(
-            f"unexpected HEAD {head}; this script only targets the reviewed snapshot "
-            f"{EXPECTED_HEAD}. Do not bypass this check."
+            f"HEAD {head} is not based on the reviewed snapshot "
+            f"{REVIEWED_BASE_COMMIT}; refusing to continue."
         )
     branch = run_git(root, "branch", "--show-current")
     if branch != BRANCH:
@@ -736,7 +739,8 @@ def main() -> None:
     changes = build_candidate(root)
     print("PREFLIGHT PASSED")
     print(f"- Branch: {BRANCH}")
-    print(f"- Reviewed commit: {EXPECTED_HEAD}")
+    print(f"- Reviewed baseline: {REVIEWED_BASE_COMMIT}")
+    print(f"- Current HEAD: {head}; reviewed baseline is an ancestor")
     print("- Source files and AAR match the reviewed GitHub blobs")
     print("- AAR OfflineTts callback and existing cancellation APIs verified with javap")
     print("- Sherpa step count remains 5; text chunk limit is 70 codepoints")
