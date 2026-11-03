@@ -12,6 +12,7 @@ import android.os.Looper
 import android.util.Log
 import com.aram.mahakama.R
 import java.io.File
+import java.util.ArrayDeque
 
 /**
  * One continuous ambient soundtrack and the Arabic voice of "طيف الذات".
@@ -35,6 +36,13 @@ class AppAudioController(context: Context) {
     private var appIsForeground = false
     private var muted = false
     private var speaking = false
+    private data class QueuedSpeech(
+        val text: String,
+        val onFinished: () -> Unit
+    )
+
+    private val speechQueue = ArrayDeque<QueuedSpeech>()
+    private var speechRequestActive = false
     private var finishedCallback: (() -> Unit)? = null
 
     private val sherpaEngine = SherpaSupertonicEngine(appContext)
@@ -200,7 +208,6 @@ class AppAudioController(context: Context) {
         Log.i(TAG, "Spirit speech requested: chars=${text.length}, foreground=$appIsForeground, muted=$muted, engineReady=${sherpaEngine.isReady}, preparing=$sherpaPreparing")
 
         speaking = true
-        finishedCallback = onFinished
 
         if (appIsForeground && !muted) {
             ensurePlayer()
@@ -213,7 +220,29 @@ class AppAudioController(context: Context) {
             fadeMusicTo(ambientTargetVolume(true), 650L)
         }
 
-        requestSherpaSpeech(speechText)
+        speechQueue.addLast(QueuedSpeech(speechText, onFinished))
+        Log.i(
+            TAG,
+            "Speech added to queue: queued=${speechQueue.size}, active=$speechRequestActive"
+        )
+        startNextSpeechIfIdle()
+    }
+
+    @Synchronized
+    private fun startNextSpeechIfIdle() {
+        if (released || speechRequestActive || speechQueue.isEmpty()) return
+
+        val request = speechQueue.removeFirst()
+        speechRequestActive = true
+        speechGeneration++
+        val generation = speechGeneration
+        finishedCallback = request.onFinished
+
+        Log.i(
+            TAG,
+            "Speech queue starting: generation=$generation, remaining=${speechQueue.size}, chars=${request.text.length}"
+        )
+        requestSherpaSpeech(request.text)
     }
 
     /**
@@ -264,8 +293,22 @@ class AppAudioController(context: Context) {
             },
             onError = { error ->
                 synchronized(this@AppAudioController) {
-                    sherpaPreparing = false
-                    if (!released) onError(error)
+                sherpaPreparing = false
+                val failedGeneration = pendingSpeechGeneration
+                val hadPendingSpeech = pendingSpeechText != null
+                pendingSpeechText = null
+
+                if (
+                    !released &&
+                    hadPendingSpeech &&
+                    speechRequestActive &&
+                    failedGeneration == speechGeneration
+                ) {
+                    Log.e(TAG, "Queued speech failed while shared engine was preparing", error)
+                    finishSpeakingIfCurrent(failedGeneration)
+                }
+
+                if (!released) onError(error)
                 }
             }
         )
@@ -274,8 +317,6 @@ class AppAudioController(context: Context) {
     @Synchronized
     private fun requestSherpaSpeech(text: String) {
         if (released || text.isBlank()) return
-
-        speechGeneration++
         val generation = speechGeneration
 
         Log.i(TAG, "Sherpa speech queued: generation=$generation, chars=${text.length}, engineReady=${sherpaEngine.isReady}, preparing=$sherpaPreparing")
@@ -557,6 +598,8 @@ class AppAudioController(context: Context) {
         stopOrchestraIntro()
         speechGeneration++
         pendingSpeechText = null
+        speechQueue.clear()
+        speechRequestActive = false
         releaseSpeechPlayer()
 
         speaking = false
@@ -593,6 +636,8 @@ class AppAudioController(context: Context) {
         speaking = false
 
         pendingSpeechText = null
+        speechQueue.clear()
+        speechRequestActive = false
         releaseSpeechPlayer()
         sherpaEngine.close()
 
@@ -630,14 +675,33 @@ class AppAudioController(context: Context) {
             return
         }
 
-        if (released || generation != speechGeneration) return
-
-        speaking = false
-        fadeMusicTo(ambientTargetVolume(false), 850L)
+        if (released || generation != speechGeneration || !speechRequestActive) return
 
         val callback = finishedCallback
         finishedCallback = null
-        callback?.invoke()
+        speechRequestActive = false
+
+        Log.i(
+            TAG,
+            "Speech queue item finished: generation=$generation, remaining=${speechQueue.size}"
+        )
+
+        try {
+            callback?.invoke()
+        } catch (error: Exception) {
+            Log.e(TAG, "Speech completion callback failed", error)
+        }
+
+        // The callback may have stopped the controller, released it, or enqueued a new item.
+        if (released || generation != speechGeneration) return
+
+        if (speechQueue.isNotEmpty()) {
+            startNextSpeechIfIdle()
+        } else {
+            speaking = false
+            fadeMusicTo(ambientTargetVolume(false), 850L)
+            Log.i(TAG, "Speech queue is empty")
+        }
     }
 
     private fun ensurePlayer() {
