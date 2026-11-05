@@ -35,10 +35,16 @@ jobs:
           yes | sdkmanager --licenses >/dev/null
           sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
 
-      - name: Create temporary CI-only token
+      - name: Create secure TTS token configuration
+        env:
+          MAHAKAMA_TTS_TOKEN: ${{ secrets.MAHAKAMA_TTS_TOKEN }}
         run: |
+          test -n "$MAHAKAMA_TTS_TOKEN" || {
+            echo "MAHAKAMA_TTS_TOKEN repository secret is missing"
+            exit 1
+          }
           mkdir -p "$HOME/.config/mahakama"
-          printf '%s' 'CI_DUMMY_TOKEN_NOT_FOR_RELEASE' > "$HOME/.config/mahakama/app_access_token"
+          printf '%s' "$MAHAKAMA_TTS_TOKEN" > "$HOME/.config/mahakama/app_access_token"
           chmod 600 "$HOME/.config/mahakama/app_access_token"
 
       - name: Grant Gradle permission
