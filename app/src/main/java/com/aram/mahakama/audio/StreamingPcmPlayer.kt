@@ -23,6 +23,8 @@ internal class StreamingPcmPlayer(
     }
 
     private val stopped = AtomicBoolean(false)
+    private val inputLock = Any()
+    private var pendingPcmByte: Int? = null
     private val inputFinished = AtomicBoolean(false)
     private val queue = ArrayBlockingQueue<ShortArray>(QUEUE_CAPACITY)
     private val audioTrack: AudioTrack
@@ -72,9 +74,9 @@ internal class StreamingPcmPlayer(
     }
 
     /** Copies callback samples into a bounded queue; returns false after stop. */
-    fun enqueue(samples: FloatArray): Boolean {
-        if (samples.isEmpty()) return true
-        if (stopped.get() || inputFinished.get()) return false
+    fun enqueue(samples: FloatArray): Boolean = synchronized(inputLock) {
+        if (samples.isEmpty()) return@synchronized true
+        if (stopped.get() || inputFinished.get()) return@synchronized false
 
         val pcm = ShortArray(samples.size)
         for (index in samples.indices) {
@@ -86,7 +88,46 @@ internal class StreamingPcmPlayer(
                 .roundToInt()
                 .toShort()
         }
+        enqueueShorts(pcm)
+    }
 
+    /** Accepts little-endian signed PCM16 bytes from Gemini streaming. */
+    fun enqueuePcm16(bytes: ByteArray): Boolean = synchronized(inputLock) {
+        if (bytes.isEmpty()) return@synchronized true
+        if (stopped.get() || inputFinished.get()) return@synchronized false
+
+        val hasPending = pendingPcmByte != null
+        val sampleCount = (bytes.size + if (hasPending) 1 else 0) / 2
+        val pcm = ShortArray(sampleCount)
+        var outputIndex = 0
+        var inputIndex = 0
+
+        val pending = pendingPcmByte
+        if (pending != null) {
+            val low = pending
+            val high = bytes[0].toInt() and 0xFF
+            pcm[outputIndex++] = ((high shl 8) or low).toShort()
+            inputIndex = 1
+            pendingPcmByte = null
+        }
+
+        while (inputIndex + 1 < bytes.size) {
+            val low = bytes[inputIndex].toInt() and 0xFF
+            val high = bytes[inputIndex + 1].toInt() and 0xFF
+            pcm[outputIndex++] = ((high shl 8) or low).toShort()
+            inputIndex += 2
+        }
+
+        if (inputIndex < bytes.size) {
+            pendingPcmByte = bytes[inputIndex].toInt() and 0xFF
+        }
+
+        if (outputIndex == 0) return@synchronized true
+        enqueueShorts(if (outputIndex == pcm.size) pcm else pcm.copyOf(outputIndex))
+    }
+
+    private fun enqueueShorts(pcm: ShortArray): Boolean {
+        if (pcm.isEmpty()) return true
         while (!stopped.get() && !inputFinished.get()) {
             try {
                 if (queue.offer(pcm, 100, TimeUnit.MILLISECONDS)) return true
@@ -98,8 +139,12 @@ internal class StreamingPcmPlayer(
         return false
     }
 
-    /** Called only after Sherpa has returned from its final callback. */
-    fun finishInput() {
+    /** Called only after the final source callback has returned. */
+    fun finishInput() = synchronized(inputLock) {
+        if (pendingPcmByte != null) {
+            pendingPcmByte = null
+            throw IOException("انتهى بث PCM16 ببايت ناقص؛ تعذر تكوين عينة صوتية كاملة")
+        }
         inputFinished.set(true)
     }
 

@@ -4,12 +4,27 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val mahakamaTtsTokenFile = File(
+    System.getProperty("user.home"),
+    ".config/mahakama/app_access_token"
+)
+val mahakamaTtsToken = if (mahakamaTtsTokenFile.isFile) {
+    mahakamaTtsTokenFile.readText().trim()
+} else {
+    ""
+}
+require(mahakamaTtsToken.isNotBlank()) {
+    "Mahakama TTS token is missing from local secure configuration"
+}
+
+
 android {
     namespace = "com.aram.mahakama"
     compileSdk = 36
 
     defaultConfig {
         applicationId = "com.aram.mahakama"
+        buildConfigField("String", "MAHAKAMA_TTS_TOKEN", "\"${mahakamaTtsToken}\"")
         minSdk = 26
         targetSdk = 35
         versionCode = 3
@@ -17,7 +32,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildFeatures { compose = true }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -29,6 +47,7 @@ android {
 
 dependencies {
     implementation(files("libs/sherpa-onnx-2.0.1.aar"))
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.apache.commons:commons-compress:1.28.0")
     val composeBom = platform("androidx.compose:compose-bom:2025.11.00")
     implementation(composeBom)

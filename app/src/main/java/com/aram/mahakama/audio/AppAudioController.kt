@@ -12,6 +12,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import com.aram.mahakama.R
+import okhttp3.Call
 import java.io.File
 import java.util.ArrayDeque
 
@@ -53,6 +54,10 @@ class AppAudioController(context: Context) {
     private var pendingSpeechGeneration = 0L
     private var speechPlayer: MediaPlayer? = null
     private var streamingSpeechPlayer: StreamingPcmPlayer? = null
+    private val geminiTtsClient = GeminiTtsClient()
+    @Volatile private var geminiCall: Call? = null
+    private var healthCall: Call? = null
+    private var healthGeneration = 0L
 
     @Volatile private var speechGeneration = 0L
     private var volumeAnimator: ValueAnimator? = null
@@ -245,7 +250,162 @@ class AppAudioController(context: Context) {
             TAG,
             "Speech queue starting: generation=$generation, remaining=${speechQueue.size}, chars=${request.text.length}, queueWaitMs=${SystemClock.elapsedRealtime() - request.queuedAtMs}"
         )
-        requestSherpaSpeech(request.text)
+        requestGeminiSpeech(request.text)
+    }
+
+    @Synchronized
+    fun prepareGeminiService(
+        onStatus: (String) -> Unit,
+        onReady: () -> Unit,
+        onError: (Throwable) -> Unit
+    ) {
+        if (released) {
+            onError(IllegalStateException("متحكم الصوت مغلق"))
+            return
+        }
+        healthGeneration++
+        val generation = healthGeneration
+        healthCall?.cancel()
+        healthCall = null
+        onStatus("checking")
+        try {
+            val call = geminiTtsClient.checkHealth(
+                onReady = {
+                    mainHandler.post {
+                        synchronized(this@AppAudioController) {
+                            if (released || generation != healthGeneration) return@synchronized
+                            healthCall = null
+                            onStatus("ready")
+                            onReady()
+                        }
+                    }
+                },
+                onError = { error ->
+                    mainHandler.post {
+                        synchronized(this@AppAudioController) {
+                            if (released || generation != healthGeneration) return@synchronized
+                            healthCall = null
+                            onError(error)
+                        }
+                    }
+                }
+            )
+            healthCall = call
+        } catch (error: Throwable) {
+            onError(error)
+        }
+    }
+
+    private fun cancelGeminiRequest() {
+        val call = geminiCall
+        geminiCall = null
+        try { call?.cancel() } catch (_: Exception) { }
+    }
+
+    @Synchronized
+    private fun requestGeminiSpeech(text: String) {
+        val generation = speechGeneration
+        if (released || text.isBlank()) {
+            finishSpeakingIfCurrent(generation)
+            return
+        }
+
+        releaseSpeechPlayer()
+
+        lateinit var streamPlayer: StreamingPcmPlayer
+        try {
+            streamPlayer = StreamingPcmPlayer(
+                sampleRate = 24000,
+                onPlaybackComplete = {
+                    mainHandler.post {
+                        synchronized(this@AppAudioController) {
+                            if (!released && generation == speechGeneration &&
+                                streamingSpeechPlayer === streamPlayer) {
+                                streamingSpeechPlayer = null
+                                geminiCall = null
+                                finishSpeakingIfCurrent(generation)
+                            }
+                        }
+                    }
+                },
+                onPlaybackError = { error ->
+                    mainHandler.post {
+                        synchronized(this@AppAudioController) {
+                            if (!released && generation == speechGeneration &&
+                                streamingSpeechPlayer === streamPlayer) {
+                                Log.e(TAG, "Gemini playback failed", error)
+                                streamingSpeechPlayer = null
+                                cancelGeminiRequest()
+                                try { streamPlayer.stop() } catch (_: Exception) { }
+                                finishSpeakingIfCurrent(generation)
+                            }
+                        }
+                    }
+                }
+            )
+        } catch (error: Throwable) {
+            Log.e(TAG, "Could not create Gemini PCM player", error)
+            finishSpeakingIfCurrent(generation)
+            return
+        }
+
+        streamingSpeechPlayer = streamPlayer
+
+        try {
+            val call = geminiTtsClient.stream(
+                text = text,
+                onAudioChunk = { bytes ->
+                    !released &&
+                        generation == speechGeneration &&
+                        streamingSpeechPlayer === streamPlayer &&
+                        streamPlayer.enqueuePcm16(bytes)
+                },
+                onComplete = {
+                    mainHandler.post {
+                        synchronized(this@AppAudioController) {
+                            if (!released && generation == speechGeneration &&
+                                streamingSpeechPlayer === streamPlayer) {
+                                try {
+                                    streamPlayer.finishInput()
+                                } catch (error: Throwable) {
+                                    Log.e(TAG, "Gemini PCM finish failed", error)
+                                    streamingSpeechPlayer = null
+                                    cancelGeminiRequest()
+                                    try { streamPlayer.stop() } catch (_: Exception) { }
+                                    finishSpeakingIfCurrent(generation)
+                                }
+                            }
+                        }
+                    }
+                },
+                onError = { error ->
+                    mainHandler.post {
+                        synchronized(this@AppAudioController) {
+                            if (!released && generation == speechGeneration &&
+                                streamingSpeechPlayer === streamPlayer) {
+                                Log.e(TAG, "Gemini TTS request failed", error)
+                                streamingSpeechPlayer = null
+                                geminiCall = null
+                                try { streamPlayer.stop() } catch (_: Exception) { }
+                                finishSpeakingIfCurrent(generation)
+                            }
+                        }
+                    }
+                }
+            )
+
+            if (!released && generation == speechGeneration &&
+                streamingSpeechPlayer === streamPlayer) {
+                geminiCall = call
+            } else {
+                call.cancel()
+            }
+        } catch (error: Throwable) {
+            Log.e(TAG, "Could not start Gemini TTS", error)
+            streamingSpeechPlayer = null
+            try { streamPlayer.stop() } catch (_: Exception) { }
+            finishSpeakingIfCurrent(generation)
+        }
     }
 
     /**
@@ -580,6 +740,7 @@ class AppAudioController(context: Context) {
 
     @Synchronized
     private fun releaseSpeechPlayer() {
+        cancelGeminiRequest()
         val stream = streamingSpeechPlayer
         streamingSpeechPlayer = null
         try { stream?.stop() } catch (_: Exception) { }
@@ -677,6 +838,9 @@ class AppAudioController(context: Context) {
         if (released) return
 
         released = true
+        healthGeneration++
+        healthCall?.cancel()
+        healthCall = null
         speechGeneration++
 
         try {

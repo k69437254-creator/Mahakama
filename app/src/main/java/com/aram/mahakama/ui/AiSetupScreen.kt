@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,7 +24,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
@@ -43,43 +40,33 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.viewinterop.AndroidView
 import com.aram.mahakama.R
 import com.aram.mahakama.audio.AppAudioController
-import java.io.File
 
 @Composable
 fun AiSetupScreen(
     audio: AppAudioController,
     onContinue: () -> Unit
 ) {
-    val context = LocalContext.current
     var status by remember { mutableStateOf("checking") }
-    var progress by remember { mutableIntStateOf(0) }
-    var ready by remember { mutableStateOf(false) }
+var ready by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var attempt by remember { mutableIntStateOf(0) }
     var videoView by remember { mutableStateOf<VideoView?>(null) }
 
-    val modelPath = remember {
-        File(context.filesDir, "sherpa-supertonic-3").absolutePath
-    }
-
     LaunchedEffect(attempt) {
         ready = false
         errorMessage = null
-        progress = 0
         status = "checking"
 
-        audio.prepareEngine(
+        audio.prepareGeminiService(
             onStatus = { status = it },
-            onProgress = { progress = it.coerceIn(0, 100) },
             onReady = {
                 status = "ready"
-                progress = 100
                 ready = true
                 errorMessage = null
             },
             onError = { error ->
                 errorMessage = error.localizedMessage
-                    ?: "تعذرت تهيئة مكوّنات الذكاء الاصطناعي."
+                    ?: "تعذر الاتصال بخدمة الصوت. تحقق من الإنترنت وحاول مجددًا."
                 ready = false
             }
         )
@@ -174,7 +161,7 @@ fun AiSetupScreen(
                         Spacer(Modifier.height(14.dp))
 
                         Text(
-                            text = "يحتاج التطبيق إلى تحميل مكوّنات الذكاء الاصطناعي وملفاته الصوتية لضمان تجربة أكثر وضوحًا وعمقًا، بالاعتماد على الذكاء الاصطناعي الذي بُرمج التطبيق ليعمل به.\n\nكما تتيح هذه التهيئة تشغيل التفاعلات الصوتية المدمجة باحترافية، ليكون طيفك الذاتي رفيقك الدائم في هذه المحاكمة.",
+                            text = "تُهيّئ هذه المرحلة المساحة الصوتية للمحاكمة، لتصبح الحوارات والانعكاسات أكثر حضورًا وعمقًا، ويغدو صوت طيفك الذاتي جزءًا من تجربتك في استكشاف أعماقك.\n\nتأكد من اتصالك بالإنترنت لإتمام التهيئة والاستمتاع بالتجربة الصوتية.",
                             color = Color(0xFFD0C8D9),
                             fontSize = 15.sp,
                             lineHeight = 25.sp,
@@ -192,29 +179,14 @@ fun AiSetupScreen(
 
                         Spacer(Modifier.height(13.dp))
 
-                        if (status == "downloading") {
-                            LinearProgressIndicator(
-                                progress = { progress / 100f },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(7.dp),
-                                color = Color(0xFFB58AEF),
-                                trackColor = Color(0xFF393044)
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = "$progress%",
-                                color = Color.White,
-                                fontSize = 14.sp
-                            )
-                        } else if (!ready && errorMessage == null) {
+                        if (!ready && errorMessage == null) {
                             CircularProgressIndicator(
                                 color = Color(0xFFB58AEF),
                                 strokeWidth = 3.dp
                             )
                         } else if (ready) {
                             Text(
-                                text = "100%",
+                                text = "الخدمة متاحة",
                                 color = Color(0xFFB8F0CC),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold
@@ -222,14 +194,6 @@ fun AiSetupScreen(
                         }
 
                         Spacer(Modifier.height(18.dp))
-
-                        Text(
-                            text = "مسار حفظ المكوّنات داخل التطبيق:\n$modelPath",
-                            color = Color(0xFFAAA0B8),
-                            fontSize = 11.sp,
-                            lineHeight = 17.sp,
-                            textAlign = TextAlign.Center
-                        )
 
                         if (errorMessage != null) {
                             Spacer(Modifier.height(14.dp))
@@ -279,11 +243,11 @@ fun AiSetupScreen(
 }
 
 private fun statusLabel(status: String): String = when (status) {
-    "checking" -> "فحص ملفات النموذج الموجودة..."
-    "downloading" -> "تنزيل مكوّنات الذكاء الاصطناعي..."
-    "extracting" -> "استخراج ملفات النموذج..."
-    "verifying" -> "التحقق من سلامة الملفات..."
-    "initializing" -> "تهيئة محرك الصوت المحلي..."
-    "ready" -> "اكتملت التهيئة بنجاح"
+    "checking" -> "التحقق من الاتصال بخدمة الصوت..."
+    "downloading" -> "جارٍ الاتصال بخدمة الصوت..."
+    "extracting" -> "تجهيز الاتصال..."
+    "verifying" -> "التحقق من استجابة الخدمة..."
+    "initializing" -> "تهيئة خدمة الصوت..."
+    "ready" -> "خدمة الصوت جاهزة"
     else -> "تهيئة المكوّنات..."
 }
