@@ -1,0 +1,46 @@
+name: Gemini TTS Kotlin Compile
+
+on:
+  push:
+    branches:
+      - feature/gemini-tts-streaming
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Gemini branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/gemini-tts-streaming
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses >/dev/null
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+
+      - name: Create temporary CI-only token
+        run: |
+          mkdir -p "$HOME/.config/mahakama"
+          printf '%s' 'CI_DUMMY_TOKEN_NOT_FOR_RELEASE' > "$HOME/.config/mahakama/app_access_token"
+          chmod 600 "$HOME/.config/mahakama/app_access_token"
+
+      - name: Grant Gradle permission
+        run: chmod +x gradlew
+
+      - name: Compile Kotlin
+        run: ./gradlew --no-daemon --stacktrace :app:compileDebugKotlin
