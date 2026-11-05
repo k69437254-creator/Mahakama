@@ -1,4 +1,4 @@
-name: Gemini TTS Kotlin Compile
+name: Gemini TTS Debug APK
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  compile:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,5 +44,13 @@ jobs:
       - name: Grant Gradle permission
         run: chmod +x gradlew
 
-      - name: Compile Kotlin
-        run: ./gradlew --no-daemon --stacktrace :app:compileDebugKotlin
+      - name: Build debug APK
+        run: ./gradlew --no-daemon --stacktrace :app:assembleDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: mahakama-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 7
